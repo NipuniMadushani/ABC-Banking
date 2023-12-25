@@ -1,5 +1,5 @@
 const config = {
-    basename: '/itos',
+    basename: '/ABC-banking',
     defaultPath: '/',
     fontFamily: `'Lexend', sans-serif`,
     borderRadius: 12
