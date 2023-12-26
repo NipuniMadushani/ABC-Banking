@@ -41,9 +41,9 @@ import './../../../../assets/scss/imageUpload.css';
 
 function User({ open, handleClose, mode, userCode, component, handleCloseSubmit }) {
     const initialValues = {
-        disablePassowrdField: true,
-        company: null,
-        title: '',
+        userId: '',
+        // disablePassowrdField: true,
+        title: 'MR.',
         firstName: '',
         middleName: '',
         status: true,
@@ -51,17 +51,9 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
         nic: '',
         email: '',
         mobile: '',
-        designation: null,
-        department: null,
-        cluster: null,
-        markets: [],
-        roles: [],
+        roles: 'USER',
         userName: '',
-        password: '',
-        availableLicenceCount: '',
-        allocatedLicenceCount: '',
-        files: '',
-        docPath: ''
+        password: ''
     };
     const [loadValues, setLoadValues] = useState('');
     const [previewImages, setPreviewImages] = useState([]);
@@ -88,7 +80,7 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
 
     const validationSchema = yup.object().shape({
         disablePassowrdField: yup.boolean(),
-        company: yup.object().typeError('Required field'),
+        // company: yup.object().typeError('Required field'),
         // title: yup.string().required('Required field'),
         firstName: yup.string().required('Required field'),
         lastName: yup.string().required('Required field'),
@@ -100,16 +92,16 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
             .matches(phoneRegExp, 'Not valid')
             .min(10, 'Must be exactly 10 digits')
             .max(10, 'Must be 10 digits'),
-        designation: yup.object().typeError('Required field'),
-        department: yup.object().typeError('Required field'),
-        cluster: yup.object().typeError('Required field'),
+        // designation: yup.object().typeError('Required field'),
+        // department: yup.object().typeError('Required field'),
+        // cluster: yup.object().typeError('Required field'),
         userName: yup.string().required('Requied field'),
-        roles: yup
-            .array()
-            // .of(yup.object().shape({ roleName: yup.string().required('Required field') }))
-            // .typeError('Required field')
-            .required('Required field'),
-        markets: yup.array().required('Required field')
+        password: yup.string().max(8).required('Required field')
+        // roles: yup
+        //     .array()
+        //     // .of(yup.object().shape({ roleName: yup.string().required('Required field') }))
+        //     // .typeError('Required field')
+        //     .required('Required field')
 
         // password: yup.string().when('disablePassowrdField', {
         //     is: true && mode === 'INSERT' && component === 'user_creation',
@@ -176,32 +168,9 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
     }, [departmentActiveList]);
 
     useEffect(() => {
+        console.warn(userToUpdate);
         if ((mode === 'VIEW_UPDATE' && userToUpdate != null) || (mode === 'VIEW' && userToUpdate != null)) {
-            userToUpdate.disablePassowrdField = false;
-            userToUpdate.availableLicenceCount = userToUpdate.company.availableLicenceCount;
-            userToUpdate.allocatedLicenceCount = userToUpdate.company.allocatedLicenceCount;
-            console.warn(userToUpdate?.roles);
-
-            let images = [];
-            const contentType = 'image/png';
-            console.log(userToUpdate.docPath);
-            if (userToUpdate.docPath !== '' && userToUpdate.docPath !== null) {
-                console.log('dftyuiopghfxcvjklkb hhhhhhhhhhhhhhhhh');
-                const byteCharacters = atob(userToUpdate.docPath);
-
-                const byteNumbers = new Array(byteCharacters?.length);
-                for (let i = 0; i < byteCharacters?.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                const blob1 = new Blob([byteArray], { type: contentType });
-                images.push(URL.createObjectURL(blob1));
-                let fileData = new File([blob1], 'name');
-                userToUpdate.files = [fileData];
-            }
-            console.log([images]);
-            setLoadValues(userToUpdate);
-            setPreviewImages(images);
+            setLoadValues(userToUpdate?.body?.payload[0]);
         }
     }, [userToUpdate]);
 
@@ -233,20 +202,6 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
     }, [profileToUpdate]);
 
     useEffect(() => {
-        console.log(roleIdList);
-        if (roleIdList != null) {
-            console.log(roleIdList);
-            setuserRoleListOptions(roleIdList);
-        }
-    }, [roleIdList]);
-
-    useEffect(() => {
-        if (designationActiveList != null) {
-            setDesignationListOptions(designationActiveList);
-        }
-    }, [designationActiveList]);
-
-    useEffect(() => {
         if ((mode === 'VIEW_UPDATE' && component === 'user_creation') || (mode === 'VIEW' && component === 'user_creation')) {
             dispatch(getUserDataById(userCode));
 
@@ -256,18 +211,6 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
         }
     }, [mode]);
 
-    useEffect(() => {
-        setMarketListOptions(marketListData);
-    }, [marketListData]);
-
-    useEffect(() => {
-        if (companyProfile?.payload?.length > 0) {
-            setCompanyListOptions(companyProfile?.payload[0]);
-
-            dispatch(getAvailableLicenseCount(companyProfile?.payload[0][0].id));
-        }
-    }, [companyProfile]);
-
     const handleSubmitForm = (data) => {
         console.log(data);
         if (component === 'user_creation') {
@@ -275,7 +218,7 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                 console.log(data);
                 dispatch(saveUserData(data));
             } else if (mode === 'VIEW_UPDATE') {
-                dispatch(updateUserData(data));
+                dispatch(saveUserData(data));
             }
         } else if (component === 'user_profile') {
             console.log('user_profile');
@@ -291,28 +234,8 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
     };
 
     useEffect(() => {
-        dispatch(getAllActiveMarketData());
-        dispatch(getAllClusterData());
-        dispatch(getAllCompanyProfileData());
         setTitleListOptions(titleItems);
-        dispatch(getAllDepartmentData());
-        dispatch(getAllDesignationData());
-        dispatch(getAllRolesData());
     }, []);
-
-    const showImages = (event) => {
-        let images = [];
-        console.log(event);
-        for (let i = 0; i < event.target.files?.length; i++) {
-            images.push(URL.createObjectURL(event.target.files[i]));
-        }
-        setPreviewImages(images);
-    };
-
-    function deleteHandler(image) {
-        setPreviewImages(previewImages?.filter((e) => e !== image));
-        URL.revokeObjectURL(image);
-    }
 
     return (
         <div>
@@ -320,9 +243,9 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                 <DialogTitle>
                     <Box display="flex" alignItems="center" className="dialog-title">
                         <Box flexGrow={1}>
-                            {mode === 'INSERT' && component === 'user_creation' ? 'Add User Creation' : ''}
-                            {mode === 'VIEW_UPDATE' && component === 'user_creation' ? 'Update User Creation' : ''}
-                            {mode === 'VIEW' && component === 'user_creation' ? 'View User Creation' : ''}
+                            {mode === 'INSERT' && component === 'user_creation' ? 'Add Manager' : ''}
+                            {mode === 'VIEW_UPDATE' && component === 'user_creation' ? 'Update Manager' : ''}
+                            {mode === 'VIEW' && component === 'user_creation' ? 'View Manager' : ''}
                             {component === 'user_profile' ? 'My Profile' : ''}
                         </Box>
                         <Box>
@@ -348,101 +271,24 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                 }}
                                                 validationSchema={validationSchema}
                                             >
-                                                {({ values, handleChange, setFieldValue, errors, handleBlur, touched }) => {
+                                                {({
+                                                    values,
+                                                    handleChange,
+                                                    setFieldValue,
+                                                    errors,
+                                                    handleBlur,
+                                                    touched,
+                                                    dirty,
+                                                    resetForm
+                                                }) => {
                                                     return (
                                                         <Form>
                                                             <div style={{ marginTop: '6px', margin: '10px' }}>
-                                                                <Grid display="flex" gap="10px" style={{ marginTop: '20px' }}>
-                                                                    {/* <Grid item sm={4}>
-                                                                        <FormGroup>
-                                                                            <FormControlLabel
-                                                                                name="status"
-                                                                                disabled={mode == 'VIEW'}
-                                                                                onChange={handleChange}
-                                                                                value={values.status}
-                                                                                control={<Switch color="success" />}
-                                                                                label="Status"
-                                                                                checked={values.status}
-                                                                                // disabled={mode == 'VIEW'}
-                                                                            />
-                                                                        </FormGroup>
-                                                                    </Grid> */}
-                                                                    {/* <Grid item sm={4}>
-                                                                        <Typography variant="" component="p">
-                                                                            5 Licenses Used Out Of 10
-                                                                        </Typography>
-                                                                    </Grid> */}
-                                                                    {/* <Grid item sm={4}>
-                                                                        <Typography variant="" component="p">
-                                                                            5 Licenses Used Out Of 10
-                                                                        </Typography>
-                                                                    </Grid> */}
-                                                                </Grid>
                                                                 <Grid gap="10px" display="flex" style={{ marginTop: '10px' }}>
-                                                                    {/* <Grid item>
-                                                                        {' '}
-                                                                        <TextField
-                                                                            sx={{
-                                                                                width: { sm: 200, md: 200 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
-                                                                                }
-                                                                            }}
-                                                                            disabled
-                                                                            label="System Generated User ID"
-                                                                            name="generatedCode"
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            onChange={handleChange}
-                                                                            onBlur={handleBlur}
-                                                                            value={values.generatedCode}
-                                                                            // error={Boolean(touched.code && errors.code)}
-                                                                            // helperText={touched.code && errors.code ? errors.code : ''}
-                                                                        ></TextField>
-                                                                    </Grid> */}
-                                                                    <Grid item>
-                                                                        <Autocomplete
-                                                                            value={values.company}
-                                                                            name="company"
-                                                                            onChange={(_, value) => {
-                                                                                console.log(value);
-                                                                                setFieldValue(`company`, value);
-                                                                                loadAvalibleLicenseCount(value, setFieldValue);
-                                                                            }}
-                                                                            options={companyListOptions}
-                                                                            getOptionLabel={(option) => `${option?.companyName}`}
-                                                                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                                                                            renderInput={(params) => (
-                                                                                <TextField
-                                                                                    {...params}
-                                                                                    label="Company"
-                                                                                    sx={{
-                                                                                        width: { sm: 200, md: 200 },
-                                                                                        '& .MuiInputBase-root': {
-                                                                                            height: 40
-                                                                                        }
-                                                                                    }}
-                                                                                    InputLabelProps={{
-                                                                                        shrink: true
-                                                                                    }}
-                                                                                    variant="outlined"
-                                                                                    name="company"
-                                                                                    onBlur={handleBlur}
-                                                                                    error={Boolean(touched.company && errors.company)}
-                                                                                    helperText={
-                                                                                        touched.company && errors.company
-                                                                                            ? errors.company
-                                                                                            : ''
-                                                                                    }
-                                                                                />
-                                                                            )}
-                                                                        />
-                                                                    </Grid>
                                                                     <Grid item>
                                                                         <TextField
                                                                             sx={{
-                                                                                width: { sm: 100, md: 100 },
+                                                                                width: { sm: 100, md: 250 },
                                                                                 '& .MuiInputBase-root': {
                                                                                     height: 40
                                                                                 }
@@ -485,44 +331,6 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                             </MenuItem>
                                                                         </TextField>
                                                                     </Grid>
-                                                                    <Grid item>
-                                                                        <TextField
-                                                                            sx={{
-                                                                                width: { sm: 145 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
-                                                                                }
-                                                                            }}
-                                                                            label="Available LicenceCount"
-                                                                            name="availableLicenceCount"
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            disabled={true}
-                                                                            onChange={handleChange}
-                                                                            onBlur={handleBlur}
-                                                                            value={values.availableLicenceCount}
-                                                                        ></TextField>
-                                                                    </Grid>
-                                                                    <Grid item>
-                                                                        <TextField
-                                                                            sx={{
-                                                                                width: { sm: 145 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
-                                                                                }
-                                                                            }}
-                                                                            label="Allocated LicenceCount"
-                                                                            name="allocatedLicenceCount"
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            disabled={true}
-                                                                            onChange={handleChange}
-                                                                            onBlur={handleBlur}
-                                                                            value={values.allocatedLicenceCount}
-                                                                        ></TextField>
-                                                                    </Grid>
                                                                 </Grid>
                                                                 <Grid gap="10px" display="flex" style={{ marginTop: '10px' }}>
                                                                     <Grid item>
@@ -540,11 +348,12 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
-                                                                            disabled={
-                                                                                component === 'user_creation' && mode === 'INSERT'
-                                                                                    ? false
-                                                                                    : true
-                                                                            }
+                                                                            disabled={mode === 'VIEW'}
+                                                                            // disabled={
+                                                                            //     component === 'user_creation' && mode === 'INSERT'
+                                                                            //         ? false
+                                                                            //         : true
+                                                                            // }
                                                                             onBlur={handleBlur}
                                                                             value={values.firstName}
                                                                             error={Boolean(touched.firstName && errors.firstName)}
@@ -571,11 +380,7 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
-                                                                            disabled={
-                                                                                component === 'user_creation' && mode === 'INSERT'
-                                                                                    ? false
-                                                                                    : true
-                                                                            }
+                                                                            disabled={mode === 'VIEW'}
                                                                             onBlur={handleBlur}
                                                                             value={values.middleName}
                                                                             error={Boolean(touched.middleName && errors.middleName)}
@@ -602,11 +407,12 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
-                                                                            disabled={
-                                                                                component === 'user_creation' && mode === 'INSERT'
-                                                                                    ? false
-                                                                                    : true
-                                                                            }
+                                                                            // disabled={
+                                                                            //     component === 'user_creation' && mode === 'INSERT'
+                                                                            //         ? false
+                                                                            //         : true
+                                                                            // }
+                                                                            disabled={mode === 'VIEW'}
                                                                             value={values.lastName}
                                                                             error={Boolean(touched.lastName && errors.lastName)}
                                                                             helperText={
@@ -627,11 +433,12 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                             id="outlined-required"
                                                                             label="NIC"
                                                                             name="nic"
-                                                                            disabled={
-                                                                                component === 'user_creation' && mode === 'INSERT'
-                                                                                    ? false
-                                                                                    : true
-                                                                            }
+                                                                            disabled={mode === 'VIEW'}
+                                                                            // disabled={
+                                                                            //     component === 'user_creation' && mode === 'INSERT'
+                                                                            //         ? false
+                                                                            //         : true
+                                                                            // }
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
                                                                             InputLabelProps={{
@@ -642,33 +449,7 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                             helperText={touched.nic && errors.nic ? errors.nic : ''}
                                                                         />
                                                                     </Grid>
-                                                                    <Grid>
-                                                                        <TextField
-                                                                            sx={{
-                                                                                width: { sm: 200, md: 200 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
-                                                                                }
-                                                                            }}
-                                                                            id="outlined-required"
-                                                                            label="Email"
-                                                                            type="email"
-                                                                            name="email"
-                                                                            disabled={
-                                                                                component === 'user_creation' && mode === 'INSERT'
-                                                                                    ? false
-                                                                                    : true
-                                                                            }
-                                                                            onChange={handleChange}
-                                                                            onBlur={handleBlur}
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            value={values.email}
-                                                                            error={Boolean(touched.email && errors.email)}
-                                                                            helperText={touched.email && errors.email ? errors.email : ''}
-                                                                        />
-                                                                    </Grid>
+
                                                                     <Grid item>
                                                                         {' '}
                                                                         <TextField
@@ -682,6 +463,7 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
+                                                                            disabled={mode === 'VIEW'}
                                                                             name="mobile"
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
@@ -695,202 +477,61 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                 </Grid>
                                                                 <Grid gap="10px" display="flex" style={{ marginTop: '10px' }}>
                                                                     <Grid item>
-                                                                        <Autocomplete
-                                                                            value={values.designation}
-                                                                            name="designation"
-                                                                            onChange={(_, value) => {
-                                                                                setFieldValue(`designation`, value);
+                                                                        <TextField
+                                                                            sx={{
+                                                                                width: { sm: 200, md: 500 },
+                                                                                '& .MuiInputBase-root': {
+                                                                                    height: 40
+                                                                                }
                                                                             }}
-                                                                            disabled={component === 'user_profile' ? true : false}
-                                                                            options={designationListOptions}
-                                                                            getOptionLabel={(option) => `${option?.description}`}
-                                                                            isOptionEqualToValue={(option, value) =>
-                                                                                option?.id === value?.id
-                                                                            }
-                                                                            renderInput={(params) => (
-                                                                                <TextField
-                                                                                    {...params}
-                                                                                    label="Designation"
-                                                                                    sx={{
-                                                                                        width: { sm: 200, md: 200 },
-                                                                                        '& .MuiInputBase-root': {
-                                                                                            height: 40
-                                                                                        }
-                                                                                    }}
-                                                                                    InputLabelProps={{
-                                                                                        shrink: true
-                                                                                    }}
-                                                                                    variant="outlined"
-                                                                                    name="designation"
-                                                                                    onBlur={handleBlur}
-                                                                                    error={Boolean(
-                                                                                        touched.designation && errors.designation
-                                                                                    )}
-                                                                                    helperText={
-                                                                                        touched.designation && errors.designation
-                                                                                            ? errors.designation
-                                                                                            : ''
-                                                                                    }
-                                                                                />
-                                                                            )}
-                                                                        />
-                                                                    </Grid>
-                                                                    <Grid>
-                                                                        <Autocomplete
-                                                                            value={values.department}
-                                                                            name="department"
-                                                                            onChange={(_, value) => {
-                                                                                setFieldValue(`department`, value);
+                                                                            id="outlined-required"
+                                                                            label="Email"
+                                                                            type="email"
+                                                                            name="email"
+                                                                            disabled={mode === 'VIEW'}
+                                                                            // disabled={
+                                                                            //     component === 'user_creation' && mode === 'INSERT'
+                                                                            //         ? false
+                                                                            //         : true
+                                                                            // }
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                            InputLabelProps={{
+                                                                                shrink: true
                                                                             }}
-                                                                            disabled={component === 'user_profile' ? true : false}
-                                                                            options={departmentListOptions}
-                                                                            getOptionLabel={(option) => `${option?.description}`}
-                                                                            isOptionEqualToValue={(option, value) => option.id === value.id}
-                                                                            renderInput={(params) => (
-                                                                                <TextField
-                                                                                    {...params}
-                                                                                    label="Department"
-                                                                                    sx={{
-                                                                                        width: { sm: 200, md: 200 },
-                                                                                        '& .MuiInputBase-root': {
-                                                                                            height: 40
-                                                                                        }
-                                                                                    }}
-                                                                                    InputLabelProps={{
-                                                                                        shrink: true
-                                                                                    }}
-                                                                                    variant="outlined"
-                                                                                    name="department"
-                                                                                    onBlur={handleBlur}
-                                                                                    error={Boolean(touched.department && errors.department)}
-                                                                                    helperText={
-                                                                                        touched.department && errors.department
-                                                                                            ? errors.department
-                                                                                            : ''
-                                                                                    }
-                                                                                />
-                                                                            )}
-                                                                        />
-                                                                    </Grid>
-                                                                    <Grid>
-                                                                        <Autocomplete
-                                                                            value={values.cluster}
-                                                                            name="cluster"
-                                                                            onChange={(_, value) => {
-                                                                                setFieldValue(`cluster`, value);
-                                                                            }}
-                                                                            disabled={component === 'user_profile' ? true : false}
-                                                                            options={clusterListOptions}
-                                                                            getOptionLabel={(option) => `${option?.code} - ${option?.name}`}
-                                                                            // isOptionEqualToValue={(
-                                                                            //     option,
-                                                                            //     value
-                                                                            // ) => option.taxId === value.taxId}
-                                                                            renderInput={(params) => (
-                                                                                <TextField
-                                                                                    {...params}
-                                                                                    label="Cluster"
-                                                                                    sx={{
-                                                                                        width: { sm: 200, md: 200 },
-                                                                                        '& .MuiInputBase-root': {
-                                                                                            height: 40
-                                                                                        }
-                                                                                    }}
-                                                                                    InputLabelProps={{
-                                                                                        shrink: true
-                                                                                    }}
-                                                                                    variant="outlined"
-                                                                                    name="cluster"
-                                                                                    onBlur={handleBlur}
-                                                                                    error={Boolean(touched.cluster && errors.cluster)}
-                                                                                    helperText={
-                                                                                        touched.cluster && errors.cluster
-                                                                                            ? errors.cluster
-                                                                                            : ''
-                                                                                    }
-                                                                                />
-                                                                            )}
-                                                                        />
-                                                                    </Grid>
-                                                                </Grid>
-                                                                <Grid gap="10px" display="flex" style={{ marginTop: '10px' }}>
-                                                                    <Grid>
-                                                                        <Autocomplete
-                                                                            value={values.markets}
-                                                                            multiple
-                                                                            fullWidth
-                                                                            name="markets"
-                                                                            onChange={(_, value) => {
-                                                                                setFieldValue(`markets`, value);
-                                                                            }}
-                                                                            disabled={component === 'user_profile' ? true : false}
-                                                                            options={marketListOptions}
-                                                                            getOptionLabel={(option) =>
-                                                                                `${option?.code} - (${option?.name})`
-                                                                            }
-                                                                            isOptionEqualToValue={(option, value) =>
-                                                                                option?.marketId === value?.marketId
-                                                                            }
-                                                                            renderInput={(params) => (
-                                                                                <TextField
-                                                                                    {...params}
-                                                                                    label="Market"
-                                                                                    sx={{
-                                                                                        width: { sm: 620, md: 620 },
-                                                                                        '& .MuiInputBase-root': {
-                                                                                            height: 40
-                                                                                        }
-                                                                                    }}
-                                                                                    variant="outlined"
-                                                                                    InputLabelProps={{
-                                                                                        shrink: true
-                                                                                    }}
-                                                                                    name="markets"
-                                                                                    onBlur={handleBlur}
-                                                                                />
-                                                                            )}
+                                                                            value={values.email}
+                                                                            error={Boolean(touched.email && errors.email)}
+                                                                            helperText={touched.email && errors.email ? errors.email : ''}
                                                                         />
                                                                     </Grid>
                                                                 </Grid>
 
                                                                 <Grid gap="10px" display="flex" style={{ marginTop: '10px' }}>
                                                                     <Grid item>
-                                                                        <Autocomplete
-                                                                            value={values.roles}
-                                                                            multiple
-                                                                            fullWidth
-                                                                            name="roles"
-                                                                            onChange={(_, value) => {
-                                                                                console.warn(value);
-                                                                                setFieldValue(`roles`, value);
+                                                                        <TextField
+                                                                            sx={{
+                                                                                width: { sm: 200, md: 200 },
+                                                                                '& .MuiInputBase-root': {
+                                                                                    height: 40
+                                                                                }
                                                                             }}
-                                                                            options={userRoleListOptions}
-                                                                            getOptionLabel={(option) => `${option?.roleName}`}
-                                                                            isOptionEqualToValue={(option, value) =>
-                                                                                option.roleId === value.roleId
-                                                                            }
-                                                                            renderInput={(params) => (
-                                                                                <TextField
-                                                                                    {...params}
-                                                                                    label="Role"
-                                                                                    sx={{
-                                                                                        width: { sm: 620, md: 620 },
-                                                                                        '& .MuiInputBase-root': {
-                                                                                            height: 40
-                                                                                        }
-                                                                                    }}
-                                                                                    InputLabelProps={{
-                                                                                        shrink: true
-                                                                                    }}
-                                                                                    variant="outlined"
-                                                                                    name="roles"
-                                                                                    onBlur={handleBlur}
-                                                                                    error={Boolean(touched.roles && errors.roles)}
-                                                                                    helperText={
-                                                                                        touched.roles && errors.roles ? errors.roles : ''
-                                                                                    }
-                                                                                />
-                                                                            )}
+                                                                            id="outlined-required"
+                                                                            label="Role"
+                                                                            name="roles"
+                                                                            disabled
+                                                                            // disabled={
+                                                                            //     component === 'user_creation' && mode === 'INSERT'
+                                                                            //         ? false
+                                                                            //         : true
+                                                                            // }
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                            InputLabelProps={{
+                                                                                shrink: true
+                                                                            }}
+                                                                            value={values.roles}
+                                                                            // error={Boolean(touched.roles && errors.roles)}
+                                                                            // helperText={touched.roles && errors.roles ? errors.roles : ''}
                                                                         />
                                                                     </Grid>
                                                                 </Grid>
@@ -916,20 +557,21 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                             helperText={
                                                                                 touched.userName && errors.userName ? errors.userName : ''
                                                                             }
-                                                                            disabled={
-                                                                                component === 'user_creation' && mode === 'INSERT'
-                                                                                    ? false
-                                                                                    : true
-                                                                            }
+                                                                            disabled={mode == 'VIEW'}
+                                                                            // disabled={
+                                                                            //     component === 'user_creation' && mode === 'INSERT'
+                                                                            //         ? false
+                                                                            //         : true
+                                                                            // }
                                                                         ></TextField>
                                                                     </Grid>
                                                                     <Grid
                                                                         item
-                                                                        display={
-                                                                            component === 'user_creation' && mode === 'INSERT'
-                                                                                ? 'flex'
-                                                                                : 'none'
-                                                                        }
+                                                                        // display={
+                                                                        //     component === 'user_creation' && mode === 'INSERT'
+                                                                        //         ? 'flex'
+                                                                        //         : 'none'
+                                                                        // }
                                                                     >
                                                                         {' '}
                                                                         <TextField
@@ -943,6 +585,7 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
+                                                                            disabled={mode == 'VIEW'}
                                                                             name="password"
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
@@ -957,11 +600,12 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                         <FormGroup>
                                                                             <FormControlLabel
                                                                                 name="status"
-                                                                                disabled={
-                                                                                    mode == 'VIEW' || component === 'user_profile'
-                                                                                        ? true
-                                                                                        : false
-                                                                                }
+                                                                                disabled={mode === 'VIEW'}
+                                                                                // disabled={
+                                                                                //     mode == 'VIEW' || component === 'user_profile'
+                                                                                //         ? true
+                                                                                //         : false
+                                                                                // }
                                                                                 control={<Switch color="success" />}
                                                                                 onChange={handleChange}
                                                                                 value={values.status}
@@ -969,80 +613,6 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                                 checked={values.status}
                                                                             />
                                                                         </FormGroup>
-                                                                    </Grid>
-                                                                </Grid>
-                                                                <Grid gap="10px" display="flex" style={{ marginTop: '10px' }}>
-                                                                    <Grid item xs={12}>
-                                                                        <div className="app">
-                                                                            <div className="parent">
-                                                                                <div className="file-upload">
-                                                                                    {/* <img src={uploadImg} alt="upload" /> */}
-                                                                                    <CameraAltIcon></CameraAltIcon>
-                                                                                    <h3>Click box to upload</h3>
-                                                                                    <p>Maximun file size 10mb</p>
-                                                                                    <input
-                                                                                        type="file"
-                                                                                        multiple
-                                                                                        accept="image/*"
-                                                                                        name="files"
-                                                                                        onChange={(event) => {
-                                                                                            // console.log("file", event.currentTarget.files);
-                                                                                            showImages(event);
-                                                                                            handleChange;
-                                                                                            setFieldValue(
-                                                                                                'files',
-                                                                                                event.currentTarget.files
-                                                                                            );
-                                                                                        }}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        {errors.files}
-                                                                        {previewImages && (
-                                                                            <div>
-                                                                                {previewImages.map((img, i) => {
-                                                                                    return (
-                                                                                        <div
-                                                                                            style={{
-                                                                                                display: 'inline-block',
-                                                                                                position: 'relative'
-                                                                                            }}
-                                                                                        >
-                                                                                            <img
-                                                                                                width="100"
-                                                                                                height="100"
-                                                                                                style={{
-                                                                                                    marginRight: '10px',
-                                                                                                    marginTop: '10px'
-                                                                                                }}
-                                                                                                className="preview"
-                                                                                                src={img}
-                                                                                                alt={'image-' + i}
-                                                                                                key={i + 'ke'}
-                                                                                            />
-                                                                                            <IconButton
-                                                                                                aria-label="add an alarm"
-                                                                                                onClick={() => deleteHandler(img)}
-                                                                                            >
-                                                                                                <HighlightOffIcon
-                                                                                                    key={i}
-                                                                                                    style={{
-                                                                                                        position: 'absolute',
-                                                                                                        top: -100,
-                                                                                                        right: 0,
-                                                                                                        width: '25px',
-                                                                                                        height: '25px'
-                                                                                                        // marginRight: "10px",
-                                                                                                    }}
-                                                                                                    // src="https://png.pngtree.com/png-vector/20190603/ourmid/pngtree-icon-close-button-png-image_1357822.jpg"
-                                                                                                />
-                                                                                            </IconButton>
-                                                                                        </div>
-                                                                                    );
-                                                                                })}
-                                                                            </div>
-                                                                        )}
                                                                     </Grid>
                                                                 </Grid>
                                                             </div>
@@ -1062,7 +632,8 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                         style={{
                                                                             marginLeft: '10px'
                                                                         }}
-                                                                        // onClick={handleCancel}
+                                                                        disabled={!dirty}
+                                                                        onClick={(e) => resetForm()}
                                                                     >
                                                                         CLEAR
                                                                     </Button>
@@ -1071,7 +642,12 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                 )}
 
                                                                 {mode != 'VIEW' ? (
-                                                                    <Button variant="contained" type="submit" className="btnSave">
+                                                                    <Button
+                                                                        variant="contained"
+                                                                        type="submit"
+                                                                        className="btnSave"
+                                                                        disabled={!dirty}
+                                                                    >
                                                                         {mode === 'INSERT' ? 'SAVE' : 'UPDATE'}
                                                                     </Button>
                                                                 ) : (

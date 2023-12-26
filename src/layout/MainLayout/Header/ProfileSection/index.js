@@ -35,9 +35,11 @@ import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 import UpgradePlanCard from './UpgradePlanCard';
 import User1 from 'assets/images/users/user-round.svg';
+// import User1 from 'assets/images/users/user_new.png';
 
 // assets
-import { IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
+import { IconLockOff, IconLogout, IconSearch, IconSettings, IconUser } from '@tabler/icons';
+// import LockPersonOutlinedIcon from '@mui/icons-material/LockPersonOutlined';
 import User from 'views/pages/authentication/userManagement/UserCreation';
 import { clearUserDetails } from 'store/actions/authenticationActions/UserAction';
 import { useDispatch } from 'react-redux';
@@ -54,6 +56,7 @@ const ProfileSection = () => {
     const [notification, setNotification] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [open, setOpen] = useState(false);
+    const [openAuth, setOpenAuth] = useState(false);
     const [openUserDailog, setOpenUserDialog] = useState(false);
     const userData = JSON.parse(localStorage.getItem('userData'));
     const loggedUserData = useSelector((state) => state.userReducer.loggedUserData);
@@ -75,6 +78,7 @@ const ProfileSection = () => {
             return;
         }
         setOpen(false);
+        setOpenAuth(false);
     };
 
     const handleListItemClick = (event, index, route = '') => {
@@ -98,12 +102,143 @@ const ProfileSection = () => {
         prevOpen.current = open;
     }, [open]);
 
+    const handleAuth = () => {
+        setOpenAuth((prevOpenAuth) => !prevOpenAuth);
+    };
+
+    const prevOpenAuth = useRef(openAuth);
+    useEffect(() => {
+        if (prevOpenAuth.current === true && openAuth === false) {
+            anchorRef.current.focus();
+        }
+
+        prevOpenAuth.current = openAuth;
+    }, [openAuth]);
+
     const handleClose2 = () => {
         setOpenUserDialog(false);
     };
 
     return (
         <>
+            {/* <Chip
+                sx={{
+                    height: 'auto',
+                    p: 0,
+                    transition: 'all .2s ease-in-out',
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    '& .MuiChip-label': {
+                        lineHeight: 0
+                    }
+                }}
+                icon={<LockPersonOutlinedIcon size={30} />}
+                variant="outlined"
+                ref={anchorRef}
+                aria-controls={openAuth ? 'menu-list-grow' : undefined}
+                aria-haspopup="true"
+                onClick={handleAuth}
+                color="primary"
+            />
+            <Popper
+                placement="bottom-end"
+                open={openAuth}
+                anchorE1={anchorRef.current}
+                role={undefined}
+                transition
+                disablePortal
+                popperOptions={{
+                    modifiers: [
+                        {
+                            name: 'offset',
+                            options: {
+                                offset: [0, 14]
+                            }
+                        }
+                    ]
+                }}
+            >
+                {({ TransitionProps }) => (
+                    <Transitions in={openAuth} {...TransitionProps}>
+                        <Paper>
+                            <ClickAwayListener onClickAway={handleClose}>
+                                <MainCard border={false} elevation={16} content={false} boxShadow shadow={theme.shadows[16]}>
+                                    <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 250px)', overflowX: 'hidden' }}>
+                                        <Box sx={{ p: 2 }}>
+                                            <List
+                                                component="nav"
+                                                sx={{
+                                                    width: '100%',
+                                                    maxWidth: 350,
+                                                    minWidth: 300,
+                                                    backgroundColor: theme.palette.background.paper,
+                                                    borderRadius: '10px',
+                                                    [theme.breakpoints.down('md')]: {
+                                                        minWidth: '100%'
+                                                    },
+                                                    '& .MuiListItemButton-root': {
+                                                        mt: 0.5
+                                                    }
+                                                }}
+                                            >
+                                                <ListItemButton
+                                                    sx={{ borderRadius: `${customization.borderRadius}px` }}
+                                                    selected={selectedIndex === 1}
+                                                    onClick={(event) => {
+                                                        setOpenUserDialog(true);
+                                                        setOpen(false);
+                                                    }}
+                                                >
+                                                    <ListItemIcon>
+                                                        <IconUser stroke={1.5} size="1.3rem" />
+                                                    </ListItemIcon>
+                                                    <ListItemText
+                                                        primary={
+                                                            <Grid container spacing={1} justifyContent="space-between">
+                                                                <Grid item>
+                                                                    <Typography variant="body2">Invoice</Typography>
+                                                                </Grid>
+                                                            </Grid>
+                                                        }
+                                                    />
+                                                </ListItemButton>
+                                                <ListItemButton
+                                                    sx={{ borderRadius: `${customization.borderRadius}px` }}
+                                                    selected={selectedIndex === 1}
+                                                    onClick={(event) => handleListItemClick(event, 0, '/master/companyprofileview')}
+                                                >
+                                                    <ListItemIcon>
+                                                        <IconUser stroke={1.5} size="1.3rem" />
+                                                    </ListItemIcon>
+                                                    <ListItemText
+                                                        primary={
+                                                            <Grid container spacing={1} justifyContent="space-between">
+                                                                <Grid item>
+                                                                    <Typography variant="body2">Tour Advance</Typography>
+                                                                </Grid>
+                                                            </Grid>
+                                                        }
+                                                    />
+                                                </ListItemButton>
+                                                <ListItemButton
+                                                    sx={{ borderRadius: `${customization.borderRadius}px` }}
+                                                    selected={selectedIndex === 4}
+                                                    onClick={handleLogout}
+                                                >
+                                                    <ListItemIcon>
+                                                        <IconLogout stroke={1.5} size="1.3rem" />
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={<Typography variant="body2">Technical Visit</Typography>} />
+                                                </ListItemButton>
+                                            </List>
+                                        </Box>
+                                    </PerfectScrollbar>
+                                </MainCard>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Transitions>
+                )}
+            </Popper> */}
             <Chip
                 sx={{
                     height: '48px',
@@ -174,12 +309,15 @@ const ProfileSection = () => {
                                             <Stack direction="row" spacing={0.5} alignItems="center">
                                                 <Typography variant="h4">Hi,</Typography>
                                                 <Typography component="span" variant="h4" sx={{ fontWeight: 400 }}>
-                                                    {userData ? userData.userName.toUpperCase() : ''}
+                                                    {userData ? userData.firstName.toUpperCase() : ''}{' '}
+                                                    {userData ? userData.lastName.toUpperCase() : ''}
                                                 </Typography>
                                             </Stack>
                                             <Typography variant="subtitle2">
                                                 {' '}
-                                                {userData ? userData.role.name.charAt(0).toUpperCase() + userData.role.name.slice(1) : ''}
+                                                {userData
+                                                    ? userData?.role?.name?.charAt(0).toUpperCase() + userData.role?.name?.slice(1)
+                                                    : ''}
                                             </Typography>
                                         </Stack>
                                         {/* <OutlinedInput

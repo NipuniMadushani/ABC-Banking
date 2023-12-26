@@ -201,7 +201,7 @@ const HeaderSection = () => {
                             </motion.div>
                         </Box>
                     </Box>
-                    {HeaderAnimationImagememo}
+                    {/* {HeaderAnimationImagememo} */}
                 </Grid>
             </Grid>
         </Container>

@@ -1,6 +1,6 @@
 import { useEffect, forwardRef, useState } from 'react';
 
-import { Dialog, Box, DialogContent, TextField, DialogTitle, Button, Grid } from '@mui/material';
+import { Dialog, Box, DialogContent, TextField, DialogTitle, Button, Grid, Autocomplete } from '@mui/material';
 
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -10,6 +10,7 @@ import { checkDuplicateTaxCode, getTaxDataById, saveTaxData, updateTaxData } fro
 import { saveBankData } from 'store/actions/masterActions/BankAction';
 import * as yup from 'yup';
 import { Formik, Form } from 'formik';
+import { gridSpacing } from 'store/constant';
 
 function Bank({ open, handleClose, mode, id }) {
     const initialValues = {
@@ -82,6 +83,7 @@ function Bank({ open, handleClose, mode, id }) {
                 }}
                 open={open}
                 keepMounted
+                maxWidth="100%"
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
             >
@@ -113,8 +115,8 @@ function Bank({ open, handleClose, mode, id }) {
                                 return (
                                     <Form>
                                         <Box sx={{ width: '100%' }}>
-                                            <Grid container rowSpacing={2} style={{ marginTop: '2px' }}>
-                                                <Grid item xs={6}>
+                                            <Grid container rowSpacing={2} spacing={gridSpacing} style={{ marginTop: '2px' }}>
+                                                <Grid item xs={3}>
                                                     <TextField
                                                         disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
                                                         label="Bank Code"
@@ -138,7 +140,7 @@ function Bank({ open, handleClose, mode, id }) {
                                                         helperText={touched.bankCode && errors.bankCode ? errors.bankCode : ''}
                                                     />
                                                 </Grid>
-                                                <Grid item xs={6}>
+                                                <Grid item xs={3}>
                                                     <TextField
                                                         disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
                                                         label="Bank Name"
@@ -164,10 +166,10 @@ function Bank({ open, handleClose, mode, id }) {
                                                         helperText={touched.bankName && errors.bankName ? errors.bankName : ''}
                                                     />
                                                 </Grid>
-                                                <Grid item xs={6}>
+                                                <Grid item xs={3}>
                                                     <TextField
                                                         disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                        label="Bank Prefix"
+                                                        label="Bank Address"
                                                         sx={{
                                                             width: { xs: 150, sm: 250 },
                                                             '& .MuiInputBase-root': {
@@ -187,7 +189,38 @@ function Bank({ open, handleClose, mode, id }) {
                                                         helperText={touched.bankPrefix && errors.bankPrefix ? errors.bankPrefix : ''}
                                                     />
                                                 </Grid>
-
+                                                <Grid item xs={3}>
+                                                    <Autocomplete
+                                                        fullWidth
+                                                        name="market"
+                                                        // onChange={(_, value) => {
+                                                        //     setFieldValue(`market`, value);
+                                                        // }}
+                                                        // options={marketListOptions}
+                                                        // getOptionLabel={(option) => `${option.code} - (${option.name})`}
+                                                        // isOptionEqualToValue={(option, value) => option.marketId === value.marketId}
+                                                        renderInput={(params) => (
+                                                            <TextField
+                                                                {...params}
+                                                                label="Bank Manager"
+                                                                sx={{
+                                                                    width: { sm: 620, md: 200 },
+                                                                    '& .MuiInputBase-root': {
+                                                                        height: 40
+                                                                    }
+                                                                }}
+                                                                variant="outlined"
+                                                                InputLabelProps={{
+                                                                    shrink: true
+                                                                }}
+                                                                name="market"
+                                                                onBlur={handleBlur}
+                                                            />
+                                                        )}
+                                                    />
+                                                </Grid>{' '}
+                                            </Grid>
+                                            <Grid container rowSpacing={2} style={{ marginTop: '2px' }}>
                                                 <Grid item xs={6}>
                                                     <TextField
                                                         disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
