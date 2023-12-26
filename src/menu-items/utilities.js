@@ -56,10 +56,10 @@ const utilities = {
                     breadcrumbs: false
                 },
                 {
-                    id: 'tax-group-id',
-                    title: 'Tax Group',
+                    id: 'customer-id',
+                    title: 'Customer',
                     type: 'item',
-                    url: '/master/taxgroupview',
+                    url: '/master/customer',
                     breadcrumbs: false
                 },
                 {

@@ -4,7 +4,7 @@ import { lazy } from 'react';
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
 import ViewTax from 'views/pages/master/tax/ViewTax';
-import ViewTaxGroup from 'views/pages/master/tax_group/ViewTaxGroup';
+import ViewTaxGroup from 'views/pages/master/bankAccount/ViewBankAccount';
 import ViewTourCategory from 'views/pages/master/tour_category/ViewTourCategory';
 import ViewTourType from 'views/pages/master/tour_type/ViewTourType';
 import ViewCodeAndName from 'views/pages/master/code_name/ViewCodeAndName';
@@ -141,7 +141,7 @@ const MainRoutes = {
                     element: <ViewTax />
                 },
                 {
-                    path: 'taxgroupview',
+                    path: 'customer',
                     element: <ViewTaxGroup />
                 },
                 {

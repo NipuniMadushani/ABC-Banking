@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import MaterialTable from 'material-table';
 import tableIcons from 'utils/MaterialTableIcons';
-import TaxGroup from './TaxGroup';
+import TaxGroup from './BankAccount';
 import SuccessMsg from '../../../../messages/SuccessMsg';
 import ErrorMsg from '../../../../messages/ErrorMsg';
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,7 +12,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { FormControlLabel, FormGroup, Switch } from '@mui/material';
 
-function ViewTaxGroup() {
+function ViewBankAccount() {
     const [open, setOpen] = useState(false);
     const [taxGroupCode, setTaxGroupCode] = useState('');
     const [mode, setMode] = useState('INSERT');
@@ -239,4 +239,4 @@ function ViewTaxGroup() {
     );
 }
 
-export default ViewTaxGroup;
+export default ViewBankAccount;
