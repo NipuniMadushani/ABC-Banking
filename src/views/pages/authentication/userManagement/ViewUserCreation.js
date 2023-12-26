@@ -56,25 +56,7 @@ function ViewUserCreation() {
             grouping: false,
             filterPlaceholder: 'Email'
         },
-        {
-            title: 'Last Modified Date',
-            field: 'updatedDate',
-            align: 'right',
-            filterPlaceholder: 'Last Modified Date',
-            render: (rowData) => {
-                if (rowData.updatedDate != null) {
-                    return new Date(rowData.updatedDate).toLocaleString('en-US', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: 'numeric',
-                        minute: 'numeric'
-                    });
-                } else {
-                    return null;
-                }
-            }
-        },
+
         {
             title: 'Status',
             field: 'status',
@@ -91,10 +73,6 @@ function ViewUserCreation() {
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center'
-                        // background: rowData.status === true ? "#008000aa" : "#f90000aa",
-                        // borderRadius: "4px",
-                        // paddingLeft: 5,
-                        // paddingRight: 5,
                     }}
                 >
                     {rowData.status === true ? (
@@ -123,50 +101,29 @@ function ViewUserCreation() {
     }, [lastModifiedDate]);
 
     useEffect(() => {
-        console.log('users payload');
-        console.log(users);
         if (users?.length > 0) {
-            console.log('users payload');
-            console.log(users);
             setTableData(users);
         }
     }, [users]);
 
     useEffect(() => {
-        console.log(error);
         if (error != null) {
-            console.log('failed Toast');
             setOpenErrorToast(true);
         }
     }, [error]);
 
     useEffect(() => {
-        if (myProfileUpdate) {
-            console.log('myProfileUpdate');
-            // dispatch(getProfileData(userCode));
-            setMode('VIEW_UPDATE');
-            setHandleToast(myProfileUpdate);
-            // dispatch(getAllUserDetails());
-            // dispatch(getLatestModifiedUserDetails());
-        }
-    }, [myProfileUpdate]);
-
-    useEffect(() => {
         if (user) {
             setHandleToast(true);
-            dispatch(getAllUserDetails());
-            dispatch(getLatestModifiedUserDetails());
+            dispatch(getAllUserDetails('USER'));
         }
     }, [user]);
 
     useEffect(() => {
-        dispatch(getAllUserDetails());
-        dispatch(getLatestModifiedUserDetails());
+        dispatch(getAllUserDetails('USER'));
     }, []);
 
     const handleClickOpen = (type, data) => {
-        console.log(type);
-        console.log(data);
         if (type === 'VIEW_UPDATE') {
             setMode(type);
             setUserCode(data.userId);
@@ -180,9 +137,6 @@ function ViewUserCreation() {
         setOpen(true);
     };
 
-    // const handleClose = () => {
-    //     setOpen(false);
-    // };
     const handleClose = () => {
         mode === 'VIEW' ? setOpen(false) : setOpenConfirmationModel(true);
     };
@@ -208,13 +162,13 @@ function ViewUserCreation() {
 
     return (
         <div>
-            <MainCard title={<div className="title">User</div>}>
+            <MainCard title={<div className="title">Bank Manager</div>}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12}>
                                 <MaterialTable
-                                    title={`Last Modified Date : ${lastModifiedTimeDate}`}
+                                    // title={`Last Modified Date : ${lastModifiedTimeDate}`}
                                     columns={columns}
                                     data={tableData}
                                     actions={[
@@ -237,7 +191,7 @@ function ViewUserCreation() {
                                     ]}
                                     options={{
                                         padding: 'dense',
-                                        showTitle: true,
+                                        showTitle: false,
                                         sorting: true,
                                         search: true,
                                         searchFieldAlignment: 'right',

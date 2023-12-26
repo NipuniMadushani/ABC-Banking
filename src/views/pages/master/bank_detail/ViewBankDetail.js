@@ -177,13 +177,13 @@ function ViewBankDetail() {
     };
     return (
         <div>
-            <MainCard title="Bank Detail Setup">
+            <MainCard title={<div className="title">Bank </div>}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12}>
                                 <MaterialTable
-                                    title={`Last Modified Date : ${lastModifiedTimeDate}`}
+                                    // title={`Last Modified Date : ${lastModifiedTimeDate}`}
                                     columns={columns}
                                     data={tableData}
                                     actions={[

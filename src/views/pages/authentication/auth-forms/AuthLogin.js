@@ -266,19 +266,6 @@ const FirebaseLogin = ({ ...others }) => {
                                 </Button>
                             </AnimateButton>
                             <br></br>
-                            <AnimateButton>
-                                <Button
-                                    component={Link}
-                                    to="/pages/register/register3"
-                                    variant="contained"
-                                    color="primary"
-                                    fullWidth
-                                    size="small"
-                                    // sx={{ ml: 2 }} // Add some margin to separate the button from the text
-                                >
-                                    Admin Register
-                                </Button>
-                            </AnimateButton>
                         </Box>
 
                         <Box sx={{ mt: 6 }}>

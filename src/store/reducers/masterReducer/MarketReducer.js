@@ -33,7 +33,7 @@ export const marketReducer = (state = initialState, action) => {
         case ADD_SUCCESS_MARKET_DATA:
             console.warn('ADD_SUCCESS_CODE_AND_NAME_DATA', action.payload);
             console.log(data.payload[0]);
-            return { ...state, market: data.payload[0] };
+            return { ...state, market: data?.payload[0] };
 
         case ADD_FAILED_MARKET_DATA:
             console.warn('ADD_FAILED_CODE_AND_NAME_DATA', action);
@@ -45,7 +45,7 @@ export const marketReducer = (state = initialState, action) => {
             };
 
         case SUCCESS_GET_MARKET_DETAILS_BY_CODE:
-            return { ...state, marketToUpdate: data.payload[0] };
+            return { ...state, marketToUpdate: data?.payload[0] };
 
         case FAILED_GET_MARKET_DETAILS_BY_CODE:
             return {
@@ -55,7 +55,7 @@ export const marketReducer = (state = initialState, action) => {
             };
 
         case UPDATE_SUCCESS_MARKET_DATA:
-            return { ...state, market: data.payload[0] };
+            return { ...state, market: data?.payload[0] };
 
         case UPDATE_FAILED_MARKET_DATA:
             return {
@@ -74,17 +74,17 @@ export const marketReducer = (state = initialState, action) => {
             return { ...state, duplicateCode: data };
 
         case SUCCESS_GET_MARKET_LAST_MODIFIED_DATE_TIME:
-            return { ...state, lastModifiedDateTime: data.payload[0].dateTime };
+            return { ...state, lastModifiedDateTime: data?.payload[0].dateTime };
 
         case FAILED_GET_MARKET_LAST_MODIFIED_DATE_TIME:
             return { ...state, lastModifiedDateTime: data };
 
         case SUCCESS_GET_ALL_ACTIVE_MARKET_DATA:
             console.log(data.payload[0]);
-            return { ...state, marketActiveList: data.payload[0] };
+            return { ...state, marketActiveList: data?.payload[0] };
 
         case FAILED_GET_ALL_ACTIVE_MARKET_DATA:
-            return { ...state, marketActiveList: data.payload[0] };
+            return { ...state, marketActiveList: data?.payload[0] };
 
         default:
             return state;

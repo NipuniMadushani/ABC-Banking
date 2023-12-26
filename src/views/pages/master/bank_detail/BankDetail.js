@@ -80,30 +80,30 @@ function BankDetail({ open, handleClose, mode, code }) {
             setBranchList(branchesByBankId);
         }
     }, [branchesByBankId]);
-    useEffect(() => {
-        if (bankListData.length != 0) {
-            console.log(bankListData);
-            if (bankListData.payload.length === 1) {
-                console.log(bankListData.payload[0]);
-                setbankList(bankListData.payload[0]);
-            }
-        }
-    }, [bankListData]);
+    // useEffect(() => {
+    //     if (bankListData?.length != 0) {
+    //         console.log(bankListData);
+    //         if (bankListData?.payload.length === 1) {
+    //             console.log(bankListData?.payload[0]);
+    //             setbankList(bankListData?.payload[0]);
+    //         }
+    //     }
+    // }, [bankListData]);
 
-    useEffect(() => {
-        if (bankListData.length != 0) {
-            console.log(bankListData);
-            if (bankListData.payload.length === 1) {
-                console.log(bankListData.payload[0]);
-                setbankList(bankListData.payload[0]);
-            }
-        }
-    }, [bankListData]);
+    // useEffect(() => {
+    //     if (bankListData.length != 0) {
+    //         console.log(bankListData);
+    //         if (bankListData.payload.length === 1) {
+    //             console.log(bankListData.payload[0]);
+    //             setbankList(bankListData.payload[0]);
+    //         }
+    //     }
+    // }, [bankListData]);
 
     useEffect(() => {
         dispatch(getAllActiveMarketData());
         dispatch(getAllCurrencyListData());
-        dispatch(getAllbankData());
+        // dispatch(getAllbankData());
     }, []);
 
     useEffect(() => {
@@ -135,7 +135,7 @@ function BankDetail({ open, handleClose, mode, code }) {
     });
 
     const validationSchema = yup.object().shape({
-        bank: yup.object().nullable().required('Required field'),
+        // bank: yup.object().nullable().required('Required field'),
         branch: yup
             .object()
             .nullable()
@@ -156,10 +156,10 @@ function BankDetail({ open, handleClose, mode, code }) {
         }
     }, [bankDetailToUpdate]);
 
-    const loadBranches = (data) => {
-        console.log(data.bankId);
-        dispatch(getBranchesByBankId(data.bankId));
-    };
+    // const loadBranches = (data) => {
+    //     console.log(data.bankId);
+    //     dispatch(getBranchesByBankId(data.bankId));
+    // };
 
     const handleSubmitForm = (data) => {
         if (mode === 'INSERT') {
@@ -202,20 +202,20 @@ function BankDetail({ open, handleClose, mode, code }) {
                                     <Form>
                                         <Box sx={{ width: '100%' }}>
                                             <Grid container rowSpacing={2} style={{ marginTop: '2px' }}>
-                                                <Grid item xs={3}>
+                                                {/* <Grid item xs={3}>
                                                     <Autocomplete
-                                                        value={values.bank}
+                                                        // value={values.bank}
                                                         name="bank"
                                                         onChange={(_, value) => {
                                                             loadBranches(value);
                                                             setFieldValue(`bank`, value);
                                                         }}
-                                                        options={bankList}
+                                                        // options={bankList}
                                                         disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                        getOptionLabel={(option) => `${option.bankCode}-${option.bankName}`}
-                                                        isOptionEqualToValue={(option, value) => {
-                                                            return option.bankId === value.bankId;
-                                                        }}
+                                                        // getOptionLabel={(option) => `${option.bankCode}-${option.bankName}`}
+                                                        // isOptionEqualToValue={(option, value) => {
+                                                        //     return option.bankId === value.bankId;
+                                                        // }}
                                                         renderInput={(params) => (
                                                             <TextField
                                                                 {...params}
@@ -229,7 +229,7 @@ function BankDetail({ open, handleClose, mode, code }) {
                                                                 InputLabelProps={{
                                                                     shrink: true
                                                                 }}
-                                                                label="bank"
+                                                                label="Bank Manager"
                                                                 variant="outlined"
                                                                 name="branch"
                                                                 onBlur={handleBlur}
@@ -238,9 +238,9 @@ function BankDetail({ open, handleClose, mode, code }) {
                                                             />
                                                         )}
                                                     />
-                                                </Grid>
+                                                </Grid> */}
 
-                                                <Grid item xs={3}>
+                                                {/* <Grid item xs={3}>
                                                     <Autocomplete
                                                         value={values.branch}
                                                         name="branch"
@@ -278,6 +278,26 @@ function BankDetail({ open, handleClose, mode, code }) {
                                                             />
                                                         )}
                                                     />
+                                                </Grid> */}
+                                                <Grid item xs={3}>
+                                                    <TextField
+                                                        sx={{
+                                                            width: { xs: 100, sm: 200 },
+                                                            '& .MuiInputBase-root': {
+                                                                height: 40
+                                                            }
+                                                        }}
+                                                        InputLabelProps={{
+                                                            shrink: true
+                                                        }}
+                                                        label="Bank Code"
+                                                        name="swiftCode"
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur}
+                                                        value={values.swiftCode}
+                                                        error={Boolean(touched.swiftCode && errors.swiftCode)}
+                                                        helperText={touched.swiftCode && errors.swiftCode ? errors.swiftCode : ''}
+                                                    ></TextField>
                                                 </Grid>
                                                 <Grid item xs={3}>
                                                     <TextField
@@ -290,7 +310,7 @@ function BankDetail({ open, handleClose, mode, code }) {
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
-                                                        label="Swift Code"
+                                                        label="Bank Name"
                                                         name="swiftCode"
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
@@ -299,7 +319,7 @@ function BankDetail({ open, handleClose, mode, code }) {
                                                         helperText={touched.swiftCode && errors.swiftCode ? errors.swiftCode : ''}
                                                     ></TextField>
                                                 </Grid>
-                                                <Grid item>
+                                                <Grid item xs={3}>
                                                     <TextField
                                                         sx={{
                                                             width: { xs: 100, sm: 200 },
@@ -321,7 +341,7 @@ function BankDetail({ open, handleClose, mode, code }) {
                                                 </Grid>
                                                 <Grid item xs={3}>
                                                     <Autocomplete
-                                                        value={values.currency}
+                                                        // value={values.currency}
                                                         name="currency"
                                                         onChange={(_, value) => {
                                                             console.log(value);
@@ -370,7 +390,7 @@ function BankDetail({ open, handleClose, mode, code }) {
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
-                                                        label="Account Number"
+                                                        label="Website"
                                                         name="accountNumber"
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
@@ -393,7 +413,7 @@ function BankDetail({ open, handleClose, mode, code }) {
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
-                                                        label="Account Description"
+                                                        label="Bank Email"
                                                         name="accountDesc"
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
@@ -414,7 +434,7 @@ function BankDetail({ open, handleClose, mode, code }) {
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
-                                                        label="Intermediary Bank"
+                                                        label="Phone No"
                                                         name="intermediaryBank"
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
@@ -518,7 +538,7 @@ function BankDetail({ open, handleClose, mode, code }) {
                                                 </Grid>
                                                 <Grid item xs={9}>
                                                     <Autocomplete
-                                                        value={values.market}
+                                                        // value={values.market}
                                                         multiple
                                                         fullWidth
                                                         name="market"

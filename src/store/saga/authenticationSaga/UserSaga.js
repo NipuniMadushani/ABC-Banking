@@ -33,50 +33,60 @@ import { create, getById, updateWithUpload, get, createWithUpload, update } from
 //User creation saga
 
 export function* saveUserSaga(action) {
-    console.log('yaaa');
-    action.data.path = `${process.env.REACT_APP_USER_MANAGEMENT_URL}/register`;
+    action.data.path = `${process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL}/register`;
     let responseData = [];
-    let responseData2 = [];
     try {
         responseData = yield call(create, action.data);
-        if (responseData.data.errorMessages.length === 0) {
-            console.log('in side hfcsfsek');
-            let formData = new FormData();
-            console.log(action.data.files);
-            if (action.data.files.length !== 0) {
-                console.log('in side gdywetwytwu');
-                console.log(responseData.data.payload[0]);
-                formData.append(`id`, responseData.data.payload[0].userId);
-                if (action.data.files != undefined) {
-                    for (let i = 0; i < action.data.files.length; i++) {
-                        formData.append(`files`, action.data.files[i]);
-                    }
-                }
-                // for (let [key, val] of Object.entries(action.data)) {
-                //     console.log(val);
-                //     formData.append(key, val);
-                // }
-                const requestOptions = {
-                    method: 'POST',
-                    body: formData
-                };
-                requestOptions.path = `${process.env.REACT_APP_USER_MANAGEMENT_URL}/userImg/`;
-                responseData2 = yield call(createWithUpload, requestOptions);
-                console.log(responseData2);
-                if (responseData2.status == 201 || responseData2.status == 200) {
-                    console.log('responseData2');
-                    yield put({ type: ADD_SUCCESS_USER_DATA, data: responseData.data });
-                } else {
-                    yield put({ type: ADD_FAILED_USER_DATA, data: 'error' });
-                }
-            } else {
-                yield put({ type: ADD_SUCCESS_USER_DATA, data: responseData.data });
-            }
-        }
+        console.log(responseData.data.payload);
+
+        yield put({ type: ADD_SUCCESS_USER_DATA, data: responseData.data });
     } catch (e) {
-        console.log('e:' + e);
         yield put({ type: ADD_FAILED_USER_DATA, data: responseData.data });
     }
+    // console.log('yaaa');
+    // action.data.path = `${process.env.REACT_APP_USER_MANAGEMENT_URL}/register`;
+    // let responseData = [];
+    // let responseData2 = [];
+    // try {
+    //     responseData = yield call(create, action.data);
+    //     if (responseData.data.errorMessages.length === 0) {
+    //         console.log('in side hfcsfsek');
+    //         let formData = new FormData();
+    //         console.log(action.data.files);
+    //         if (action.data.files.length !== 0) {
+    //             console.log('in side gdywetwytwu');
+    //             console.log(responseData.data.payload[0]);
+    //             formData.append(`id`, responseData.data.payload[0].userId);
+    //             if (action.data.files != undefined) {
+    //                 for (let i = 0; i < action.data.files.length; i++) {
+    //                     formData.append(`files`, action.data.files[i]);
+    //                 }
+    //             }
+    //             // for (let [key, val] of Object.entries(action.data)) {
+    //             //     console.log(val);
+    //             //     formData.append(key, val);
+    //             // }
+    //             const requestOptions = {
+    //                 method: 'POST',
+    //                 body: formData
+    //             };
+    //             requestOptions.path = `${process.env.REACT_APP_USER_MANAGEMENT_URL}/userImg/`;
+    //             responseData2 = yield call(createWithUpload, requestOptions);
+    //             console.log(responseData2);
+    //             if (responseData2.status == 201 || responseData2.status == 200) {
+    //                 console.log('responseData2');
+    //                 yield put({ type: ADD_SUCCESS_USER_DATA, data: responseData.data });
+    //             } else {
+    //                 yield put({ type: ADD_FAILED_USER_DATA, data: 'error' });
+    //             }
+    //         } else {
+    //             yield put({ type: ADD_SUCCESS_USER_DATA, data: responseData.data });
+    //         }
+    //     }
+    // } catch (e) {
+    //     console.log('e:' + e);
+    //     yield put({ type: ADD_FAILED_USER_DATA, data: responseData.data });
+    // }
 }
 
 export function* getUserByIdSaga(action) {
@@ -85,7 +95,7 @@ export function* getUserByIdSaga(action) {
 
     let responseData = [];
     try {
-        responseData = yield call(getById, `${process.env.REACT_APP_GATEWAY_SERVICE_URL}/userProfile/${action.data.id}`);
+        responseData = yield call(getById, `${process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL}/branchManager/${action.data.id}`);
         console.log(responseData);
         yield put({ type: SUCCESS_GET_USER_DATA_BY_ID, data: responseData.data });
     } catch (e) {
@@ -159,11 +169,12 @@ export function* updateUserSaga(action) {
     }
 }
 
-export function* getAllUserSaga() {
+export function* getAllUserSaga(action) {
     let responseData = [];
 
     try {
-        responseData = yield call(get, process.env.REACT_APP_USER_MANAGEMENT_URL + '/users');
+        responseData = yield call(getById, `${process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL}/users/${action.data}`);
+        // responseData = yield call(get, process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL + '/users/${action.data}');
         console.log(responseData.data.payload);
         yield put({ type: SUCCESS_USER_LIST_DATA, data: responseData.data });
     } catch (e) {
@@ -228,7 +239,7 @@ export function* getAllRolesSaga() {
 //user login
 
 export function* userLoginSaga(action) {
-    action.data.path = `${process.env.REACT_APP_USER_MANAGEMENT_URL}/authenticate`;
+    action.data.path = `${process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL}/authenticate`;
     let responseData = [];
 
     try {

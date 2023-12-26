@@ -23,7 +23,7 @@ const pages = {
             children: [
                 {
                     id: 'register3',
-                    title: 'User Creation',
+                    title: 'Bank Managers',
                     type: 'item',
                     url: '/pages/usermanagement/usercreation',
                     breadcrumbs: false

@@ -24,10 +24,11 @@ export const saveUserData = (data) => {
     };
 };
 
-export const getAllUserDetails = () => {
+export const getAllUserDetails = (data) => {
     console.log('get getAllUserDetails Data action s called');
     return {
-        type: GET_ALL_USER_DATA
+        type: GET_ALL_USER_DATA,
+        data
     };
 };
 
