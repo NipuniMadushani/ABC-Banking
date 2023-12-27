@@ -27,7 +27,7 @@ export const saveBankData = (data) => {
     };
 };
 
-export const getAllbankData = () => {
+export const getAllActiveBrnachManagers = () => {
     return {
         type: GET_ALL_BANK_DATA
     };

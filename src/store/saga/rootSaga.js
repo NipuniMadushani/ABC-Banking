@@ -610,7 +610,8 @@ import {
     checkDupicateBankSaga,
     getBranchesByBankId,
     getSavedBankBrachData,
-    getBankDetailsByIdSaga
+    getBankDetailsByIdSaga,
+    getAllActiveBranchManagersSaga
 } from './mastersaga/Bank&BranchSaga';
 
 import {
@@ -1035,7 +1036,7 @@ export function* wacherSaga() {
 
     //bank
     yield takeLatest(SAVE_BANK_DATA, saveBankSaga);
-    yield takeLatest(GET_ALL_BANK_DATA, getAllBankSaga);
+    yield takeLatest(GET_ALL_BANK_DATA, getAllActiveBranchManagersSaga);
 
     // branch
     yield takeLatest(SAVE_BRANCH_DATA, saveBranchSaga);

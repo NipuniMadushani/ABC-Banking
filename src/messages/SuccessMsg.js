@@ -8,7 +8,7 @@ function SuccessMsg({ openToast, handleToast, mode }) {
         <div>
             <Snackbar
                 open={openToast}
-                autoHideDuration={6000}
+                autoHideDuration={1500}
                 onClose={handleToast}
                 anchorOrigin={{
                     vertical: 'bottom',

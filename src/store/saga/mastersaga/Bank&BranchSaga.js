@@ -38,7 +38,7 @@ import {
 //bank saga
 
 export function* saveBankSaga(action) {
-    action.data.path = `${process.env.REACT_APP_FINANCE_URL}/bank/`;
+    action.data.path = `${process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL}/branch`;
     let responseData = [];
     try {
         responseData = yield call(create, action.data);
@@ -50,11 +50,11 @@ export function* saveBankSaga(action) {
     }
 }
 
-export function* getAllBankSaga() {
+export function* getAllActiveBranchManagersSaga() {
     let responseData = [];
 
     try {
-        responseData = yield call(get, process.env.REACT_APP_FINANCE_URL + '/bank/');
+        responseData = yield call(get, process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL + '/activeManagers');
         console.log(responseData.data.payload);
         yield put({ type: SUCCESS_BANK_LIST_DATA, data: responseData.data });
     } catch (e) {
@@ -113,7 +113,7 @@ export function* getBranchByIdSaga(action) {
 
     let responseData = [];
     try {
-        responseData = yield call(getById, `${process.env.REACT_APP_FINANCE_URL}/branch/${action.data.id}`);
+        responseData = yield call(getById, `${process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL}/branch/${action.data.id}`);
         console.log(responseData);
         yield put({
             type: SUCCESS_GET_BRANCH_DATA_BY_ID,
@@ -147,7 +147,7 @@ export function* updateBranchSaga(action) {
 export function* getAllBranchesSaga() {
     let responseData = [];
     try {
-        responseData = yield call(get, process.env.REACT_APP_FINANCE_URL + '/branch/');
+        responseData = yield call(get, process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL + '/branches');
         console.log(responseData.data.payload);
         yield put({ type: SUCCESS_BRANCH_LIST_DATA, data: responseData.data });
     } catch (e) {
