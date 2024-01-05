@@ -133,13 +133,13 @@ const FirebaseLogin = ({ ...others }) => {
             <Formik
                 initialValues={{
                     // email: 'info@codedthemes.com',
-                    username: '',
-                    password: '',
-                    submit: null
+                    userName: '',
+                    password: ''
+                    // submit: null
                 }}
                 validationSchema={Yup.object().shape({
                     // email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                    username: Yup.string().required('Username is required'),
+                    userName: Yup.string().required('Username is required'),
                     password: Yup.string().max(255).required('Password is required')
                 })}
                 // onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
@@ -166,23 +166,23 @@ const FirebaseLogin = ({ ...others }) => {
                     <form noValidate onSubmit={handleSubmit} {...others}>
                         <FormControl
                             fullWidth
-                            error={Boolean(touched.username && errors.username)}
+                            error={Boolean(touched.userName && errors.userName)}
                             sx={{ ...theme.typography.customInput }}
                         >
                             <InputLabel htmlFor="outlined-adornment-email-login"> Username</InputLabel>
                             <OutlinedInput
                                 id="outlined-adornment-email-login"
                                 type="text"
-                                value={values.username}
-                                name="username"
+                                value={values.userName}
+                                name="userName"
                                 onBlur={handleBlur}
                                 onChange={handleChange}
                                 label="Username"
                                 inputProps={{}}
                             />
-                            {touched.username && errors.username && (
+                            {touched.userName && errors.userName && (
                                 <FormHelperText error id="standard-weight-helper-text-email-login">
-                                    {errors.username}
+                                    {errors.userName}
                                 </FormHelperText>
                             )}
                         </FormControl>

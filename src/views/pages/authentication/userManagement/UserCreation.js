@@ -51,7 +51,7 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
         nic: '',
         email: '',
         mobile: '',
-        roles: 'USER',
+        roles: 'MANAGER',
         userName: '',
         password: ''
     };

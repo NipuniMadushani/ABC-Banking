@@ -8,7 +8,7 @@ function Error({ openToast, handleToast, mode, messages }) {
         <div>
             <Snackbar
                 open={openToast}
-                autoHideDuration={4000}
+                autoHideDuration={1500}
                 onClose={handleToast}
                 anchorOrigin={{
                     vertical: 'bottom',

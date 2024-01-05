@@ -39,7 +39,7 @@ export const branchReducer = (state = initialState, action) => {
             };
 
         case SUCCESS_GET_BRANCH_DATA_BY_ID:
-            return { ...state, branchToUpdate: data.payload[0]?.body?.payload[0] };
+            return { ...state, branchToUpdate: data.payload[0] };
 
         case FAILED_GET_BRANCH_DATA_BY_ID:
             return {

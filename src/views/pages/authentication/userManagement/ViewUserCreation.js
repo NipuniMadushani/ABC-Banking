@@ -115,12 +115,12 @@ function ViewUserCreation() {
     useEffect(() => {
         if (user) {
             setHandleToast(true);
-            dispatch(getAllUserDetails('USER'));
+            dispatch(getAllUserDetails('MANAGER'));
         }
     }, [user]);
 
     useEffect(() => {
-        dispatch(getAllUserDetails('USER'));
+        dispatch(getAllUserDetails('MANAGER'));
     }, []);
 
     const handleClickOpen = (type, data) => {
@@ -205,7 +205,7 @@ function ViewUserCreation() {
                                         showFirstLastPageButtons: false,
                                         exportButton: true,
                                         exportAllData: true,
-                                        exportFileName: 'TableData',
+                                        exportFileName: 'Managers Details',
                                         actionsColumnIndex: -1,
                                         columnsButton: true,
                                         headerStyle: {

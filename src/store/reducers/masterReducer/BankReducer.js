@@ -8,7 +8,7 @@ import {
 
 const initialState = {
     bank: null,
-    bankList: [],
+    branchManagerList: [],
     errorMsg: null,
     duplicateBank: null,
     lastModifiedDateTime: null
@@ -28,10 +28,10 @@ export const bankReducer = (state = initialState, action) => {
                 errorMsg: data ? data.errorMessages : 'netwok error'
             };
         case SUCCESS_BANK_LIST_DATA:
-            return { ...state, bankList: data };
+            return { ...state, branchManagerList: data?.payload[0] };
 
         case FAILED_BANK_LIST_DATA:
-            return { ...state, bankList: data };
+            return { ...state, branchManagerList: data };
 
         case BANK_DUPLICATE:
             return { ...state, duplicateBank: data };

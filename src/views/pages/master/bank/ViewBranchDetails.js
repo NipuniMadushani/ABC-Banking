@@ -5,7 +5,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import tableIcons from 'utils/MaterialTableIcons';
 import { gridSpacing } from 'store/constant';
 import { useEffect, useState } from 'react';
-import Branch from './Branch';
+
 import Bank from './Bank';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAllTaxData, getLatestModifiedTaxDetails } from 'store/actions/masterActions/TaxActions/TaxAction';
@@ -16,33 +16,33 @@ import ErrorMsg from 'messages/ErrorMsg';
 const ViewBranchDetails = () => {
     const columns = [
         {
-            title: 'Bank Name',
-            field: 'bankCode.bankName',
-            filterPlaceholder: 'Bank Name',
+            title: 'Branch Name',
+            field: 'bankName',
+            // filterPlaceholder: 'Bank Name',
             align: 'left'
         },
         {
             title: 'Branch Code',
-            field: 'branchCode',
-            filterPlaceholder: 'Branch Code',
+            field: 'bankCode',
+            // filterPlaceholder: 'Branch Code',
             align: 'left'
         },
         {
-            title: 'Branch Name',
-            field: 'branchName',
-            filterPlaceholder: 'Tax Description',
+            title: 'Branch Address',
+            field: 'bankAddress',
+            // filterPlaceholder: 'Tax Description',
             align: 'left'
         },
         {
             title: 'Branch Description',
-            field: 'branchDesc',
-            filterPlaceholder: 'Branch Description',
+            field: 'bankDesc',
+            // filterPlaceholder: 'Branch Description',
             align: 'left'
         },
         {
-            title: 'Branch Prefix',
-            field: 'branchPrefix',
-            filterPlaceholder: 'Branch Prefix',
+            title: 'Phone',
+            field: 'phone',
+            // filterPlaceholder: 'Branch Prefix',
             align: 'left'
         },
         {
@@ -92,12 +92,11 @@ const ViewBranchDetails = () => {
     const [lastModifiedTimeDate, setLastModifiedTimeDate] = useState(null);
     const [openBankDialog, setOpenBankDialog] = useState(false);
     const dispatch = useDispatch();
-    const error = useSelector((state) => state.branchReducer.errorMsg);
+    const error = useSelector((state) => state.bankReducer.errorMsg);
 
     const bankData = useSelector((state) => state.bankReducer.bank);
-    const branchData = useSelector((state) => state.branchReducer.branch);
+
     const branchList = useSelector((state) => state.branchReducer.branches);
-    const lastModifiedDate = useSelector((state) => state.branchReducer.lastModifiedDateTime);
 
     useEffect(() => {
         console.log(branchList);
@@ -122,55 +121,25 @@ const ViewBranchDetails = () => {
         if (bankData) {
             setMode('INSERT');
             setHandleToast(true);
+            dispatch(getAllBranchData());
         }
     }, [bankData]);
-
-    useEffect(() => {
-        console.log(branchData);
-        if (branchData) {
-            setHandleToast(true);
-            dispatch(getAllBranchData());
-            dispatch(getLatestModifiedBranchDetails());
-        }
-    }, [branchData]);
-
-    useEffect(() => {
-        dispatch(getAllBranchData());
-        dispatch(getLatestModifiedBranchDetails());
-    }, []);
-
-    useEffect(() => {
-        console.log(lastModifiedDate);
-        setLastModifiedTimeDate(
-            lastModifiedDate === null
-                ? ''
-                : new Date(lastModifiedDate).toLocaleString('en-GB', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: '2-digit',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                      hour12: true
-                  })
-        );
-    }, [lastModifiedDate]);
 
     const handleClickOpen = (type, data) => {
         if (type === 'VIEW_UPDATE') {
             setMode(type);
             setId(data.branchId);
-            setOpen(true);
+            setOpenBankDialog(true);
+            // setOpen(true);
         } else if (type === 'INSERT') {
             setId('');
             setMode(type);
-            setOpen(true);
-        } else if (type === 'BANK') {
-            setMode(type);
             setOpenBankDialog(true);
+            // setOpen(true);
         } else {
             setMode(type);
             setId(data.branchId);
-            setOpen(true);
+            setOpenBankDialog(true);
         }
     };
 
@@ -178,30 +147,31 @@ const ViewBranchDetails = () => {
         setHandleToast(false);
     };
 
+    useEffect(() => {
+        setHandleToast(false);
+        setOpenErrorToast(false);
+        dispatch(getAllBranchData());
+    }, []);
+
     return (
         <div>
-            <MainCard title="Bank & Branch Setup">
+            <MainCard title={<div className="title">Branch Details</div>}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12}>
                                 <MaterialTable
-                                    title={`Last Modified Date : ${lastModifiedTimeDate}`}
+                                    // title={`Last Modified Date : ${lastModifiedTimeDate}`}
                                     columns={columns}
                                     data={tableData}
                                     actions={[
                                         {
                                             icon: tableIcons.AccountBalanceIcon,
-                                            tooltip: 'Add New Bank',
-                                            isFreeAction: true,
-                                            onClick: () => handleClickOpen('BANK', null)
-                                        },
-                                        {
-                                            icon: tableIcons.Add,
                                             tooltip: 'Add New Branch',
                                             isFreeAction: true,
                                             onClick: () => handleClickOpen('INSERT', null)
                                         },
+
                                         (rowData) => ({
                                             // <-- ***NOW A FUNCTION***
                                             icon: tableIcons.Edit,
@@ -216,7 +186,7 @@ const ViewBranchDetails = () => {
                                     ]}
                                     options={{
                                         padding: 'dense',
-                                        showTitle: true,
+                                        showTitle: false,
                                         sorting: true,
                                         search: true,
                                         searchFieldAlignment: 'right',
@@ -230,7 +200,7 @@ const ViewBranchDetails = () => {
                                         showFirstLastPageButtons: false,
                                         exportButton: true,
                                         exportAllData: true,
-                                        exportFileName: 'Tax Data',
+                                        exportFileName: 'Branch Details',
                                         actionsColumnIndex: -1,
                                         columnsButton: true,
                                         color: 'primary',
@@ -258,75 +228,9 @@ const ViewBranchDetails = () => {
                                         }
                                     }}
                                 />
-                                {/* <MaterialTable
-                                    components={{
-                                        Toolbar: (props) => (
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    justifyContent: 'flex-end',
-                                                    alignItems: 'center'
-                                                }}
-                                            >
-                                                <Button style={{ height: 'fit-content' }} color="primary" variant="contained">
-                                                    Quotations
-                                                </Button>
-                                                <div style={{ width: '13rem' }}>
-                                                    <MTableToolbar {...props} />
-                                                </div>
-                                            </div>
-                                        ),
-                                        Container: (props) => <Paper {...props} elevation={8} />
-                                    }}
-                                    title={lastModifiedTimeDate}
-                                    columns={columns}
-                                    data={tableData}
-                                    options={{
-                                        padding: 'dense',
-                                        showTitle: false,
-                                        sorting: true,
-                                        search: true,
-                                        searchFieldAlignment: 'right',
-                                        searchAutoFocus: true,
-                                        searchFieldVariant: 'standard',
-                                        filtering: true,
-                                        paging: true,
-                                        pageSizeOptions: [5, 10, 20, 50, 100],
-                                        pageSize: 5,
-                                        paginationType: 'stepped',
-                                        showFirstLastPageButtons: false,
-                                        exportButton: true,
-                                        exportAllData: true,
-                                        exportFileName: 'Tax Data',
-                                        actionsColumnIndex: -1,
-                                        columnsButton: true,
-                                        color: 'primary',
 
-                                        headerStyle: {
-                                            whiteSpace: 'nowrap',
-                                            height: 30,
-                                            maxHeight: 30,
-                                            padding: 2,
-                                            fontSize: '14px',
-                                            backgroundColor: '#2196F3',
-                                            background: '-ms-linear-gradient(top, #0790E8, #3180e6)',
-                                            background: '-webkit-linear-gradient(top, #0790E8, #3180e6)',
-                                            textAlign: 'center',
-                                            color: '#FFF',
-                                            textAlign: 'center'
-                                        },
-                                        rowStyle: {
-                                            whiteSpace: 'nowrap',
-                                            height: 20,
-                                            align: 'left',
-                                            // maxHeight: 20,
-                                            fontSize: '13px',
-                                            padding: 0
-                                        }
-                                    }}
-                                /> */}
                                 {openBankDialog ? <Bank open={openBankDialog} handleClose={handleBankClose} id={id} mode={mode} /> : ''}
-                                {open ? <Branch open={open} handleClose={handleClose} id={id} mode={mode} /> : ''}
+
                                 {openToast ? <SuccessMsg openToast={openToast} handleToast={handleToast} mode={mode} /> : null}
                                 {openErrorToast ? (
                                     <ErrorMsg openToast={openErrorToast} handleToast={setOpenErrorToast} mode={mode} />
