@@ -46,9 +46,9 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
             .uniqueTaxCode('Must be unique')
     });
 
-    const taxGroupToUpdate = useSelector((state) => state.taxGroupReducer.taxGroupToUpdate);
-    const taxListData = useSelector((state) => state.taxReducer.taxes);
-    const duplicateTaxGroup = useSelector((state) => state.taxGroupReducer.duplicateTaxGroup);
+    const taxGroupToUpdate = useSelector((state) => state.bankAcccountReducer.taxGroupToUpdate);
+    const taxListData = useSelector((state) => state.bankAcccountReducer.taxes);
+    const duplicateTaxGroup = useSelector((state) => state.bankAcccountReducer.duplicateTaxGroup);
 
     const dispatch = useDispatch();
 
@@ -56,13 +56,13 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
         console.log('update');
         if (mode === 'VIEW_UPDATE' || mode === 'VIEW') {
             console.log(taxGroupCode);
-            dispatch(getTaxGroupDataById(taxGroupCode));
+            // dispatch(getTaxGroupDataById(taxGroupCode));
         }
     }, [mode]);
 
     useEffect(() => {
         if (taxListData != null) {
-            setTaxListOptions(taxListData);
+            // setTaxListOptions(taxListData);
         }
     }, [taxListData]);
 

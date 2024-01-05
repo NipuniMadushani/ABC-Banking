@@ -719,12 +719,13 @@ import {
     updateDistanceSaga,
     getDistanceAndDurationSaga
 } from './mastersaga/transportSaga/DistanceSaga';
+import { getBANK_ACCOUNTDataById } from 'store/actions/masterActions/TaxAction';
 export function* wacherSaga() {
     // bank account setup
-    yield takeLatest(SAVE_BANK_ACCOUNT_DATA, saveTaxSaga);
-    yield takeLatest(GET_BANK_ACCOUNT_DATA_BY_ID, getTaxByIdSaga);
-    yield takeLatest(GET_ALL_BANK_ACCOUNT_DATA, getAllTaxSaga);
-    yield takeLatest(UPDATE_BANK_ACCOUNT_DATA, updateTaxSaga);
+    yield takeLatest(SAVE_BANK_ACCOUNT_DATA, saveBankAccountSaga);
+    yield takeLatest(GET_BANK_ACCOUNT_DATA_BY_ID, getBANK_ACCOUNTDataById);
+    yield takeLatest(GET_ALL_BANK_ACCOUNT_DATA, getAllBankAccountSaga);
+    yield takeLatest(UPDATE_BANK_ACCOUNT_DATA, updateBankAccountSaga);
 
     // //tour category setup
     yield takeLatest(SAVE_TOUR_CATEGORY_DATA, saveTourCategoryHandler);

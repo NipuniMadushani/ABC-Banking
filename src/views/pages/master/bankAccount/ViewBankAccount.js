@@ -127,12 +127,12 @@ function ViewBankAccount() {
     };
 
     const dispatch = useDispatch();
-    const error = useSelector((state) => state.taxReducer.errorMsg);
+    const error = useSelector((state) => state.bankAcccountReducer.errorMsg);
 
-    const taxGroupListData = useSelector((state) => state.taxGroupReducer.taxgroups);
-    const taxGroupData = useSelector((state) => state.taxGroupReducer.taxgroup);
+    const taxGroupListData = useSelector((state) => state.bankAcccountReducer.taxgroups);
+    const taxGroupData = useSelector((state) => state.bankAcccountReducer.taxgroup);
     console.log(taxGroupListData);
-    const lastModifiedDate = useSelector((state) => state.taxGroupReducer.lastModifiedDateTime);
+    const lastModifiedDate = useSelector((state) => state.bankAcccountReducer.lastModifiedDateTime);
 
     useEffect(() => {
         if (taxGroupListData?.payload?.length > 0) {
@@ -153,15 +153,15 @@ function ViewBankAccount() {
         if (taxGroupData) {
             console.log('sucessToast');
             setHandleToast(true);
-            dispatch(getAllTaxGroupDetails());
-            dispatch(getLatestModifiedTaxGroupDetails());
+            // dispatch(getAllTaxGroupDetails());
+            // dispatch(getLatestModifiedTaxGroupDetails());
         }
     }, [taxGroupData]);
 
     useEffect(() => {
-        dispatch(getAllTaxGroupDetails());
-        dispatch(getAllTaxData());
-        dispatch(getLatestModifiedTaxGroupDetails());
+        // dispatch(getAllTaxGroupDetails());
+        // dispatch(getAllTaxData());
+        // dispatch(getLatestModifiedTaxGroupDetails());
     }, []);
 
     useEffect(() => {
