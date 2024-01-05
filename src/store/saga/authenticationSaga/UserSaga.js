@@ -26,7 +26,9 @@ import {
     FAILED_GET_PROFILE_DATA_BY_ID,
     FAILED_UPDATE_MY_PROFILE,
     SUCCESS_UPDATE_MY_PROFILE,
-    SUCCESS_CLEAR_USER
+    SUCCESS_CLEAR_USER,
+    ADD_SUCCESS_CUSTOMER_DATA,
+    ADD_FAILED_CUSTOMER_DATA
 } from 'store/constant/authentication/UserConstant';
 import { create, getById, updateWithUpload, get, createWithUpload, update } from '../../../apis/Apis';
 
@@ -38,10 +40,17 @@ export function* saveUserSaga(action) {
     try {
         responseData = yield call(create, action.data);
         console.log(responseData.data.payload);
-
-        yield put({ type: ADD_SUCCESS_USER_DATA, data: responseData.data });
+        if ((action.data.roles = 'MANAGER')) {
+            yield put({ type: ADD_SUCCESS_USER_DATA, data: responseData.data });
+        } else if ((action.data.roles = 'CUSTOMER')) {
+            yield put({ type: ADD_SUCCESS_CUSTOMER_DATA, data: responseData.data });
+        }
     } catch (e) {
-        yield put({ type: ADD_FAILED_USER_DATA, data: responseData.data });
+        if ((action.data.roles = 'MANAGER')) {
+            yield put({ type: ADD_FAILED_USER_DATA, data: responseData.data });
+        } else if ((action.data.roles = 'CUSTOMER')) {
+            yield put({ type: ADD_FAILED_CUSTOMER_DATA, data: responseData.data });
+        }
     }
     // console.log('yaaa');
     // action.data.path = `${process.env.REACT_APP_USER_MANAGEMENT_URL}/register`;

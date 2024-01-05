@@ -5,7 +5,7 @@ import CompanyProfile from './CompanyProfile';
 import SuccessMsg from '../../../../messages/SuccessMsg';
 import ErrorMsg from '../../../../messages/ErrorMsg';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllTaxData } from '../../../../store/actions/masterActions/TaxActions/TaxAction';
+import { getAllTaxData } from '../../../../store/actions/masterActions/TaxAction';
 import { getAllCompanyProfileData, getLatestModifiedDetails } from '../../../../store/actions/masterActions/CompanyProfileAction';
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';

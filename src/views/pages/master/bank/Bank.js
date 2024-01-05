@@ -18,7 +18,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import 'assets/scss/style.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkDuplicateTaxCode, getTaxDataById, saveTaxData, updateTaxData } from 'store/actions/masterActions/TaxActions/TaxAction';
+import { checkDuplicateTaxCode, getTaxDataById, saveTaxData, updateTaxData } from 'store/actions/masterActions/TaxAction';
 import { getAllActiveBrnachManagers, getBranchDataById, saveBankData } from 'store/actions/masterActions/BankAction';
 import * as yup from 'yup';
 import { Formik, Form } from 'formik';
@@ -51,23 +51,6 @@ function Bank({ open, handleClose, mode, id }) {
     const duplicateTax = useSelector((state) => state.taxReducer.duplicateTax);
 
     const branchToUpdate = useSelector((state) => state.branchReducer.branchToUpdate);
-    yup.addMethod(yup.string, 'checkDuplicateTax', function (message) {
-        return this.test('checkDuplicateTax', message, async function validateValue(value) {
-            if (mode === 'INSERT') {
-                try {
-                    await dispatch(checkDuplicateTaxCode(value));
-
-                    if (duplicateTax != null && duplicateTax.errorMessages.length != 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                    return false; // or true as you see fit
-                } catch (error) {}
-            }
-            return true;
-        });
-    });
 
     const validationSchema = yup.object().shape({
         bankCode: yup.string().required('Required field'),

@@ -1,68 +1,68 @@
 import {
-    SAVE_TAX_GROUP_DATA,
-    GET_ALL_TAX_GROUP_DATA,
-    GET_TAX_GROUP_DATA_BY_ID,
-    UPDATE_TAX_GROUP_DATA,
-    CHECK_TAX_GROUP_DUPLICATE,
-    GET_LAST_MODIFIED_DATE_TIME_TAX_GROUP,
-    GET_ACTIVE_TAX_GROUP_LIST,
-    GET_TAX_GROUP_AND_TAX_LIST
-} from '../../../constant/master/TaxMasterConstant';
+    SAVE_BANK_ACCOUNT_GROUP_DATA,
+    GET_ALL_BANK_ACCOUNT_GROUP_DATA,
+    GET_BANK_ACCOUNT_GROUP_DATA_BY_ID,
+    UPDATE_BANK_ACCOUNT_GROUP_DATA,
+    CHECK_BANK_ACCOUNT_GROUP_DUPLICATE,
+    GET_LAST_MODIFIED_DATE_TIME_BANK_ACCOUNT_GROUP,
+    GET_ACTIVE_BANK_ACCOUNT_GROUP_LIST,
+    GET_BANK_ACCOUNT_GROUP_AND_BANK_ACCOUNT_LIST
+} from '../../../constant/master/BankAccountConstant';
 
-export const saveTaxGroupData = (data) => {
-    console.log('saveTax group Data action s called', data);
+export const saveBANK_ACCOUNTGroupData = (data) => {
+    console.log('saveBANK_ACCOUNT group Data action s called', data);
     return {
-        type: SAVE_TAX_GROUP_DATA,
+        type: SAVE_BANK_ACCOUNT_GROUP_DATA,
         data
     };
 };
 
-export const getAllTaxGroupDetails = () => {
+export const getAllBANK_ACCOUNTGroupDetails = () => {
     console.log('get all group Data action s called');
     return {
-        type: GET_ALL_TAX_GROUP_DATA
+        type: GET_ALL_BANK_ACCOUNT_GROUP_DATA
     };
 };
 
-export const getTaxGroupDataById = (id) => {
-    console.log('getTaxDataById  called', id);
+export const getBANK_ACCOUNTGroupDataById = (id) => {
+    console.log('getBANK_ACCOUNTDataById  called', id);
     return {
-        type: GET_TAX_GROUP_DATA_BY_ID,
+        type: GET_BANK_ACCOUNT_GROUP_DATA_BY_ID,
         data: { id }
     };
 };
 
-export const updateTaxGroupData = (data) => {
-    console.log('getTaxDataById  called', data);
+export const updateBANK_ACCOUNTGroupData = (data) => {
+    console.log('getBANK_ACCOUNTDataById  called', data);
     return {
-        type: UPDATE_TAX_GROUP_DATA,
+        type: UPDATE_BANK_ACCOUNT_GROUP_DATA,
         data: data
     };
 };
 
-export const checkDuplicateTaxGroupCode = (data) => {
-    console.log('getTaxDataById  called', data);
+export const checkDuplicateBANK_ACCOUNTGroupCode = (data) => {
+    console.log('getBANK_ACCOUNTDataById  called', data);
     return {
-        type: CHECK_TAX_GROUP_DUPLICATE,
+        type: CHECK_BANK_ACCOUNT_GROUP_DUPLICATE,
         data: data
     };
 };
 
-export const getLatestModifiedTaxGroupDetails = () => {
+export const getLatestModifiedBANK_ACCOUNTGroupDetails = () => {
     return {
-        type: GET_LAST_MODIFIED_DATE_TIME_TAX_GROUP
+        type: GET_LAST_MODIFIED_DATE_TIME_BANK_ACCOUNT_GROUP
     };
 };
 
-export const getActiveTaxGroupList = () => {
+export const getActiveBANK_ACCOUNTGroupList = () => {
     return {
-        type: GET_ACTIVE_TAX_GROUP_LIST
+        type: GET_ACTIVE_BANK_ACCOUNT_GROUP_LIST
     };
 };
 
-export const getActiveTaxGroupandTaxList = (data) => {
+export const getActiveBANK_ACCOUNTGroupandBANK_ACCOUNTList = (data) => {
     return {
-        type: GET_TAX_GROUP_AND_TAX_LIST,
+        type: GET_BANK_ACCOUNT_GROUP_AND_BANK_ACCOUNT_LIST,
         data: data
     };
 };

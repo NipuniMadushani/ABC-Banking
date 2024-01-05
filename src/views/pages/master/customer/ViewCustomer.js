@@ -17,6 +17,7 @@ import BankAccount from '../bankAccount/BankAccount';
 function ViewCustomer() {
     const [open, setOpen] = useState(false);
     const [openAccount, setOpenAccount] = useState(false);
+    const [roleMode, setRoleMode] = useState(false);
     const [userCode, setUserCode] = useState('');
     const [mode, setMode] = useState('INSERT');
     const [openToast, setHandleToast] = useState(false);
@@ -24,6 +25,22 @@ function ViewCustomer() {
     const [tableData, setTableData] = useState([]);
     const [lastModifiedTimeDate, setLastModifiedTimeDate] = useState(null);
     const [openConfirmationModel, setOpenConfirmationModel] = useState(false);
+    const [createCustomer, setcreateCustomer] = useState(false);
+    let data = null;
+    data = localStorage.getItem('userData');
+    let logUserData = JSON.parse(data);
+
+    useEffect(() => {
+        console.log(logUserData);
+        if (logUserData) {
+            if (logUserData.roles == 'ADMIN') {
+                setRoleMode('View');
+            } else if (logUserData.roles == 'MANAGER') {
+                setRoleMode('create');
+                setcreateCustomer(true);
+            }
+        }
+    }, [logUserData]);
     const columns = [
         {
             title: 'User Name',
@@ -93,7 +110,7 @@ function ViewCustomer() {
             title: 'Account',
             render: (rowData) => (
                 <Button variant="outlined" type="button" onClick={() => handleButtonClick('account', rowData)}>
-                    Account
+                    {roleMode} Account
                 </Button>
             ),
             align: 'center'
@@ -159,6 +176,9 @@ function ViewCustomer() {
     const handleClose = () => {
         mode === 'VIEW' ? setOpen(false) : setOpenConfirmationModel(true);
     };
+    const handleCloseBankAccount = () => {
+        setOpenAccount(false);
+    };
 
     const handleToast = () => {
         setHandleToast(false);
@@ -191,7 +211,7 @@ function ViewCustomer() {
                                     columns={columns}
                                     data={tableData}
                                     actions={[
-                                        {
+                                        createCustomer && {
                                             icon: tableIcons.Add,
                                             tooltip: 'Add New',
                                             isFreeAction: true,
@@ -273,7 +293,7 @@ function ViewCustomer() {
                                 {openAccount ? (
                                     <BankAccount
                                         open={openAccount}
-                                        handleClose={handleClose}
+                                        handleClose={handleCloseBankAccount}
                                         userCode={userCode}
                                         mode={mode}
                                         component="user_creation"

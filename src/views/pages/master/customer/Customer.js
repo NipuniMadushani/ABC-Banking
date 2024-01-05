@@ -59,23 +59,6 @@ function Customer({ open, handleClose, mode, userCode, component, handleCloseSub
     const [previewImages, setPreviewImages] = useState([]);
     const formikRef = useRef();
 
-    // yup.addMethod(yup.string, 'checkDuplicateLocationCode', function (message) {
-    //     return this.test('checkDuplicateLocationCode', 'Duplicate Tax group', async function validateValue(value) {
-    //         if (mode === 'INSERT') {
-    //             try {
-    //                 // dispatch(checkDuplicateTaxGroupCode(value));
-
-    //                 if (duplicateLoction != null && duplicateLoction.errorMessages.length != 0) {
-    //                     return false;
-    //                 } else {
-    //                     return true;
-    //                 }
-    //                 return false; // or true as you see fit
-    //             } catch (error) {}
-    //         }
-    //         return true;
-    //     });
-    // });
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
     const validationSchema = yup.object().shape({
@@ -213,18 +196,7 @@ function Customer({ open, handleClose, mode, userCode, component, handleCloseSub
 
     const handleSubmitForm = (data) => {
         console.log(data);
-        if (component === 'user_creation') {
-            if (mode === 'INSERT') {
-                console.log(data);
-                dispatch(saveUserData(data));
-            } else if (mode === 'VIEW_UPDATE') {
-                dispatch(saveUserData(data));
-            }
-        } else if (component === 'user_profile') {
-            console.log('user_profile');
-            dispatch(updateMyProfile(data));
-        }
-
+        dispatch(saveUserData(data));
         handleCloseSubmit();
     };
 

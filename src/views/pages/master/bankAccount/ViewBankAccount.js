@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
 import MaterialTable from 'material-table';
 import tableIcons from 'utils/MaterialTableIcons';
-import TaxGroup from './BankAccount';
+import BankAccount from './BankAccount';
 import SuccessMsg from '../../../../messages/SuccessMsg';
 import ErrorMsg from '../../../../messages/ErrorMsg';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllTaxData } from '../../../../store/actions/masterActions/TaxActions/TaxAction';
-import { getAllTaxGroupDetails, getLatestModifiedTaxGroupDetails } from '../../../../store/actions/masterActions/TaxActions/TaxGroupAction';
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
@@ -20,26 +18,49 @@ function ViewBankAccount() {
     const [openErrorToast, setOpenErrorToast] = useState(false);
     const [tableData, setTableData] = useState([]);
     const [lastModifiedTimeDate, setLastModifiedTimeDate] = useState(null);
+    const [openAccount, setOpenAccount] = useState(false);
 
     const columns = [
         {
-            title: 'Tax Group Type',
-            field: 'taxGroupType',
-            filterPlaceholder: 'Tax Group Type',
+            title: 'Customer Name',
+            field: 'bank.bankName',
+            filterPlaceholder: 'filter',
+            align: 'left'
+        },
+
+        {
+            title: 'Bank Branch',
+            field: 'companyName',
+            filterPlaceholder: 'filter',
             align: 'left'
         },
         {
-            title: 'Tax Group Code',
-            field: 'taxGroupCode',
-            filterPlaceholder: 'Tax Group Code',
-            align: 'left'
-        },
-        {
-            title: 'Description',
-            field: 'description',
+            title: 'Account Number',
+            field: 'accountNumber',
             align: 'left',
             grouping: false,
-            filterPlaceholder: 'Description'
+            filterPlaceholder: 'filter'
+        },
+        {
+            title: 'Ifs  Code',
+            field: 'accountDesc',
+            align: 'left',
+            grouping: false,
+            filterPlaceholder: 'filter'
+        },
+        {
+            title: 'Account Type',
+            field: 'intermediaryBank',
+            align: 'right',
+            grouping: false,
+            filterPlaceholder: 'filter'
+        },
+        {
+            title: 'Complete Detail',
+            field: 'intermediaryBank',
+            align: 'right',
+            grouping: false,
+            filterPlaceholder: 'filter'
         },
         {
             title: 'Status',
@@ -61,7 +82,7 @@ function ViewBankAccount() {
                 >
                     {rowData.status === true ? (
                         <FormGroup>
-                            <FormControlLabel control={<Switch size="small" color="success" />} checked={true} />
+                            <FormControlLabel control={<Switch color="success" size="small" />} checked={true} />
                         </FormGroup>
                     ) : (
                         <FormGroup>
@@ -70,8 +91,40 @@ function ViewBankAccount() {
                     )}
                 </div>
             )
+        },
+        {
+            title: 'Statement',
+            field: 'intermediaryBank',
+            align: 'right',
+            grouping: false,
+            filterPlaceholder: 'filter'
+        },
+        {
+            title: 'view acc',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('account', rowData)}>
+                    Account
+                </Button>
+            ),
+            align: 'center'
         }
     ];
+
+    const handleButtonClick = (type, rowData) => {
+        // Add your button click logic here
+        console.log('Button clicked for:', rowData);
+        if (type == 'account') {
+            setOpenAccount(true);
+        }
+    };
+
+    const handleCloseBankAccount = () => {
+        setOpenAccount(false);
+    };
+
+    const handleCloseSubmit = () => {
+        setOpen(false);
+    };
 
     const dispatch = useDispatch();
     const error = useSelector((state) => state.taxReducer.errorMsg);
@@ -154,7 +207,7 @@ function ViewBankAccount() {
     };
     return (
         <div>
-            <MainCard title="Tax Group Setup">
+            <MainCard title="Bank Accounts">
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
@@ -164,12 +217,12 @@ function ViewBankAccount() {
                                     columns={columns}
                                     data={tableData}
                                     actions={[
-                                        {
-                                            icon: tableIcons.Add,
-                                            tooltip: 'Add New',
-                                            isFreeAction: true,
-                                            onClick: () => handleClickOpen('INSERT', null)
-                                        },
+                                        // {
+                                        //     icon: tableIcons.Add,
+                                        //     tooltip: 'Add New',
+                                        //     isFreeAction: true,
+                                        //     onClick: () => handleClickOpen('INSERT', null)
+                                        // },
                                         (rowData) => ({
                                             icon: tableIcons.Edit,
                                             tooltip: 'Edit',
@@ -183,7 +236,7 @@ function ViewBankAccount() {
                                     ]}
                                     options={{
                                         padding: 'dense',
-                                        showTitle: true,
+                                        showTitle: false,
                                         sorting: true,
                                         search: true,
                                         searchFieldAlignment: 'right',
@@ -224,11 +277,23 @@ function ViewBankAccount() {
                                     }}
                                 />
 
-                                {open ? <TaxGroup open={open} handleClose={handleClose} taxGroupCode={taxGroupCode} mode={mode} /> : ''}
+                                {/* {open ? <TaxGroup open={open} handleClose={handleClose} taxGroupCode={taxGroupCode} mode={mode} /> : ''} */}
                                 {openToast ? <SuccessMsg openToast={openToast} handleToast={handleToast} mode={mode} /> : null}
                                 {openErrorToast ? (
                                     <ErrorMsg openToast={openErrorToast} handleToast={setOpenErrorToast} mode={mode} />
                                 ) : null}
+                                {openAccount ? (
+                                    <BankAccount
+                                        open={openAccount}
+                                        handleClose={handleCloseBankAccount}
+                                        userCode={userCode}
+                                        mode={mode}
+                                        component="user_creation"
+                                        handleCloseSubmit={handleCloseSubmit}
+                                    />
+                                ) : (
+                                    ''
+                                )}
                             </Grid>
                         </Grid>
                         {/* </SubCard> */}

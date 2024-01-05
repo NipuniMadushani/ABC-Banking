@@ -387,9 +387,9 @@ const utilities = {
                 },
                 {
                     id: 'bank-detail-id',
-                    title: 'Bank Details',
+                    title: 'Bank Accounts',
                     type: 'item',
-                    url: '/master/bankDetails',
+                    url: '/master/bankaccounts',
                     breadcrumbs: false
                 },
 

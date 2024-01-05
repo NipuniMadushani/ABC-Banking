@@ -23,11 +23,12 @@ function ViewBankDetail() {
 
     const columns = [
         {
-            title: 'Bank Name',
+            title: 'Customer Name',
             field: 'bank.bankName',
             filterPlaceholder: 'filter',
             align: 'left'
         },
+
         {
             title: 'Bank Branch',
             field: 'companyName',
@@ -42,14 +43,21 @@ function ViewBankDetail() {
             filterPlaceholder: 'filter'
         },
         {
-            title: 'Descrition',
+            title: 'Ifs  Code',
             field: 'accountDesc',
             align: 'left',
             grouping: false,
             filterPlaceholder: 'filter'
         },
         {
-            title: 'Intermediary Bank',
+            title: 'Account Type',
+            field: 'intermediaryBank',
+            align: 'right',
+            grouping: false,
+            filterPlaceholder: 'filter'
+        },
+        {
+            title: 'Complete Detail',
             field: 'intermediaryBank',
             align: 'right',
             grouping: false,
@@ -84,6 +92,22 @@ function ViewBankDetail() {
                     )}
                 </div>
             )
+        },
+        {
+            title: 'Statement',
+            field: 'intermediaryBank',
+            align: 'right',
+            grouping: false,
+            filterPlaceholder: 'filter'
+        },
+        {
+            title: 'view acc',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('account', rowData)}>
+                    Account
+                </Button>
+            ),
+            align: 'center'
         }
     ];
 
@@ -177,7 +201,7 @@ function ViewBankDetail() {
     };
     return (
         <div>
-            <MainCard title={<div className="title">Bank </div>}>
+            <MainCard title={<div className="title">Bank Accounts</div>}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
@@ -187,12 +211,12 @@ function ViewBankDetail() {
                                     columns={columns}
                                     data={tableData}
                                     actions={[
-                                        {
-                                            icon: tableIcons.Add,
-                                            tooltip: 'Add New',
-                                            isFreeAction: true,
-                                            onClick: () => handleClickOpen('INSERT', null)
-                                        },
+                                        // {
+                                        //     icon: tableIcons.Add,
+                                        //     tooltip: 'Add New',
+                                        //     isFreeAction: true,
+                                        //     onClick: () => handleClickOpen('INSERT', null)
+                                        // },
                                         (rowData) => ({
                                             icon: tableIcons.Edit,
                                             tooltip: 'Edit',

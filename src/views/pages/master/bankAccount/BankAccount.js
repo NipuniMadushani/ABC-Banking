@@ -3,92 +3,30 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dialog, Box, DialogContent, TextField, DialogTitle, Button, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import {
-    saveTaxGroupData,
-    getTaxGroupDataById,
-    updateTaxGroupData,
-    checkDuplicateTaxGroupCode
-} from '../../../../store/actions/masterActions/TaxActions/TaxGroupAction';
-
 import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
-import { getAllTaxData } from '../../../../store/actions/masterActions/TaxActions/TaxAction';
 
 function BankAccount({ open, handleClose, mode, taxGroupCode }) {
     const initialValues = {
-        taxGroupType: '',
-        taxGroupCode: '',
-        description: '',
-        taxGroupDetails: [
-            {
-                tax: null,
-                taxOrder: '',
-                // onOriginal: '',
-                status: true
-            }
-        ]
+        accountId: null,
+        accountNo: '',
+        ifscCode: '',
+        type: '',
+        status: '',
+        userId: '',
+        createdBy: '',
+        createdDate: new Date(),
+        modifiedBy: '',
+        modifiedDate: '',
+        bank: 'ABC',
+        customerContract: '',
+        accountBalance: ''
     };
 
     const [taxListOptions, setTaxListOptions] = useState([]);
     const [loadValues, setLoadValues] = useState(null);
     const [openDialogBox, setOpenDialogBox] = useState(false);
-
-    yup.addMethod(yup.array, 'uniqueTaxOrder', function (message) {
-        return this.test('uniqueTaxOrder', message, function (list) {
-            const mapper = (x) => {
-                return x.taxOrder;
-            };
-            const set = [...new Set(list.map(mapper))];
-            const isUnique = list.length === set.length;
-            if (isUnique) {
-                return true;
-            }
-
-            const idx = list.findIndex((l, i) => mapper(l) !== set[i]);
-            return this.createError({
-                path: `taxGroupDetails[${idx}].taxOrder`,
-                message: message
-            });
-        });
-    });
-
-    yup.addMethod(yup.array, 'uniqueTaxCode', function (message) {
-        return this.test('uniqueTaxCode', message, function (list) {
-            const mapper = (x) => {
-                return x.tax?.taxCode;
-            };
-            const set = [...new Set(list.map(mapper))];
-            const isUnique = list.length === set.length;
-            if (isUnique) {
-                return true;
-            }
-
-            const idx = list.findIndex((l, i) => mapper(l) !== set[i]);
-            return this.createError({
-                path: `taxGroupDetails[${idx}].tax`,
-                message: message
-            });
-        });
-    });
-
-    yup.addMethod(yup.string, 'checkDuplicateTaxGroup', function (message) {
-        return this.test('checkDuplicateTaxGroup', message, async function validateValue(value) {
-            if (mode === 'INSERT') {
-                try {
-                    await dispatch(checkDuplicateTaxGroupCode(value));
-
-                    if (duplicateTaxGroup != null && duplicateTaxGroup.errorMessages.length != 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                    return false; // or true as you see fit
-                } catch (error) {}
-            }
-            return true;
-        });
-    });
 
     const validationSchema = yup.object().shape({
         taxGroupType: yup.string().required('Required field'),
@@ -158,10 +96,10 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
         if (result === true) {
             setOpenDialogBox(false);
             if (mode === 'INSERT') {
-                dispatch(saveTaxGroupData(data));
+                // dispatch(saveTaxGroupData(data));
             } else if (mode === 'VIEW_UPDATE') {
                 console.log('yes click');
-                dispatch(updateTaxGroupData(data));
+                // dispatch(updateTaxGroupData(data));
             }
             handleClose();
         } else {
@@ -182,7 +120,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                 <DialogTitle>
                     <Box display="flex" className="dialog-title">
                         <Box flexGrow={1}>
-                            {mode === 'INSERT' ? 'Add' : ''} {mode === 'VIEW_UPDATE' ? 'Update' : ''} {mode === 'VIEW' ? 'View' : ''}User
+                            {mode === 'INSERT' ? 'Add' : ''} {mode === 'VIEW_UPDATE' ? 'Update' : ''} {mode === 'VIEW' ? 'View' : ''}Account
                         </Box>
                         <Box>
                             <IconButton onClick={handleClose}>
@@ -223,19 +161,15 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                             }}
                                                                             type="text"
                                                                             variant="outlined"
-                                                                            name="taxGroupCode"
+                                                                            name="bank"
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
-                                                                            value={values.taxGroupCode}
+                                                                            value={values.bank}
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
-                                                                            error={Boolean(touched.taxGroupCode && errors.taxGroupCode)}
-                                                                            helperText={
-                                                                                touched.taxGroupCode && errors.taxGroupCode
-                                                                                    ? errors.taxGroupCode
-                                                                                    : ''
-                                                                            }
+                                                                            error={Boolean(touched.bank && errors.bank)}
+                                                                            helperText={touched.bank && errors.bank ? errors.bank : ''}
                                                                         />
                                                                     </Grid>
                                                                     <Grid>
@@ -252,14 +186,14 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                             }}
                                                                             id="outlined-required"
                                                                             label="Bank Account No"
-                                                                            name="description"
+                                                                            name="accountNo"
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
-                                                                            value={values.description}
-                                                                            error={Boolean(touched.description && errors.description)}
+                                                                            value={values.accountNo}
+                                                                            error={Boolean(touched.accountNo && errors.accountNo)}
                                                                             helperText={
-                                                                                touched.description && errors.description
-                                                                                    ? errors.description
+                                                                                touched.accountNo && errors.accountNo
+                                                                                    ? errors.accountNo
                                                                                     : ''
                                                                             }
                                                                         />
@@ -281,15 +215,13 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                                 shrink: true
                                                                             }}
                                                                             label="IFSC code"
-                                                                            name="taxGroupType"
+                                                                            name="ifscCode"
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
-                                                                            value={values.taxGroupType}
-                                                                            error={Boolean(touched.taxGroupType && errors.taxGroupType)}
+                                                                            value={values.ifscCode}
+                                                                            error={Boolean(touched.ifscCode && errors.ifscCode)}
                                                                             helperText={
-                                                                                touched.taxGroupType && errors.taxGroupType
-                                                                                    ? errors.taxGroupType
-                                                                                    : ''
+                                                                                touched.ifscCode && errors.ifscCode ? errors.ifscCode : ''
                                                                             }
                                                                         ></TextField>
                                                                     </Grid>
@@ -309,14 +241,12 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
-                                                                            value={values.taxGroupCode}
+                                                                            value={values.customer}
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
-                                                                            error={Boolean(touched.taxGroupCode && errors.taxGroupCode)}
+                                                                            error={Boolean(touched.customer && errors.customer)}
                                                                             helperText={
-                                                                                touched.taxGroupCode && errors.taxGroupCode
-                                                                                    ? errors.taxGroupCode
-                                                                                    : ''
+                                                                                touched.customer && errors.customer ? errors.customer : ''
                                                                             }
                                                                         />
                                                                     </Grid>
@@ -336,14 +266,16 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                             }}
                                                                             id="outlined-required"
                                                                             label="Customer Contact"
-                                                                            name="description"
+                                                                            name="customerContract"
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
-                                                                            value={values.description}
-                                                                            error={Boolean(touched.description && errors.description)}
+                                                                            value={values.customerContract}
+                                                                            error={Boolean(
+                                                                                touched.customerContract && errors.customerContract
+                                                                            )}
                                                                             helperText={
-                                                                                touched.description && errors.description
-                                                                                    ? errors.description
+                                                                                touched.customerContract && errors.customerContract
+                                                                                    ? errors.customerContract
                                                                                     : ''
                                                                             }
                                                                         />
@@ -351,7 +283,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                     <Grid item>
                                                                         <TextField
                                                                             disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                                            label="IFSC Code"
+                                                                            label="Creation Date"
                                                                             sx={{
                                                                                 width: { sm: 200, md: 300 },
                                                                                 '& .MuiInputBase-root': {
@@ -360,21 +292,23 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                             }}
                                                                             type="text"
                                                                             variant="outlined"
-                                                                            name="taxGroupCode"
+                                                                            name="createdDate"
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
-                                                                            value={values.taxGroupCode}
+                                                                            value={values.createdDate}
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
-                                                                            error={Boolean(touched.taxGroupCode && errors.taxGroupCode)}
+                                                                            error={Boolean(touched.createdDate && errors.createdDate)}
                                                                             helperText={
-                                                                                touched.taxGroupCode && errors.taxGroupCode
-                                                                                    ? errors.taxGroupCode
+                                                                                touched.createdDate && errors.createdDate
+                                                                                    ? errors.createdDate
                                                                                     : ''
                                                                             }
                                                                         />
                                                                     </Grid>
+                                                                </Grid>
+                                                                <Grid gap="10px" display="flex" style={{ marginTop: '15px' }}>
                                                                     <Grid item>
                                                                         {' '}
                                                                         <TextField
@@ -386,29 +320,45 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                                 }
                                                                             }}
                                                                             id="standard-select-currency"
-                                                                            select
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
-                                                                            label="Account Type"
-                                                                            name="taxGroupType"
+                                                                            label="Avaliable Balance"
+                                                                            name="accountBalance"
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
-                                                                            value={values.taxGroupType}
-                                                                            error={Boolean(touched.taxGroupType && errors.taxGroupType)}
+                                                                            value={values.accountBalance}
+                                                                            error={Boolean(touched.accountBalance && errors.accountBalance)}
                                                                             helperText={
-                                                                                touched.taxGroupType && errors.taxGroupType
-                                                                                    ? errors.taxGroupType
+                                                                                touched.accountBalance && errors.accountBalance
+                                                                                    ? errors.accountBalance
                                                                                     : ''
                                                                             }
-                                                                        >
-                                                                            <MenuItem dense={true} value={'Sell'}>
-                                                                                Saving
-                                                                            </MenuItem>
-                                                                            <MenuItem dense={true} value={'Buy'}>
-                                                                                Current
-                                                                            </MenuItem>
-                                                                        </TextField>
+                                                                        ></TextField>
+                                                                    </Grid>
+                                                                    <Grid>
+                                                                        <TextField
+                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
+                                                                            sx={{
+                                                                                width: { sm: 200, md: 300 },
+                                                                                '& .MuiInputBase-root': {
+                                                                                    height: 40
+                                                                                }
+                                                                            }}
+                                                                            InputLabelProps={{
+                                                                                shrink: true
+                                                                            }}
+                                                                            id="outlined-required"
+                                                                            label="Account Status"
+                                                                            name="status"
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                            value={values.status}
+                                                                            error={Boolean(touched.status && errors.status)}
+                                                                            helperText={
+                                                                                touched.status && errors.status ? errors.status : ''
+                                                                            }
+                                                                        />
                                                                     </Grid>
                                                                 </Grid>
                                                             </div>
