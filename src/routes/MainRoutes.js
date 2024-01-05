@@ -26,7 +26,6 @@ import ViewGuideClass from 'views/pages/master/guideMaster/guide_class/ViewGuide
 import ViewExpenseTypes from 'views/pages/master/transportMaster/expensetypes/ViewExpenseTypes';
 import ViewTransportRates from 'views/pages/master/transportMaster/transportRates/ViewTransportRates';
 import ViewCompanyProfile from 'views/pages/master/company_profile/ViewCompanyProfile';
-import ViewDepartmentDesignation from 'views/pages/master/department_designation/ViewDepartmentDesignation';
 import ViewUserCreation from 'views/pages/authentication/userManagement/ViewUserCreation';
 import ViewActivitySupplement from 'views/pages/master/activity_supplement/ViewActivitySupplement';
 import VIewActualGuide from 'views/pages/master/guideMaster/actual_guide/VIewActualGuide';
@@ -41,6 +40,8 @@ import FacilityCounter from 'views/pages/master/hotelMaster/facility_count/Facil
 import ViewRoomBuyingRate from 'views/pages/master/hotelMaster/RoomBuyingRates/ViewRoomBuyingRate';
 import Landing from 'views/pages/landing';
 import ViewMainScreen from 'views/pages/programmCreation/viewMainScreen';
+import ViewOnlinebanking from 'views/pages/master/onlineBanking/ViewOnlinebanking';
+import ViewCustomer from 'views/pages/master/customer/ViewCustomer';
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
 
@@ -142,7 +143,7 @@ const MainRoutes = {
                 },
                 {
                     path: 'customer',
-                    element: <ViewTaxGroup />
+                    element: <ViewCustomer />
                 },
                 {
                     path: 'tourtypeview',
@@ -233,8 +234,8 @@ const MainRoutes = {
                     element: <ViewCompanyProfile />
                 },
                 {
-                    path: 'designationdepartmentview',
-                    element: <ViewDepartmentDesignation />
+                    path: 'onlinebanking',
+                    element: <ViewOnlinebanking />
                 },
                 {
                     path: 'actualguide',

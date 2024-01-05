@@ -212,44 +212,9 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                             <div style={{ marginTop: '6px', margin: '10px' }}>
                                                                 <Grid gap="10px" display="flex">
                                                                     <Grid item>
-                                                                        {' '}
                                                                         <TextField
                                                                             disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                                            sx={{
-                                                                                width: { sm: 200, md: 300 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
-                                                                                }
-                                                                            }}
-                                                                            id="standard-select-currency"
-                                                                            select
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            label="Bank Name"
-                                                                            name="taxGroupType"
-                                                                            onChange={handleChange}
-                                                                            onBlur={handleBlur}
-                                                                            value={values.taxGroupType}
-                                                                            error={Boolean(touched.taxGroupType && errors.taxGroupType)}
-                                                                            helperText={
-                                                                                touched.taxGroupType && errors.taxGroupType
-                                                                                    ? errors.taxGroupType
-                                                                                    : ''
-                                                                            }
-                                                                        >
-                                                                            <MenuItem dense={true} value={'Sell'}>
-                                                                                Sell
-                                                                            </MenuItem>
-                                                                            <MenuItem dense={true} value={'Buy'}>
-                                                                                Buy
-                                                                            </MenuItem>
-                                                                        </TextField>
-                                                                    </Grid>
-                                                                    <Grid item>
-                                                                        <TextField
-                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                                            label="Bank Code"
+                                                                            label="Bank"
                                                                             sx={{
                                                                                 width: { sm: 200, md: 300 },
                                                                                 '& .MuiInputBase-root': {
@@ -286,7 +251,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                                 shrink: true
                                                                             }}
                                                                             id="outlined-required"
-                                                                            label="Customer Name"
+                                                                            label="Bank Account No"
                                                                             name="description"
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
@@ -312,11 +277,10 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                                 }
                                                                             }}
                                                                             id="standard-select-currency"
-                                                                            select
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
-                                                                            label="Customer Email"
+                                                                            label="IFSC code"
                                                                             name="taxGroupType"
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
@@ -327,56 +291,51 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                                     ? errors.taxGroupType
                                                                                     : ''
                                                                             }
-                                                                        >
-                                                                            <MenuItem dense={true} value={'Sell'}>
-                                                                                Sell
-                                                                            </MenuItem>
-                                                                            <MenuItem dense={true} value={'Buy'}>
-                                                                                Buy
-                                                                            </MenuItem>
-                                                                        </TextField>
+                                                                        ></TextField>
                                                                     </Grid>
                                                                     <Grid item>
                                                                         <TextField
                                                                             disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
+                                                                            label="Customer"
+                                                                            sx={{
+                                                                                width: { sm: 200, md: 300 },
+                                                                                '& .MuiInputBase-root': {
+                                                                                    height: 40
+                                                                                }
+                                                                            }}
+                                                                            type="text"
+                                                                            variant="outlined"
+                                                                            name="taxGroupCode"
+                                                                            InputLabelProps={{
+                                                                                shrink: true
+                                                                            }}
+                                                                            value={values.taxGroupCode}
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                            error={Boolean(touched.taxGroupCode && errors.taxGroupCode)}
+                                                                            helperText={
+                                                                                touched.taxGroupCode && errors.taxGroupCode
+                                                                                    ? errors.taxGroupCode
+                                                                                    : ''
+                                                                            }
+                                                                        />
+                                                                    </Grid>
+                                                                </Grid>
+                                                                <Grid gap="10px" display="flex" style={{ marginTop: '15px' }}>
+                                                                    <Grid>
+                                                                        <TextField
+                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
+                                                                            sx={{
+                                                                                width: { sm: 200, md: 300 },
+                                                                                '& .MuiInputBase-root': {
+                                                                                    height: 40
+                                                                                }
+                                                                            }}
+                                                                            InputLabelProps={{
+                                                                                shrink: true
+                                                                            }}
+                                                                            id="outlined-required"
                                                                             label="Customer Contact"
-                                                                            sx={{
-                                                                                width: { sm: 200, md: 300 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
-                                                                                }
-                                                                            }}
-                                                                            type="text"
-                                                                            variant="outlined"
-                                                                            name="taxGroupCode"
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            value={values.taxGroupCode}
-                                                                            onChange={handleChange}
-                                                                            onBlur={handleBlur}
-                                                                            error={Boolean(touched.taxGroupCode && errors.taxGroupCode)}
-                                                                            helperText={
-                                                                                touched.taxGroupCode && errors.taxGroupCode
-                                                                                    ? errors.taxGroupCode
-                                                                                    : ''
-                                                                            }
-                                                                        />
-                                                                    </Grid>
-                                                                    <Grid>
-                                                                        <TextField
-                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                                            sx={{
-                                                                                width: { sm: 200, md: 300 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
-                                                                                }
-                                                                            }}
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            id="outlined-required"
-                                                                            label="Account Number"
                                                                             name="description"
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
@@ -389,8 +348,6 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                             }
                                                                         />
                                                                     </Grid>
-                                                                </Grid>
-                                                                <Grid gap="10px" display="flex" style={{ marginTop: '15px' }}>
                                                                     <Grid item>
                                                                         <TextField
                                                                             disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}

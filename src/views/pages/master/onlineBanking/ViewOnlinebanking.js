@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import MaterialTable from 'material-table';
 import tableIcons from 'utils/MaterialTableIcons';
-import DepartmentDesignation from './DepartmentDesignation';
+import OnlineBanking from './OnlineBanking';
+import Deposit from './Deposit';
+import Withdrawal from './Withdrawal';
 import SuccessMsg from '../../../../messages/SuccessMsg';
 import ErrorMsg from '../../../../messages/ErrorMsg';
 import { useSelector, useDispatch } from 'react-redux';
@@ -12,9 +14,10 @@ import {
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
-import { FormControlLabel, FormGroup, Switch } from '@mui/material';
+import { Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
+import BankStatement from './BankStatement';
 
-function ViewDepartmentDesignation() {
+function ViewOnlinebanking() {
     const [open, setOpen] = useState(false);
     const [code, setCode] = useState('');
     const [mode, setMode] = useState('INSERT');
@@ -23,51 +26,58 @@ function ViewDepartmentDesignation() {
     const [tableData, setTableData] = useState([]);
     const [lastModifiedTimeDate, setLastModifiedTimeDate] = useState(null);
     const [type, setType] = useState('');
+    const [openWithdrwal, setOpenWithdrwal] = useState(false);
+    const [openDeposit, setOpenDeposit] = useState(false);
+    const [openStatement, setOpenStatement] = useState(false);
 
     const columns = [
         {
-            title: 'Type',
-            field: 'type',
+            title: 'CustomerName',
+            field: 'customerName',
             filterPlaceholder: 'filter',
             align: 'left'
         },
         {
-            title: 'Description',
-            field: 'description',
-            filterPlaceholder: 'filter',
-            align: 'left'
-        },
-        {
-            title: 'Status',
-            field: 'status',
-            align: 'center',
-            lookup: {
-                true: 'Active',
-                false: 'Inactive'
-            },
+            title: 'Withdrwal2',
             render: (rowData) => (
-                <div
-                    style={{
-                        alignItems: 'center',
-                        align: 'center',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}
-                >
-                    {rowData.status === true ? (
-                        <FormGroup>
-                            <FormControlLabel control={<Switch color="success" size="small" />} checked={true} />
-                        </FormGroup>
-                    ) : (
-                        <FormGroup>
-                            <FormControlLabel control={<Switch color="error" size="small" />} checked={false} />
-                        </FormGroup>
-                    )}
-                </div>
-            )
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Withdrawal', rowData)}>
+                    Withdraw
+                </Button>
+            ),
+            align: 'center'
+        },
+
+        {
+            title: 'Withdrwal24',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Deposit', rowData)}>
+                    Deposit
+                </Button>
+            ),
+            align: 'center'
+        },
+        {
+            title: 'Withdrw4al2',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('statement', rowData)}>
+                    Download Statement
+                </Button>
+            ),
+            align: 'center'
         }
     ];
+
+    const handleButtonClick = (type, rowData) => {
+        // Add your button click logic here
+        console.log('Button clicked for:', rowData);
+        if (type == 'Withdrawal') {
+            setOpenWithdrwal(true);
+        } else if (type == 'Deposit') {
+            setOpenDeposit(true);
+        } else if (type == 'statement') {
+            setOpenStatement(true);
+        }
+    };
 
     const dispatch = useDispatch();
     const error = useSelector((state) => state.departmentDesignationReducer.errorMsg);
@@ -78,6 +88,7 @@ function ViewDepartmentDesignation() {
 
     useEffect(() => {
         console.log(departmentDesignationList);
+        setTableData([{ customerName: 'Mithula' }]);
         if (departmentDesignationList?.payload?.length > 0) {
             console.log(departmentDesignationList);
             setTableData(departmentDesignationList?.payload[0]);
@@ -162,7 +173,7 @@ function ViewDepartmentDesignation() {
     };
     return (
         <div>
-            <MainCard title="Designation / Department">
+            <MainCard title="Online Banking">
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
@@ -233,8 +244,18 @@ function ViewDepartmentDesignation() {
                                     }}
                                 />
 
-                                {open ? (
-                                    <DepartmentDesignation open={open} handleClose={handleClose} code={code} mode={mode} type={type} />
+                                {openWithdrwal ? (
+                                    <Withdrawal open={openWithdrwal} handleClose={handleClose} code={code} mode={mode} type={type} />
+                                ) : (
+                                    ''
+                                )}
+                                {openDeposit ? (
+                                    <Deposit open={openDeposit} handleClose={handleClose} code={code} mode={mode} type={type} />
+                                ) : (
+                                    ''
+                                )}
+                                {openStatement ? (
+                                    <BankStatement open={openStatement} handleClose={handleClose} code={code} mode={mode} type={type} />
                                 ) : (
                                     ''
                                 )}
@@ -252,4 +273,4 @@ function ViewDepartmentDesignation() {
     );
 }
 
-export default ViewDepartmentDesignation;
+export default ViewOnlinebanking;

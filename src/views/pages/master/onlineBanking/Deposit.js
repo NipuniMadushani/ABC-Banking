@@ -16,7 +16,7 @@ import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
 import CreatedUpdatedUserDetailsWithTableFormat from '../userTimeDetails/CreatedUpdatedUserDetailsWithTableFormat';
 
-function DepartmentDesignation({ open, handleClose, mode, code, type }) {
+function Deposit({ open, handleClose, mode, code, type }) {
     const initialValues = {
         type: '',
         description: '',
@@ -83,10 +83,7 @@ function DepartmentDesignation({ open, handleClose, mode, code, type }) {
             <Dialog fullWidth open={open} keepMounted onClose={handleClose} aria-describedby="alert-dialog-slide-description">
                 <DialogTitle>
                     <Box display="flex" className="dialog-title">
-                        <Box flexGrow={1}>
-                            {mode === 'INSERT' ? 'Add' : ''} {mode === 'VIEW_UPDATE' ? 'Update' : ''} {mode === 'VIEW' ? 'View' : ''}
-                            Department / Designation
-                        </Box>
+                        <Box flexGrow={1}>Deposit</Box>
                         <Box>
                             <IconButton onClick={handleClose}>
                                 <CloseIcon />
@@ -114,35 +111,6 @@ function DepartmentDesignation({ open, handleClose, mode, code, type }) {
                                                 <Grid item xs={6}>
                                                     <TextField
                                                         sx={{
-                                                            width: { xs: 100, sm: 200 },
-                                                            '& .MuiInputBase-root': {
-                                                                height: 40
-                                                            }
-                                                        }}
-                                                        disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                        select
-                                                        InputLabelProps={{
-                                                            shrink: true
-                                                        }}
-                                                        label="type"
-                                                        name="type"
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlur}
-                                                        value={values.type}
-                                                        error={Boolean(touched.type && errors.type)}
-                                                        helperText={touched.type && errors.type ? errors.type : ''}
-                                                    >
-                                                        <MenuItem dense={true} value={'Department'}>
-                                                            Department
-                                                        </MenuItem>
-                                                        <MenuItem dense={true} value={'Designation'}>
-                                                            Designation
-                                                        </MenuItem>
-                                                    </TextField>
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <TextField
-                                                        sx={{
                                                             width: { xs: 100, sm: 250 },
                                                             '& .MuiInputBase-root': {
                                                                 height: 40
@@ -152,7 +120,7 @@ function DepartmentDesignation({ open, handleClose, mode, code, type }) {
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
-                                                        label="Description"
+                                                        label="Amount to Deposit"
                                                         name="description"
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
@@ -160,19 +128,6 @@ function DepartmentDesignation({ open, handleClose, mode, code, type }) {
                                                         error={Boolean(touched.description && errors.description)}
                                                         helperText={touched.description && errors.description ? errors.description : ''}
                                                     ></TextField>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <FormGroup>
-                                                        <FormControlLabel
-                                                            name="status"
-                                                            onChange={handleChange}
-                                                            value={values.status}
-                                                            control={<Switch color="success" />}
-                                                            label="Status"
-                                                            checked={values.status}
-                                                            disabled={mode == 'VIEW'}
-                                                        />
-                                                    </FormGroup>
                                                 </Grid>
                                             </Grid>
                                         </Box>
@@ -217,4 +172,4 @@ function DepartmentDesignation({ open, handleClose, mode, code, type }) {
     );
 }
 
-export default DepartmentDesignation;
+export default Deposit;

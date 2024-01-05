@@ -192,9 +192,9 @@ const utilities = {
                 },
                 {
                     id: 'department-designation-id',
-                    title: 'Designation / Department',
+                    title: 'Online Banking',
                     type: 'item',
-                    url: '/master/designationdepartmentview',
+                    url: '/master/onlinebanking',
                     breadcrumbs: false
                 },
 
