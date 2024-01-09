@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/ABC-Banking/static/css/main.1943b2bb.css",
-    "main.js": "/ABC-Banking/static/js/main.3fecfa64.js",
+    "main.js": "/ABC-Banking/static/js/main.f17c5f34.js",
     "static/js/728.dacb75cb.chunk.js": "/ABC-Banking/static/js/728.dacb75cb.chunk.js",
     "static/js/319.888bca28.chunk.js": "/ABC-Banking/static/js/319.888bca28.chunk.js",
     "static/js/338.642d5d06.chunk.js": "/ABC-Banking/static/js/338.642d5d06.chunk.js",
@@ -60,7 +60,7 @@
     "static/media/earning.svg": "/ABC-Banking/static/media/earning.00f461a5c235604f1375d5e59ee3e093.svg",
     "static/media/angular.svg": "/ABC-Banking/static/media/angular.ff20c437a84f0b47a4bbd9d1937038a4.svg",
     "main.1943b2bb.css.map": "/ABC-Banking/static/css/main.1943b2bb.css.map",
-    "main.3fecfa64.js.map": "/ABC-Banking/static/js/main.3fecfa64.js.map",
+    "main.f17c5f34.js.map": "/ABC-Banking/static/js/main.f17c5f34.js.map",
     "728.dacb75cb.chunk.js.map": "/ABC-Banking/static/js/728.dacb75cb.chunk.js.map",
     "319.888bca28.chunk.js.map": "/ABC-Banking/static/js/319.888bca28.chunk.js.map",
     "338.642d5d06.chunk.js.map": "/ABC-Banking/static/js/338.642d5d06.chunk.js.map",
@@ -77,6 +77,6 @@
   },
   "entrypoints": [
     "static/css/main.1943b2bb.css",
-    "static/js/main.3fecfa64.js"
+    "static/js/main.f17c5f34.js"
   ]
 }
