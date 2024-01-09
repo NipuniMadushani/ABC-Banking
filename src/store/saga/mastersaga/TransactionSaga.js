@@ -49,4 +49,3 @@ export function* bankStatementSaga(action) {
         yield put({ type: FAILED_BANK_STATEMENT, data: responseData.data });
     }
 }
-
