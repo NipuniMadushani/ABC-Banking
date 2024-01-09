@@ -15,7 +15,7 @@ import {
 } from 'store/constant/master/BankAccountConstant';
 
 const initialState = {
-    BANK_ACCOUNT: null,
+    bankAccount: null,
     BANK_ACCOUNTes: [],
     BANK_ACCOUNTToUpdate: null,
     BANK_ACCOUNTToEdit: null,
@@ -31,14 +31,14 @@ export const bankAcccountReducer = (state = initialState, action) => {
         case ADD_SUCCESS_BANK_ACCOUNT_DATA:
             console.warn('SUCCESS_BANK_ACCOUNT_DATA', action.payload);
             console.log(data.payload[0]);
-            return { ...state, BANK_ACCOUNT: data.payload[0] };
+            return { ...state, bankAccount: data.payload[0] };
 
         case ADD_FAILED_BANK_ACCOUNT_DATA:
             console.warn('FAILED_BANK_ACCOUNT_DATA', action);
             console.log(data);
             return {
                 ...state,
-                BANK_ACCOUNT: null,
+                bankAccount: null,
                 errorMsg: data ? data.errorMessages : 'netwok error'
             };
 

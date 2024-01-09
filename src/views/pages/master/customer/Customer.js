@@ -185,13 +185,12 @@ function Customer({ open, handleClose, mode, userCode, component, handleCloseSub
     }, [profileToUpdate]);
 
     useEffect(() => {
-        if ((mode === 'VIEW_UPDATE' && component === 'user_creation') || (mode === 'VIEW' && component === 'user_creation')) {
-            dispatch(getUserDataById(userCode));
-
-            // setTitleListOptions(ti)
-        } else if ((mode === 'VIEW_UPDATE' && component === 'user_profile') || (mode === 'VIEW' && component === 'user_profile')) {
-            dispatch(getProfileData(userCode));
-        }
+        // if ((mode === 'VIEW_UPDATE' && component === 'user_creation') || (mode === 'VIEW' && component === 'user_creation')) {
+        //     dispatch(getUserDataById(userCode));
+        //     // setTitleListOptions(ti)
+        // } else if ((mode === 'VIEW_UPDATE' && component === 'user_profile') || (mode === 'VIEW' && component === 'user_profile')) {
+        //     dispatch(getProfileData(userCode));
+        // }
     }, [mode]);
 
     const handleSubmitForm = (data) => {

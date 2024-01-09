@@ -12,7 +12,8 @@ import {
     GET_ALL_USER_ROLES,
     GET_PROFILE_DATA_BY_ID,
     UPDATE_MY_PROFILE,
-    CLEAR_USER
+    CLEAR_USER,
+    USER_LIST_WITH_ACCOUNTS
 } from 'store/constant/authentication/UserConstant';
 
 //user creation
@@ -121,5 +122,11 @@ export const updateMyProfile = (data) => {
 export const clearUserDetails = () => {
     return {
         type: CLEAR_USER
+    };
+};
+
+export const customersWithAccountsAction = () => {
+    return {
+        type: USER_LIST_WITH_ACCOUNTS
     };
 };

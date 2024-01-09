@@ -16,6 +16,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
 import BankStatement from './BankStatement';
+import { customersWithAccountsAction } from 'store/actions/authenticationActions/UserAction';
 
 function ViewOnlinebanking() {
     const [open, setOpen] = useState(false);
@@ -32,8 +33,20 @@ function ViewOnlinebanking() {
 
     const columns = [
         {
-            title: 'CustomerName',
-            field: 'customerName',
+            title: 'First Name',
+            field: 'firstName',
+            filterPlaceholder: 'filter',
+            align: 'left'
+        },
+        {
+            title: 'User Name',
+            field: 'userName',
+            filterPlaceholder: 'filter',
+            align: 'left'
+        },
+        {
+            title: 'Role',
+            field: 'roles',
             filterPlaceholder: 'filter',
             align: 'left'
         },
@@ -82,18 +95,17 @@ function ViewOnlinebanking() {
     const dispatch = useDispatch();
     const error = useSelector((state) => state.departmentDesignationReducer.errorMsg);
 
-    const departmentDesignationList = useSelector((state) => state.departmentDesignationReducer.departmentDesignationList);
-    const departmentDesignation = useSelector((state) => state.departmentDesignationReducer.departmentDesignation);
+    const customersWithAccounts = useSelector((state) => state.userReducer.customersWithAccounts);
     const lastModifiedDate = useSelector((state) => state.departmentDesignationReducer.lastModifiedDateTime);
 
     useEffect(() => {
-        console.log(departmentDesignationList);
-        setTableData([{ customerName: 'Mithula' }]);
-        if (departmentDesignationList?.payload?.length > 0) {
-            console.log(departmentDesignationList);
-            setTableData(departmentDesignationList?.payload[0]);
+        console.log(customersWithAccounts);
+
+        if (customersWithAccounts) {
+            console.log(customersWithAccounts);
+            setTableData(customersWithAccounts);
         }
-    }, [departmentDesignationList]);
+    }, [customersWithAccounts]);
 
     useEffect(() => {
         console.log(error);
@@ -103,18 +115,18 @@ function ViewOnlinebanking() {
         }
     }, [error]);
 
-    useEffect(() => {
-        console.log(departmentDesignation);
-        if (departmentDesignation) {
-            console.log('sucessToast');
-            setHandleToast(true);
-            dispatch(getAllDepartmentDesignationData());
-            dispatch(getLatestModifiedDetails());
-        }
-    }, [departmentDesignation]);
+    // useEffect(() => {
+    //     console.log(departmentDesignation);
+    //     if (departmentDesignation) {
+    //         console.log('sucessToast');
+    //         setHandleToast(true);
+    //         dispatch(getAllDepartmentDesignationData());
+    //         dispatch(getLatestModifiedDetails());
+    //     }
+    // }, [departmentDesignation]);
 
     useEffect(() => {
-        dispatch(getAllDepartmentDesignationData());
+        dispatch(customersWithAccountsAction());
         dispatch(getLatestModifiedDetails());
     }, []);
 
@@ -163,6 +175,9 @@ function ViewOnlinebanking() {
 
     const handleClose = () => {
         setOpen(false);
+        setOpenDeposit(false);
+        setOpenWithdrwal(false);
+        setOpenStatement(false);
     };
 
     const handleToast = () => {

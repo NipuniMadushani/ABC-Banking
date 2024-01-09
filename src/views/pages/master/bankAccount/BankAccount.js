@@ -1,19 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dialog, Box, DialogContent, TextField, DialogTitle, Button, MenuItem } from '@mui/material';
+import { Dialog, Box, DialogContent, TextField, DialogTitle, Button, FormGroup, FormControlLabel, Switch } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
+import { saveBankAccountData } from '../../../../store/actions/masterActions/BankAccountActions';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-function BankAccount({ open, handleClose, mode, taxGroupCode }) {
+function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
     const initialValues = {
         accountId: null,
         accountNo: '',
         ifscCode: '',
         type: '',
-        status: '',
+        status: true,
         userId: '',
         createdBy: '',
         createdDate: new Date(),
@@ -21,30 +25,15 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
         modifiedDate: '',
         bank: 'ABC',
         customerContract: '',
-        accountBalance: ''
+        accountBalance: '',
+        customer: ''
     };
 
     const [taxListOptions, setTaxListOptions] = useState([]);
     const [loadValues, setLoadValues] = useState(null);
     const [openDialogBox, setOpenDialogBox] = useState(false);
 
-    const validationSchema = yup.object().shape({
-        taxGroupType: yup.string().required('Required field'),
-        taxGroupCode: yup.string().required('Required field').checkDuplicateTaxGroup('Duplicate Code'),
-        description: yup.string().required('Required field'),
-
-        taxGroupDetails: yup
-            .array()
-            .of(
-                yup.object().shape({
-                    tax: yup.object().typeError('Required field'),
-                    taxOrder: yup.number().positive('Must be greater than zero')
-                    // onOriginal: yup.string().required('Required field')
-                })
-            )
-            .uniqueTaxOrder('Must be unique')
-            .uniqueTaxCode('Must be unique')
-    });
+    const validationSchema = yup.object().shape({});
 
     const taxGroupToUpdate = useSelector((state) => state.bankAcccountReducer.taxGroupToUpdate);
     const taxListData = useSelector((state) => state.bankAcccountReducer.taxes);
@@ -61,10 +50,26 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
     }, [mode]);
 
     useEffect(() => {
-        if (taxListData != null) {
-            // setTaxListOptions(taxListData);
+        if (userCode != null) {
+            let data = {
+                accountId: null,
+                accountNo: '',
+                ifscCode: '',
+                type: '',
+                status: true,
+                userId: userCode.userId,
+                createdBy: '',
+                createdDate: new Date(),
+                modifiedBy: '',
+                modifiedDate: '',
+                bank: 'ABC',
+                customerContract: '',
+                accountBalance: '',
+                customer: userCode.userName
+            };
+            setLoadValues(data);
         }
-    }, [taxListData]);
+    }, [userCode]);
 
     useEffect(() => {
         console.log(taxGroupToUpdate);
@@ -86,29 +91,18 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
         return true;
     };
     const handleSubmitForm = (data) => {
-        console.log(data);
-        let arry = [];
-        data.taxGroupDetails.map((data) => {
-            arry.push(+data.taxOrder);
-        });
-        const result = checkValidArray(arry);
-        console.log(result);
-        if (result === true) {
-            setOpenDialogBox(false);
-            if (mode === 'INSERT') {
-                // dispatch(saveTaxGroupData(data));
-            } else if (mode === 'VIEW_UPDATE') {
-                console.log('yes click');
-                // dispatch(updateTaxGroupData(data));
-            }
-            handleClose();
-        } else {
-            setOpenDialogBox(true);
+        console.warn(data);
+        if (mode === 'INSERT') {
+            dispatch(saveBankAccountData(data));
+        } else if (mode === 'VIEW_UPDATE') {
+            console.log('yes click');
+            // dispatch(updateTaxGroupData(data));
         }
+        handleClose();
     };
 
     useEffect(() => {
-        dispatch(getAllTaxData());
+        // dispatch(getAllTaxData());
     }, []);
 
     const handleCancel = () => {
@@ -227,7 +221,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                     </Grid>
                                                                     <Grid item>
                                                                         <TextField
-                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
+                                                                            disabled
                                                                             label="Customer"
                                                                             sx={{
                                                                                 width: { sm: 200, md: 300 },
@@ -237,7 +231,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                             }}
                                                                             type="text"
                                                                             variant="outlined"
-                                                                            name="taxGroupCode"
+                                                                            name="customer"
                                                                             InputLabelProps={{
                                                                                 shrink: true
                                                                             }}
@@ -252,65 +246,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                     </Grid>
                                                                 </Grid>
                                                                 <Grid gap="10px" display="flex" style={{ marginTop: '15px' }}>
-                                                                    <Grid>
-                                                                        <TextField
-                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                                            sx={{
-                                                                                width: { sm: 200, md: 300 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
-                                                                                }
-                                                                            }}
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            id="outlined-required"
-                                                                            label="Customer Contact"
-                                                                            name="customerContract"
-                                                                            onChange={handleChange}
-                                                                            onBlur={handleBlur}
-                                                                            value={values.customerContract}
-                                                                            error={Boolean(
-                                                                                touched.customerContract && errors.customerContract
-                                                                            )}
-                                                                            helperText={
-                                                                                touched.customerContract && errors.customerContract
-                                                                                    ? errors.customerContract
-                                                                                    : ''
-                                                                            }
-                                                                        />
-                                                                    </Grid>
                                                                     <Grid item>
-                                                                        <TextField
-                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                                            label="Creation Date"
-                                                                            sx={{
-                                                                                width: { sm: 200, md: 300 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
-                                                                                }
-                                                                            }}
-                                                                            type="text"
-                                                                            variant="outlined"
-                                                                            name="createdDate"
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            value={values.createdDate}
-                                                                            onChange={handleChange}
-                                                                            onBlur={handleBlur}
-                                                                            error={Boolean(touched.createdDate && errors.createdDate)}
-                                                                            helperText={
-                                                                                touched.createdDate && errors.createdDate
-                                                                                    ? errors.createdDate
-                                                                                    : ''
-                                                                            }
-                                                                        />
-                                                                    </Grid>
-                                                                </Grid>
-                                                                <Grid gap="10px" display="flex" style={{ marginTop: '15px' }}>
-                                                                    <Grid item>
-                                                                        {' '}
                                                                         <TextField
                                                                             disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
                                                                             sx={{
@@ -336,30 +272,65 @@ function BankAccount({ open, handleClose, mode, taxGroupCode }) {
                                                                             }
                                                                         ></TextField>
                                                                     </Grid>
-                                                                    <Grid>
-                                                                        <TextField
-                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                                            sx={{
-                                                                                width: { sm: 200, md: 300 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
-                                                                                }
-                                                                            }}
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            id="outlined-required"
-                                                                            label="Account Status"
-                                                                            name="status"
-                                                                            onChange={handleChange}
-                                                                            onBlur={handleBlur}
-                                                                            value={values.status}
-                                                                            error={Boolean(touched.status && errors.status)}
-                                                                            helperText={
-                                                                                touched.status && errors.status ? errors.status : ''
-                                                                            }
-                                                                        />
+                                                                    <Grid item>
+                                                                        <LocalizationProvider
+                                                                            dateAdapter={AdapterDayjs}
+                                                                            // adapterLocale={locale}
+                                                                        >
+                                                                            <DatePicker
+                                                                                disabled={mode != 'INSERT'}
+                                                                                onChange={(value) => {
+                                                                                    setFieldValue(`createdDate`, value);
+                                                                                }}
+                                                                                inputFormat="DD/MM/YYYY"
+                                                                                value={values.createdDate}
+                                                                                renderInput={(params) => (
+                                                                                    <TextField
+                                                                                        {...params}
+                                                                                        sx={{
+                                                                                            width: { sm: 200, md: 300 },
+                                                                                            '& .MuiInputBase-root': {
+                                                                                                height: 40
+                                                                                            }
+                                                                                        }}
+                                                                                        InputLabelProps={{
+                                                                                            shrink: true
+                                                                                        }}
+                                                                                        label="To Date"
+                                                                                        variant="outlined"
+                                                                                        name="createdDate"
+                                                                                        onBlur={handleBlur}
+                                                                                        error={Boolean(
+                                                                                            touched.createdDate && errors.createdDate
+                                                                                        )}
+                                                                                        helperText={
+                                                                                            touched.createdDate && errors.createdDate
+                                                                                                ? errors.createdDate
+                                                                                                : ''
+                                                                                        }
+                                                                                    />
+                                                                                )}
+                                                                            />
+                                                                        </LocalizationProvider>
                                                                     </Grid>
+                                                                </Grid>
+                                                                <Grid gap="10px" display="flex" style={{ marginTop: '15px' }}>
+                                                                    <FormGroup>
+                                                                        <FormControlLabel
+                                                                            name="status"
+                                                                            disabled={mode === 'VIEW'}
+                                                                            // disabled={
+                                                                            //     mode == 'VIEW' || component === 'user_profile'
+                                                                            //         ? true
+                                                                            //         : false
+                                                                            // }
+                                                                            control={<Switch color="success" />}
+                                                                            onChange={handleChange}
+                                                                            value={values.status}
+                                                                            label="Status"
+                                                                            checked={values.status}
+                                                                        />
+                                                                    </FormGroup>
                                                                 </Grid>
                                                             </div>
 

@@ -18,34 +18,13 @@ import CreatedUpdatedUserDetailsWithTableFormat from '../userTimeDetails/Created
 
 function Withdrawal({ open, handleClose, mode, code, type }) {
     const initialValues = {
-        type: '',
-        description: '',
-        status: true
+        transactionAmount: ''
     };
 
     const [loadValues, setLoadValues] = useState(null);
 
-    yup.addMethod(yup.string, 'checkDuplicateCode', function (message) {
-        return this.test('checkDuplicateCode', message, async function validateValue(value) {
-            if (mode === 'INSERT') {
-                try {
-                    await dispatch(checkDuplicateDepartmentDesignationCode(value));
-                    if (duplicateDepartmentDesignation != null && duplicateDepartmentDesignation.errorMessages.length != 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                    return false; // or true as you see fit
-                } catch (error) {}
-            }
-            return true;
-        });
-    });
-
     const validationSchema = yup.object().shape({
-        type: yup.string().required('Required field'),
-        description: yup.string().required('Required field').checkDuplicateCode('Duplicate Code'),
-        status: yup.boolean()
+        transactionAmount: yup.number().required('Required field')
     });
 
     //get data from reducers...
@@ -120,13 +99,18 @@ function Withdrawal({ open, handleClose, mode, code, type }) {
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
+                                                        type="number"
                                                         label="Amount to Withdrawal"
-                                                        name="description"
+                                                        name="transactionAmount"
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
-                                                        value={values.description}
-                                                        error={Boolean(touched.description && errors.description)}
-                                                        helperText={touched.description && errors.description ? errors.description : ''}
+                                                        value={values.transactionAmount}
+                                                        error={Boolean(touched.transactionAmount && errors.transactionAmount)}
+                                                        helperText={
+                                                            touched.transactionAmount && errors.transactionAmount
+                                                                ? errors.transactionAmount
+                                                                : ''
+                                                        }
                                                     ></TextField>
                                                 </Grid>
                                             </Grid>

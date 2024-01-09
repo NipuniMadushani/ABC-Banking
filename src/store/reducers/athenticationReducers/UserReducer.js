@@ -26,7 +26,9 @@ import {
     FAILED_UPDATE_MY_PROFILE,
     SUCCESS_CLEAR_USER,
     ADD_SUCCESS_CUSTOMER_DATA,
-    ADD_FAILED_CUSTOMER_DATA
+    ADD_FAILED_CUSTOMER_DATA,
+    SUCCESS_USER_LIST_WITH_ACCOUNTS,
+    FAILED_USER_LIST_WITH_ACCOUNTS
 } from 'store/constant/authentication/UserConstant';
 
 const initialState = {
@@ -43,7 +45,8 @@ const initialState = {
     userRole: [],
     profileToUpdate: null,
     myProfileUpdate: null,
-    customer: null
+    customer: null,
+    customersWithAccounts: []
 };
 
 export const userReducer = (state = initialState, action) => {
@@ -196,6 +199,11 @@ export const userReducer = (state = initialState, action) => {
                 errorMsg: data ? data : 'netwok error'
             };
 
+        case SUCCESS_USER_LIST_WITH_ACCOUNTS:
+            return { ...state, customersWithAccounts: data.payload[0] };
+
+        case FAILED_USER_LIST_WITH_ACCOUNTS:
+            return { ...state, customersWithAccounts: [] };
         default:
             return state;
     }

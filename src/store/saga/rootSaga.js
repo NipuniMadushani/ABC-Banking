@@ -418,7 +418,8 @@ import {
     RESET_PASSWORD_CREDENTIALS,
     GET_PROFILE_DATA_BY_ID,
     UPDATE_MY_PROFILE,
-    CLEAR_USER
+    CLEAR_USER,
+    USER_LIST_WITH_ACCOUNTS
 } from 'store/constant/authentication/UserConstant';
 import {
     checkDupicateUserSaga,
@@ -434,7 +435,8 @@ import {
     resetPasswordSaga,
     getProfileDataByIdSaga,
     updateMyProfileData,
-    clearUserDataSaga
+    clearUserDataSaga,
+    getUsersWithAccounts
 } from './authenticationSaga/UserSaga';
 
 import {
@@ -720,12 +722,21 @@ import {
     getDistanceAndDurationSaga
 } from './mastersaga/transportSaga/DistanceSaga';
 import { getBANK_ACCOUNTDataById } from 'store/actions/masterActions/TaxAction';
+
+import { DEPOSIT_AMOUNT, WITHDRAW_AMOUNT, BANK_STATEMENT } from 'store/constant/master/TransactionConstant';
+
+import { depositSaga, withdrawSaga, bankStatementSaga } from 'store/saga/mastersaga/TransactionSaga';
 export function* wacherSaga() {
     // bank account setup
     yield takeLatest(SAVE_BANK_ACCOUNT_DATA, saveBankAccountSaga);
     yield takeLatest(GET_BANK_ACCOUNT_DATA_BY_ID, getBANK_ACCOUNTDataById);
     yield takeLatest(GET_ALL_BANK_ACCOUNT_DATA, getAllBankAccountSaga);
     yield takeLatest(UPDATE_BANK_ACCOUNT_DATA, updateBankAccountSaga);
+
+    // transaction setup
+    yield takeLatest(DEPOSIT_AMOUNT, depositSaga);
+    yield takeLatest(WITHDRAW_AMOUNT, withdrawSaga);
+    yield takeLatest(BANK_STATEMENT, bankStatementSaga);
 
     // //tour category setup
     yield takeLatest(SAVE_TOUR_CATEGORY_DATA, saveTourCategoryHandler);
@@ -945,6 +956,7 @@ export function* wacherSaga() {
     yield takeLatest(GET_ALL_USER_ROLES, getAllRolesSaga);
     yield takeLatest(GET_PROFILE_DATA_BY_ID, getProfileDataByIdSaga);
     yield takeLatest(CLEAR_USER, clearUserDataSaga);
+    yield takeLatest(USER_LIST_WITH_ACCOUNTS, getUsersWithAccounts);
 
     //company profile
     yield takeLatest(SAVE_COMPANY_PROFILE, saveCompanyProfileSaga);

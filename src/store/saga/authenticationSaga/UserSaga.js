@@ -28,8 +28,11 @@ import {
     SUCCESS_UPDATE_MY_PROFILE,
     SUCCESS_CLEAR_USER,
     ADD_SUCCESS_CUSTOMER_DATA,
-    ADD_FAILED_CUSTOMER_DATA
+    ADD_FAILED_CUSTOMER_DATA,
+    SUCCESS_USER_LIST_WITH_ACCOUNTS,
+    FAILED_USER_LIST_WITH_ACCOUNTS
 } from 'store/constant/authentication/UserConstant';
+
 import { create, getById, updateWithUpload, get, createWithUpload, update } from '../../../apis/Apis';
 
 //User creation saga
@@ -345,4 +348,18 @@ export function* clearUserDataSaga() {
     //         data: e.response.data.errorMessages
     //     });
     // }
+}
+
+//update my profile
+export function* getUsersWithAccounts() {
+    let responseData = [];
+
+    try {
+        responseData = yield call(get, process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL + '/customers');
+        console.log(responseData);
+        yield put({ type: SUCCESS_USER_LIST_WITH_ACCOUNTS, data: responseData.data });
+    } catch (e) {
+        console.log(e);
+        yield put({ type: FAILED_USER_LIST_WITH_ACCOUNTS, data: responseData.data });
+    }
 }

@@ -18,7 +18,7 @@ import {
 //Bank account saga
 
 export function* saveBankAccountSaga(action) {
-    action.data.path = `${process.env.REACT_APP_FINANCE_URL}/BANK_ACCOUNT`;
+    action.data.path = `${process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL}/account`;
     let responseData = [];
     try {
         responseData = yield call(create, action.data);

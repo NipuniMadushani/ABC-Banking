@@ -40,6 +40,8 @@ import { roomBuyingRateReducer } from './reducers/masterReducer/RoomBuyingRateRe
 import { paxVehicleRateReducer } from './reducers/masterReducer/transportReducer/PaxVehicleRateReducer';
 import { distanceReducer } from './reducers/masterReducer/transportReducer/DistanceReducer';
 import { bagggeTransportRateReducer } from './reducers/masterReducer/transportReducer/BaggageTransportRateReducer';
+import { transactionReducer } from './reducers/masterReducer/TransactionReducer';
+
 // ==============================|| COMBINE REDUCER ||============================== //
 
 const reducer = combineReducers({
@@ -84,7 +86,8 @@ const reducer = combineReducers({
     roomBuyingRateReducer,
     paxVehicleRateReducer,
     distanceReducer,
-    bagggeTransportRateReducer
+    bagggeTransportRateReducer,
+    transactionReducer
 });
 
 export default reducer;

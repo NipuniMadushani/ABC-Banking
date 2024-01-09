@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dialog, FormControlLabel, Box, DialogContent, TextField, DialogTitle, FormGroup, Button, MenuItem, Switch } from '@mui/material';
-
+import MaterialTable from 'material-table';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import {
@@ -10,7 +10,7 @@ import {
     updateDepartmentDesignationData,
     checkDuplicateDepartmentDesignationCode
 } from '../../../../store/actions/masterActions/DepartmentDesignationAction';
-
+import tableIcons from 'utils/MaterialTableIcons';
 import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
@@ -24,35 +24,76 @@ function BankStatement({ open, handleClose, mode, code, type }) {
     };
 
     const [loadValues, setLoadValues] = useState(null);
+    const [tableData, setTableData] = useState([]);
+    const columns = [
+        {
+            title: 'First Name',
+            field: 'firstName',
+            filterPlaceholder: 'filter',
+            align: 'left'
+        },
+        {
+            title: 'User Name',
+            field: 'userName',
+            filterPlaceholder: 'filter',
+            align: 'left'
+        },
+        {
+            title: 'Role',
+            field: 'roles',
+            filterPlaceholder: 'filter',
+            align: 'left'
+        },
+        {
+            title: 'Withdrwal2',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Withdrawal', rowData)}>
+                    Withdraw
+                </Button>
+            ),
+            align: 'center'
+        },
 
-    yup.addMethod(yup.string, 'checkDuplicateCode', function (message) {
-        return this.test('checkDuplicateCode', message, async function validateValue(value) {
-            if (mode === 'INSERT') {
-                try {
-                    await dispatch(checkDuplicateDepartmentDesignationCode(value));
-                    if (duplicateDepartmentDesignation != null && duplicateDepartmentDesignation.errorMessages.length != 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                    return false; // or true as you see fit
-                } catch (error) {}
-            }
-            return true;
-        });
-    });
+        {
+            title: 'Withdrwal24',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Deposit', rowData)}>
+                    Deposit
+                </Button>
+            ),
+            align: 'center'
+        },
+        {
+            title: 'Withdrw4al2',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('statement', rowData)}>
+                    Download Statement
+                </Button>
+            ),
+            align: 'center'
+        }
+    ];
 
     const validationSchema = yup.object().shape({
-        type: yup.string().required('Required field'),
-        description: yup.string().required('Required field').checkDuplicateCode('Duplicate Code'),
-        status: yup.boolean()
+        accno: yup.string().required('Required field')
     });
+
+    const customersWithAccounts = useSelector((state) => state.userReducer.customersWithAccounts);
 
     //get data from reducers...
     const departmentDesignationToUpdate = useSelector((state) => state.departmentDesignationReducer.departmentDesignationToUpdate);
     const duplicateDepartmentDesignation = useSelector((state) => state.departmentDesignationReducer.duplicateDepartmentDesignation);
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        console.log(customersWithAccounts);
+
+        if (customersWithAccounts) {
+            console.log(customersWithAccounts);
+            setTableData(customersWithAccounts);
+        }
+    }, [customersWithAccounts]);
 
     useEffect(() => {
         if (mode === 'VIEW_UPDATE' || mode === 'VIEW') {
@@ -80,7 +121,14 @@ function BankStatement({ open, handleClose, mode, code, type }) {
 
     return (
         <div>
-            <Dialog fullWidth open={open} keepMounted onClose={handleClose} aria-describedby="alert-dialog-slide-description">
+            <Dialog
+                fullWidth
+                open={open}
+                keepMounted
+                onClose={handleClose}
+                aria-describedby="alert-dialog-slide-description"
+                maxWidth="200px"
+            >
                 <DialogTitle>
                     <Box display="flex" className="dialog-title">
                         <Box flexGrow={1}>
@@ -110,7 +158,7 @@ function BankStatement({ open, handleClose, mode, code, type }) {
                                 return (
                                     <Form>
                                         <Box sx={{ width: '100%' }}>
-                                            <Grid container rowSpacing={2} style={{ marginTop: '2px' }}>
+                                            <Grid container rowSpacing={2} style={{ marginTop: '2px', marginBottom: '20px' }}>
                                                 <Grid item xs={6}>
                                                     <TextField
                                                         sx={{
@@ -120,62 +168,94 @@ function BankStatement({ open, handleClose, mode, code, type }) {
                                                             }
                                                         }}
                                                         disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                        select
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
-                                                        label="type"
-                                                        name="type"
+                                                        label="Account No"
+                                                        name="accountNo"
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
-                                                        value={values.type}
-                                                        error={Boolean(touched.type && errors.type)}
-                                                        helperText={touched.type && errors.type ? errors.type : ''}
-                                                    >
-                                                        <MenuItem dense={true} value={'Department'}>
-                                                            Department
-                                                        </MenuItem>
-                                                        <MenuItem dense={true} value={'Designation'}>
-                                                            Designation
-                                                        </MenuItem>
-                                                    </TextField>
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <TextField
-                                                        sx={{
-                                                            width: { xs: 100, sm: 250 },
-                                                            '& .MuiInputBase-root': {
-                                                                height: 40
-                                                            }
-                                                        }}
-                                                        disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                        InputLabelProps={{
-                                                            shrink: true
-                                                        }}
-                                                        label="Description"
-                                                        name="description"
-                                                        onChange={handleChange}
-                                                        onBlur={handleBlur}
-                                                        value={values.description}
-                                                        error={Boolean(touched.description && errors.description)}
-                                                        helperText={touched.description && errors.description ? errors.description : ''}
+                                                        value={values.accountNo}
+                                                        error={Boolean(touched.accountNo && errors.accountNo)}
+                                                        helperText={touched.accountNo && errors.accountNo ? errors.accountNo : ''}
                                                     ></TextField>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <FormGroup>
-                                                        <FormControlLabel
-                                                            name="status"
-                                                            onChange={handleChange}
-                                                            value={values.status}
-                                                            control={<Switch color="success" />}
-                                                            label="Status"
-                                                            checked={values.status}
-                                                            disabled={mode == 'VIEW'}
-                                                        />
-                                                    </FormGroup>
+
+                                                    <Button
+                                                        className="btnSave"
+                                                        variant="contained"
+                                                        type="submit"
+                                                        style={{ marginLeft: '20px' }}
+                                                    >
+                                                        {mode === 'INSERT' ? 'SAVE' : 'UPDATE'}
+                                                    </Button>
                                                 </Grid>
                                             </Grid>
                                         </Box>
+                                        <MaterialTable
+                                            title={`Last Modified Date : `}
+                                            columns={columns}
+                                            data={tableData}
+                                            actions={[
+                                                {
+                                                    icon: tableIcons.Add,
+                                                    tooltip: 'Add New',
+                                                    isFreeAction: true,
+                                                    onClick: () => handleClickOpen('INSERT', null)
+                                                },
+                                                (rowData) => ({
+                                                    icon: tableIcons.Edit,
+                                                    tooltip: 'Edit',
+                                                    onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
+                                                }),
+                                                (rowData) => ({
+                                                    icon: tableIcons.VisibilityIcon,
+                                                    tooltip: 'View',
+                                                    onClick: () => handleClickOpen('VIEW', rowData)
+                                                })
+                                            ]}
+                                            options={{
+                                                padding: 'dense',
+                                                showTitle: false,
+                                                sorting: true,
+                                                search: true,
+                                                searchFieldAlignment: 'right',
+                                                searchAutoFocus: true,
+                                                searchFieldVariant: 'standard',
+                                                filtering: true,
+                                                paging: true,
+                                                pageSizeOptions: [2, 5, 10, 20, 25, 50, 100],
+                                                pageSize: 10,
+                                                paginationType: 'stepped',
+                                                showFirstLastPageButtons: false,
+                                                exportButton: true,
+                                                exportAllData: true,
+                                                exportFileName: 'TableData',
+                                                actionsColumnIndex: -1,
+                                                columnsButton: true,
+
+                                                headerStyle: {
+                                                    whiteSpace: 'nowrap',
+                                                    height: 30,
+                                                    maxHeight: 30,
+                                                    padding: 2,
+                                                    fontSize: '14px',
+                                                    backgroundColor: '#2196F3',
+                                                    background: '-ms-linear-gradient(top, #0790E8, #3180e6)',
+                                                    background: '-webkit-linear-gradient(top, #0790E8, #3180e6)',
+                                                    textAlign: 'center',
+                                                    color: '#FFF',
+                                                    textAlign: 'center'
+                                                },
+                                                rowStyle: {
+                                                    whiteSpace: 'nowrap',
+                                                    height: 20,
+                                                    align: 'left',
+                                                    // maxHeight: 20,
+                                                    fontSize: '13px',
+                                                    padding: 0
+                                                }
+                                            }}
+                                        />
                                         <Box display="flex" flexDirection="row-reverse" style={{ marginTop: '20px' }}>
                                             {mode != 'VIEW' ? (
                                                 <Button
@@ -195,7 +275,7 @@ function BankStatement({ open, handleClose, mode, code, type }) {
 
                                             {mode != 'VIEW' ? (
                                                 <Button className="btnSave" variant="contained" type="submit">
-                                                    {mode === 'INSERT' ? 'SAVE' : 'UPDATE'}
+                                                    Submit
                                                 </Button>
                                             ) : (
                                                 ''

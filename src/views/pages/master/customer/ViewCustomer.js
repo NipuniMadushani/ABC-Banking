@@ -128,6 +128,7 @@ function ViewCustomer() {
         // Add your button click logic here
         console.log('Button clicked for:', rowData);
         if (type == 'account') {
+            setUserCode(rowData);
             setOpenAccount(true);
         }
     };
@@ -162,7 +163,7 @@ function ViewCustomer() {
     const handleClickOpen = (type, data) => {
         if (type === 'VIEW_UPDATE') {
             setMode(type);
-            setUserCode(data.userId);
+            setUserCode(data);
         } else if (type === 'INSERT') {
             setUserCode('');
             setMode(type);

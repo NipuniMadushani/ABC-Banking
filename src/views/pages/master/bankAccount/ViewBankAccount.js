@@ -130,7 +130,7 @@ function ViewBankAccount() {
     const error = useSelector((state) => state.bankAcccountReducer.errorMsg);
 
     const taxGroupListData = useSelector((state) => state.bankAcccountReducer.taxgroups);
-    const taxGroupData = useSelector((state) => state.bankAcccountReducer.taxgroup);
+    const bankAccount = useSelector((state) => state.bankAcccountReducer.bankAccount);
     console.log(taxGroupListData);
     const lastModifiedDate = useSelector((state) => state.bankAcccountReducer.lastModifiedDateTime);
 
@@ -149,14 +149,14 @@ function ViewBankAccount() {
     }, [error]);
 
     useEffect(() => {
-        console.log(taxGroupData);
-        if (taxGroupData) {
+        console.log(bankAccount);
+        if (bankAccount) {
             console.log('sucessToast');
             setHandleToast(true);
             // dispatch(getAllTaxGroupDetails());
             // dispatch(getLatestModifiedTaxGroupDetails());
         }
-    }, [taxGroupData]);
+    }, [bankAccount]);
 
     useEffect(() => {
         // dispatch(getAllTaxGroupDetails());
@@ -217,12 +217,12 @@ function ViewBankAccount() {
                                     columns={columns}
                                     data={tableData}
                                     actions={[
-                                        // {
-                                        //     icon: tableIcons.Add,
-                                        //     tooltip: 'Add New',
-                                        //     isFreeAction: true,
-                                        //     onClick: () => handleClickOpen('INSERT', null)
-                                        // },
+                                        {
+                                            icon: tableIcons.Add,
+                                            tooltip: 'Add New',
+                                            isFreeAction: true,
+                                            onClick: () => handleClickOpen('INSERT', null)
+                                        },
                                         (rowData) => ({
                                             icon: tableIcons.Edit,
                                             tooltip: 'Edit',
