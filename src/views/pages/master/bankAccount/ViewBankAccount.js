@@ -1,56 +1,63 @@
 import { useEffect, useState } from 'react';
 import MaterialTable from 'material-table';
 import tableIcons from 'utils/MaterialTableIcons';
-import CompanyProfile from './CompanyProfile';
+import BankAccount from './BankAccount';
 import SuccessMsg from '../../../../messages/SuccessMsg';
 import ErrorMsg from '../../../../messages/ErrorMsg';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllTaxData } from '../../../../store/actions/masterActions/TaxAction';
-import { getAllCompanyProfileData, getLatestModifiedDetails } from '../../../../store/actions/masterActions/CompanyProfileAction';
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { FormControlLabel, FormGroup, Switch } from '@mui/material';
 
-function ViewCompanyProfile() {
+function ViewBankAccount() {
     const [open, setOpen] = useState(false);
-    const [code, setCode] = useState('');
+    const [taxGroupCode, setTaxGroupCode] = useState('');
     const [mode, setMode] = useState('INSERT');
     const [openToast, setHandleToast] = useState(false);
     const [openErrorToast, setOpenErrorToast] = useState(false);
     const [tableData, setTableData] = useState([]);
     const [lastModifiedTimeDate, setLastModifiedTimeDate] = useState(null);
+    const [openAccount, setOpenAccount] = useState(false);
 
     const columns = [
         {
-            title: 'Company ID',
-            field: 'companyId',
+            title: 'Customer Name',
+            field: 'bank.bankName',
             filterPlaceholder: 'filter',
             align: 'left'
         },
+
         {
-            title: 'Name',
+            title: 'Bank Branch',
             field: 'companyName',
             filterPlaceholder: 'filter',
             align: 'left'
         },
         {
-            title: 'Email',
-            field: 'email',
+            title: 'Account Number',
+            field: 'accountNumber',
             align: 'left',
             grouping: false,
             filterPlaceholder: 'filter'
         },
         {
-            title: 'Website',
-            field: 'website',
+            title: 'Ifs  Code',
+            field: 'accountDesc',
             align: 'left',
             grouping: false,
             filterPlaceholder: 'filter'
         },
         {
-            title: 'Tax Registration',
-            field: 'taxRegistration',
+            title: 'Account Type',
+            field: 'intermediaryBank',
+            align: 'right',
+            grouping: false,
+            filterPlaceholder: 'filter'
+        },
+        {
+            title: 'Complete Detail',
+            field: 'intermediaryBank',
             align: 'right',
             grouping: false,
             filterPlaceholder: 'filter'
@@ -75,7 +82,7 @@ function ViewCompanyProfile() {
                 >
                     {rowData.status === true ? (
                         <FormGroup>
-                            <FormControlLabel control={<Switch size="small" color="success" />} checked={true} />
+                            <FormControlLabel control={<Switch color="success" size="small" />} checked={true} />
                         </FormGroup>
                     ) : (
                         <FormGroup>
@@ -84,22 +91,54 @@ function ViewCompanyProfile() {
                     )}
                 </div>
             )
+        },
+        {
+            title: 'Statement',
+            field: 'intermediaryBank',
+            align: 'right',
+            grouping: false,
+            filterPlaceholder: 'filter'
+        },
+        {
+            title: 'view acc',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('account', rowData)}>
+                    Account
+                </Button>
+            ),
+            align: 'center'
         }
     ];
 
-    const dispatch = useDispatch();
-    const error = useSelector((state) => state.taxReducer.errorMsg);
+    const handleButtonClick = (type, rowData) => {
+        // Add your button click logic here
+        console.log('Button clicked for:', rowData);
+        if (type == 'account') {
+            setOpenAccount(true);
+        }
+    };
 
-    const companyProfileList = useSelector((state) => state.companyProfileReducer.companyProfileList);
-    const companyProfileData = useSelector((state) => state.companyProfileReducer.companyProfile);
-    const lastModifiedDate = useSelector((state) => state.companyProfileReducer.lastModifiedDateTime);
+    const handleCloseBankAccount = () => {
+        setOpenAccount(false);
+    };
+
+    const handleCloseSubmit = () => {
+        setOpen(false);
+    };
+
+    const dispatch = useDispatch();
+    const error = useSelector((state) => state.bankAcccountReducer.errorMsg);
+
+    const taxGroupListData = useSelector((state) => state.bankAcccountReducer.taxgroups);
+    const bankAccount = useSelector((state) => state.bankAcccountReducer.bankAccount);
+    console.log(taxGroupListData);
+    const lastModifiedDate = useSelector((state) => state.bankAcccountReducer.lastModifiedDateTime);
 
     useEffect(() => {
-        console.log(companyProfileList);
-        if (companyProfileList?.payload?.length > 0) {
-            setTableData(companyProfileList?.payload[0]);
+        if (taxGroupListData?.payload?.length > 0) {
+            setTableData(taxGroupListData?.payload[0]);
         }
-    }, [companyProfileList]);
+    }, [taxGroupListData]);
 
     useEffect(() => {
         console.log(error);
@@ -110,18 +149,19 @@ function ViewCompanyProfile() {
     }, [error]);
 
     useEffect(() => {
-        console.log(companyProfileData);
-        console.log(typeof companyProfileData);
-        if (companyProfileData) {
+        console.log(bankAccount);
+        if (bankAccount) {
+            console.log('sucessToast');
             setHandleToast(true);
-            dispatch(getAllCompanyProfileData());
-            dispatch(getLatestModifiedDetails());
+            // dispatch(getAllTaxGroupDetails());
+            // dispatch(getLatestModifiedTaxGroupDetails());
         }
-    }, [companyProfileData]);
+    }, [bankAccount]);
 
     useEffect(() => {
-        dispatch(getAllCompanyProfileData());
-        dispatch(getLatestModifiedDetails());
+        // dispatch(getAllTaxGroupDetails());
+        // dispatch(getAllTaxData());
+        // dispatch(getLatestModifiedTaxGroupDetails());
     }, []);
 
     useEffect(() => {
@@ -144,13 +184,13 @@ function ViewCompanyProfile() {
         console.log(data);
         if (type === 'VIEW_UPDATE') {
             setMode(type);
-            setCode(data.companyName);
+            setTaxGroupCode(data.taxGroupCode);
         } else if (type === 'INSERT') {
-            setCode('');
+            setTaxGroupCode('');
             setMode(type);
         } else {
             setMode(type);
-            setCode(data.companyName);
+            setTaxGroupCode(data.taxGroupCode);
         }
         setOpen(true);
     };
@@ -167,7 +207,7 @@ function ViewCompanyProfile() {
     };
     return (
         <div>
-            <MainCard title="Company Profile Setup">
+            <MainCard title="Bank Accounts">
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
@@ -196,7 +236,7 @@ function ViewCompanyProfile() {
                                     ]}
                                     options={{
                                         padding: 'dense',
-                                        showTitle: true,
+                                        showTitle: false,
                                         sorting: true,
                                         search: true,
                                         searchFieldAlignment: 'right',
@@ -224,8 +264,7 @@ function ViewCompanyProfile() {
                                             background: '-ms-linear-gradient(top, #0790E8, #3180e6)',
                                             background: '-webkit-linear-gradient(top, #0790E8, #3180e6)',
                                             textAlign: 'center',
-                                            color: '#FFF',
-                                            textAlign: 'center'
+                                            color: '#FFF'
                                         },
                                         rowStyle: {
                                             whiteSpace: 'nowrap',
@@ -238,11 +277,23 @@ function ViewCompanyProfile() {
                                     }}
                                 />
 
-                                {open ? <CompanyProfile open={open} handleClose={handleClose} code={code} mode={mode} /> : ''}
+                                {/* {open ? <TaxGroup open={open} handleClose={handleClose} taxGroupCode={taxGroupCode} mode={mode} /> : ''} */}
                                 {openToast ? <SuccessMsg openToast={openToast} handleToast={handleToast} mode={mode} /> : null}
                                 {openErrorToast ? (
                                     <ErrorMsg openToast={openErrorToast} handleToast={setOpenErrorToast} mode={mode} />
                                 ) : null}
+                                {openAccount ? (
+                                    <BankAccount
+                                        open={openAccount}
+                                        handleClose={handleCloseBankAccount}
+                                        userCode={userCode}
+                                        mode={mode}
+                                        component="user_creation"
+                                        handleCloseSubmit={handleCloseSubmit}
+                                    />
+                                ) : (
+                                    ''
+                                )}
                             </Grid>
                         </Grid>
                         {/* </SubCard> */}
@@ -253,4 +304,4 @@ function ViewCompanyProfile() {
     );
 }
 
-export default ViewCompanyProfile;
+export default ViewBankAccount;

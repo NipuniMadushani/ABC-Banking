@@ -1,18 +1,24 @@
 import { useEffect, useState } from 'react';
 import MaterialTable from 'material-table';
 import tableIcons from 'utils/MaterialTableIcons';
-import CompanyProfile from './CompanyProfile';
+import OnlineBanking from './OnlineBanking';
+import Deposit from './Deposit';
+import Withdrawal from './Withdrawal';
 import SuccessMsg from '../../../../messages/SuccessMsg';
 import ErrorMsg from '../../../../messages/ErrorMsg';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllTaxData } from '../../../../store/actions/masterActions/TaxAction';
-import { getAllCompanyProfileData, getLatestModifiedDetails } from '../../../../store/actions/masterActions/CompanyProfileAction';
+import {
+    getAllDepartmentDesignationData,
+    getLatestModifiedDetails
+} from '../../../../store/actions/masterActions/DepartmentDesignationAction';
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
-import { FormControlLabel, FormGroup, Switch } from '@mui/material';
+import { Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
+import BankStatement from './BankStatement';
+import { customersWithAccountsAction } from 'store/actions/authenticationActions/UserAction';
 
-function ViewCompanyProfile() {
+function ViewOnlinebanking() {
     const [open, setOpen] = useState(false);
     const [code, setCode] = useState('');
     const [mode, setMode] = useState('INSERT');
@@ -20,86 +26,86 @@ function ViewCompanyProfile() {
     const [openErrorToast, setOpenErrorToast] = useState(false);
     const [tableData, setTableData] = useState([]);
     const [lastModifiedTimeDate, setLastModifiedTimeDate] = useState(null);
+    const [type, setType] = useState('');
+    const [openWithdrwal, setOpenWithdrwal] = useState(false);
+    const [openDeposit, setOpenDeposit] = useState(false);
+    const [openStatement, setOpenStatement] = useState(false);
 
     const columns = [
         {
-            title: 'Company ID',
-            field: 'companyId',
+            title: 'First Name',
+            field: 'firstName',
             filterPlaceholder: 'filter',
             align: 'left'
         },
         {
-            title: 'Name',
-            field: 'companyName',
+            title: 'User Name',
+            field: 'userName',
             filterPlaceholder: 'filter',
             align: 'left'
         },
         {
-            title: 'Email',
-            field: 'email',
-            align: 'left',
-            grouping: false,
-            filterPlaceholder: 'filter'
+            title: 'Role',
+            field: 'roles',
+            filterPlaceholder: 'filter',
+            align: 'left'
         },
         {
-            title: 'Website',
-            field: 'website',
-            align: 'left',
-            grouping: false,
-            filterPlaceholder: 'filter'
-        },
-        {
-            title: 'Tax Registration',
-            field: 'taxRegistration',
-            align: 'right',
-            grouping: false,
-            filterPlaceholder: 'filter'
-        },
-        {
-            title: 'Status',
-            field: 'status',
-            align: 'center',
-            lookup: {
-                true: 'Active',
-                false: 'Inactive'
-            },
+            title: 'Withdrwal2',
             render: (rowData) => (
-                <div
-                    style={{
-                        alignItems: 'center',
-                        align: 'center',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}
-                >
-                    {rowData.status === true ? (
-                        <FormGroup>
-                            <FormControlLabel control={<Switch size="small" color="success" />} checked={true} />
-                        </FormGroup>
-                    ) : (
-                        <FormGroup>
-                            <FormControlLabel control={<Switch color="error" size="small" />} checked={false} />
-                        </FormGroup>
-                    )}
-                </div>
-            )
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Withdrawal', rowData)}>
+                    Withdraw
+                </Button>
+            ),
+            align: 'center'
+        },
+
+        {
+            title: 'Withdrwal24',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Deposit', rowData)}>
+                    Deposit
+                </Button>
+            ),
+            align: 'center'
+        },
+        {
+            title: 'Withdrw4al2',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('statement', rowData)}>
+                    Download Statement
+                </Button>
+            ),
+            align: 'center'
         }
     ];
 
-    const dispatch = useDispatch();
-    const error = useSelector((state) => state.taxReducer.errorMsg);
+    const handleButtonClick = (type, rowData) => {
+        // Add your button click logic here
+        console.log('Button clicked for:', rowData);
+        if (type == 'Withdrawal') {
+            setOpenWithdrwal(true);
+        } else if (type == 'Deposit') {
+            setOpenDeposit(true);
+        } else if (type == 'statement') {
+            setOpenStatement(true);
+        }
+    };
 
-    const companyProfileList = useSelector((state) => state.companyProfileReducer.companyProfileList);
-    const companyProfileData = useSelector((state) => state.companyProfileReducer.companyProfile);
-    const lastModifiedDate = useSelector((state) => state.companyProfileReducer.lastModifiedDateTime);
+    const dispatch = useDispatch();
+    const error = useSelector((state) => state.departmentDesignationReducer.errorMsg);
+
+    const customersWithAccounts = useSelector((state) => state.userReducer.customersWithAccounts);
+    const lastModifiedDate = useSelector((state) => state.departmentDesignationReducer.lastModifiedDateTime);
 
     useEffect(() => {
-        console.log(companyProfileList);
-        if (companyProfileList?.payload?.length > 0) {
-            setTableData(companyProfileList?.payload[0]);
+        console.log(customersWithAccounts);
+
+        if (customersWithAccounts) {
+            console.log(customersWithAccounts);
+            setTableData(customersWithAccounts);
         }
-    }, [companyProfileList]);
+    }, [customersWithAccounts]);
 
     useEffect(() => {
         console.log(error);
@@ -109,24 +115,25 @@ function ViewCompanyProfile() {
         }
     }, [error]);
 
-    useEffect(() => {
-        console.log(companyProfileData);
-        console.log(typeof companyProfileData);
-        if (companyProfileData) {
-            setHandleToast(true);
-            dispatch(getAllCompanyProfileData());
-            dispatch(getLatestModifiedDetails());
-        }
-    }, [companyProfileData]);
+    // useEffect(() => {
+    //     console.log(departmentDesignation);
+    //     if (departmentDesignation) {
+    //         console.log('sucessToast');
+    //         setHandleToast(true);
+    //         dispatch(getAllDepartmentDesignationData());
+    //         dispatch(getLatestModifiedDetails());
+    //     }
+    // }, [departmentDesignation]);
 
     useEffect(() => {
-        dispatch(getAllCompanyProfileData());
+        dispatch(customersWithAccountsAction());
         dispatch(getLatestModifiedDetails());
     }, []);
 
     useEffect(() => {
+        console.log(typeof lastModifiedDate);
         setLastModifiedTimeDate(
-            lastModifiedDate === null
+            lastModifiedDate === null || lastModifiedDate === ''
                 ? ''
                 : new Date(lastModifiedDate).toLocaleString('en-GB', {
                       year: 'numeric',
@@ -144,19 +151,33 @@ function ViewCompanyProfile() {
         console.log(data);
         if (type === 'VIEW_UPDATE') {
             setMode(type);
-            setCode(data.companyName);
+            setCode(data.id);
+            if (data.type === 'Department') {
+                setType(data.type);
+            } else if (data.type === 'Designation') {
+                setType(data.type);
+            }
         } else if (type === 'INSERT') {
             setCode('');
             setMode(type);
+            setType('');
         } else {
             setMode(type);
-            setCode(data.companyName);
+            setCode(data.id);
+            if (data.type === 'Department') {
+                setType(data.type);
+            } else if (data.type === 'Designation') {
+                setType(data.type);
+            }
         }
         setOpen(true);
     };
 
     const handleClose = () => {
         setOpen(false);
+        setOpenDeposit(false);
+        setOpenWithdrwal(false);
+        setOpenStatement(false);
     };
 
     const handleToast = () => {
@@ -167,7 +188,7 @@ function ViewCompanyProfile() {
     };
     return (
         <div>
-            <MainCard title="Company Profile Setup">
+            <MainCard title="Online Banking">
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
@@ -238,7 +259,21 @@ function ViewCompanyProfile() {
                                     }}
                                 />
 
-                                {open ? <CompanyProfile open={open} handleClose={handleClose} code={code} mode={mode} /> : ''}
+                                {openWithdrwal ? (
+                                    <Withdrawal open={openWithdrwal} handleClose={handleClose} code={code} mode={mode} type={type} />
+                                ) : (
+                                    ''
+                                )}
+                                {openDeposit ? (
+                                    <Deposit open={openDeposit} handleClose={handleClose} code={code} mode={mode} type={type} />
+                                ) : (
+                                    ''
+                                )}
+                                {openStatement ? (
+                                    <BankStatement open={openStatement} handleClose={handleClose} code={code} mode={mode} type={type} />
+                                ) : (
+                                    ''
+                                )}
                                 {openToast ? <SuccessMsg openToast={openToast} handleToast={handleToast} mode={mode} /> : null}
                                 {openErrorToast ? (
                                     <ErrorMsg openToast={openErrorToast} handleToast={setOpenErrorToast} mode={mode} />
@@ -253,4 +288,4 @@ function ViewCompanyProfile() {
     );
 }
 
-export default ViewCompanyProfile;
+export default ViewOnlinebanking;

@@ -1,39 +1,21 @@
 import { takeLatest } from 'redux-saga/effects';
 
 import {
-    saveTaxSaga,
-    getTaxByIdSaga,
-    getAllTaxSaga,
-    updateTaxSaga,
+    saveBankAccountSaga,
+    getvByIdSaga,
+    getAllBankAccountSaga,
+    updateBankAccountSaga,
     checkDupicateTaxCodeSaga,
-    saveTaxGroupSaga,
-    getAllTaxGroupSaga,
-    getTaxGroupByIdSaga,
-    updateTaxGroupSaga,
-    checkDupicateTaxGroupCodeSaga,
-    checkLatestTaxModifiedDateSaga,
-    checkLatestTaxGrupModifiedDateSaga,
-    getTaxByUniqueIdSaga,
-    getAllActiveTaxGroups,
-    getAllActiveTaxGroupsandTaxes
-} from './mastersaga/TaxSaga';
+    checkLatestTaxModifiedDateSaga
+} from './mastersaga/BankAccountSaga';
 import {
-    SAVE_TAX_DATA,
-    GET_TAX_DATA_BY_ID,
-    GET_ALL_TAX_DATA,
-    UPDATE_TAX_DATA,
-    CHECK_TAX_DUPLICATE,
-    SAVE_TAX_GROUP_DATA,
-    GET_ALL_TAX_GROUP_DATA,
-    GET_TAX_GROUP_DATA_BY_ID,
-    UPDATE_TAX_GROUP_DATA,
-    CHECK_TAX_GROUP_DUPLICATE,
-    GET_LAST_MODIFIED_DATE_TIME_TAX,
-    GET_LAST_MODIFIED_DATE_TIME_TAX_GROUP,
-    GET_TAX_DATA_BY_UNIQUE_ID,
-    GET_ACTIVE_TAX_GROUP_LIST,
-    GET_TAX_GROUP_AND_TAX_LIST
-} from 'store/constant/master/TaxMasterConstant';
+    SAVE_BANK_ACCOUNT_DATA,
+    GET_BANK_ACCOUNT_DATA_BY_ID,
+    GET_ALL_BANK_ACCOUNT_DATA,
+    UPDATE_BANK_ACCOUNT_DATA,
+    CHECK_BANK_ACCOUNT_DUPLICATE,
+    GET_LAST_MODIFIED_DATE_TIME_BANK_ACCOUNT
+} from 'store/constant/master/BankAccountConstant';
 
 import {
     saveTourCategoryHandler,
@@ -436,7 +418,8 @@ import {
     RESET_PASSWORD_CREDENTIALS,
     GET_PROFILE_DATA_BY_ID,
     UPDATE_MY_PROFILE,
-    CLEAR_USER
+    CLEAR_USER,
+    USER_LIST_WITH_ACCOUNTS
 } from 'store/constant/authentication/UserConstant';
 import {
     checkDupicateUserSaga,
@@ -452,7 +435,8 @@ import {
     resetPasswordSaga,
     getProfileDataByIdSaga,
     updateMyProfileData,
-    clearUserDataSaga
+    clearUserDataSaga,
+    getUsersWithAccounts
 } from './authenticationSaga/UserSaga';
 
 import {
@@ -737,25 +721,22 @@ import {
     updateDistanceSaga,
     getDistanceAndDurationSaga
 } from './mastersaga/transportSaga/DistanceSaga';
-export function* wacherSaga() {
-    // tax setup
-    yield takeLatest(SAVE_TAX_DATA, saveTaxSaga);
-    yield takeLatest(GET_TAX_DATA_BY_ID, getTaxByIdSaga);
-    yield takeLatest(GET_ALL_TAX_DATA, getAllTaxSaga);
-    yield takeLatest(UPDATE_TAX_DATA, updateTaxSaga);
-    yield takeLatest(CHECK_TAX_DUPLICATE, checkDupicateTaxCodeSaga);
-    yield takeLatest(GET_LAST_MODIFIED_DATE_TIME_TAX, checkLatestTaxModifiedDateSaga);
-    yield takeLatest(GET_TAX_DATA_BY_UNIQUE_ID, getTaxByUniqueIdSaga);
+import { getBANK_ACCOUNTDataById } from 'store/actions/masterActions/TaxAction';
 
-    //tax group setup
-    yield takeLatest(SAVE_TAX_GROUP_DATA, saveTaxGroupSaga);
-    yield takeLatest(GET_ALL_TAX_GROUP_DATA, getAllTaxGroupSaga);
-    yield takeLatest(GET_TAX_GROUP_DATA_BY_ID, getTaxGroupByIdSaga);
-    yield takeLatest(UPDATE_TAX_GROUP_DATA, updateTaxGroupSaga);
-    yield takeLatest(CHECK_TAX_GROUP_DUPLICATE, checkDupicateTaxGroupCodeSaga);
-    yield takeLatest(GET_LAST_MODIFIED_DATE_TIME_TAX_GROUP, checkLatestTaxGrupModifiedDateSaga);
-    yield takeLatest(GET_ACTIVE_TAX_GROUP_LIST, getAllActiveTaxGroups);
-    yield takeLatest(GET_TAX_GROUP_AND_TAX_LIST, getAllActiveTaxGroupsandTaxes);
+import { DEPOSIT_AMOUNT, WITHDRAW_AMOUNT, BANK_STATEMENT } from 'store/constant/master/TransactionConstant';
+
+import { depositSaga, withdrawSaga, bankStatementSaga } from 'store/saga/mastersaga/TransactionSaga';
+export function* wacherSaga() {
+    // bank account setup
+    yield takeLatest(SAVE_BANK_ACCOUNT_DATA, saveBankAccountSaga);
+    yield takeLatest(GET_BANK_ACCOUNT_DATA_BY_ID, getBANK_ACCOUNTDataById);
+    yield takeLatest(GET_ALL_BANK_ACCOUNT_DATA, getAllBankAccountSaga);
+    yield takeLatest(UPDATE_BANK_ACCOUNT_DATA, updateBankAccountSaga);
+
+    // transaction setup
+    yield takeLatest(DEPOSIT_AMOUNT, depositSaga);
+    yield takeLatest(WITHDRAW_AMOUNT, withdrawSaga);
+    yield takeLatest(BANK_STATEMENT, bankStatementSaga);
 
     // //tour category setup
     yield takeLatest(SAVE_TOUR_CATEGORY_DATA, saveTourCategoryHandler);
@@ -975,6 +956,7 @@ export function* wacherSaga() {
     yield takeLatest(GET_ALL_USER_ROLES, getAllRolesSaga);
     yield takeLatest(GET_PROFILE_DATA_BY_ID, getProfileDataByIdSaga);
     yield takeLatest(CLEAR_USER, clearUserDataSaga);
+    yield takeLatest(USER_LIST_WITH_ACCOUNTS, getUsersWithAccounts);
 
     //company profile
     yield takeLatest(SAVE_COMPANY_PROFILE, saveCompanyProfileSaga);

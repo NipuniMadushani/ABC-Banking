@@ -2,9 +2,8 @@ import { combineReducers } from 'redux';
 
 // reducer import
 import customizationReducer from './customizationReducer';
-import { taxReducer } from './reducers/masterReducer/TaxReducer';
-import { taxGroupReducer } from './reducers/masterReducer/TaxGroupReducer';
 import { tourCategoryReducer } from './reducers/masterReducer/TourCategoryReducer';
+import { bankAcccountReducer } from './reducers/masterReducer/BankAcccountReducer';
 import { exchangeRateTypesReducer } from './reducers/masterReducer/ExchangeRateTypeReducer';
 import { productDataReducer } from './reducers/masterReducer/ProductDataReducer';
 import { codeAndNameReducer } from './reducers/masterReducer/CodeAndNameReducer';
@@ -41,12 +40,13 @@ import { roomBuyingRateReducer } from './reducers/masterReducer/RoomBuyingRateRe
 import { paxVehicleRateReducer } from './reducers/masterReducer/transportReducer/PaxVehicleRateReducer';
 import { distanceReducer } from './reducers/masterReducer/transportReducer/DistanceReducer';
 import { bagggeTransportRateReducer } from './reducers/masterReducer/transportReducer/BaggageTransportRateReducer';
+import { transactionReducer } from './reducers/masterReducer/TransactionReducer';
+
 // ==============================|| COMBINE REDUCER ||============================== //
 
 const reducer = combineReducers({
     customization: customizationReducer,
-    taxReducer,
-    taxGroupReducer,
+    bankAcccountReducer,
     tourCategoryReducer,
     // apiServiceReducer,
     exchangeRateTypesReducer,
@@ -86,7 +86,8 @@ const reducer = combineReducers({
     roomBuyingRateReducer,
     paxVehicleRateReducer,
     distanceReducer,
-    bagggeTransportRateReducer
+    bagggeTransportRateReducer,
+    transactionReducer
 });
 
 export default reducer;

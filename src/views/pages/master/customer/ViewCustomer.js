@@ -1,60 +1,81 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, forwardRef } from 'react';
 import MaterialTable from 'material-table';
+
+import SuccessMsg from 'messages/SuccessMsg';
+import ErrorMsg from 'messages/ErrorMsg';
 import tableIcons from 'utils/MaterialTableIcons';
-import CompanyProfile from './CompanyProfile';
-import SuccessMsg from '../../../../messages/SuccessMsg';
-import ErrorMsg from '../../../../messages/ErrorMsg';
+import { gridSpacing } from 'store/constant';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllTaxData } from '../../../../store/actions/masterActions/TaxAction';
-import { getAllCompanyProfileData, getLatestModifiedDetails } from '../../../../store/actions/masterActions/CompanyProfileAction';
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
-import { gridSpacing } from 'store/constant';
-import { FormControlLabel, FormGroup, Switch } from '@mui/material';
+import { getAllUserDetails, getLatestModifiedUserDetails } from 'store/actions/authenticationActions/UserAction';
+import User from './Customer';
+import { FormControlLabel, FormGroup, Switch, Button } from '@mui/material';
+import AlertModelClose from 'messages/AlertModelClose';
+import BankAccount from '../bankAccount/BankAccount';
 
-function ViewCompanyProfile() {
+function ViewCustomer() {
     const [open, setOpen] = useState(false);
-    const [code, setCode] = useState('');
+    const [openAccount, setOpenAccount] = useState(false);
+    const [roleMode, setRoleMode] = useState(false);
+    const [userCode, setUserCode] = useState('');
     const [mode, setMode] = useState('INSERT');
     const [openToast, setHandleToast] = useState(false);
     const [openErrorToast, setOpenErrorToast] = useState(false);
     const [tableData, setTableData] = useState([]);
     const [lastModifiedTimeDate, setLastModifiedTimeDate] = useState(null);
+    const [openConfirmationModel, setOpenConfirmationModel] = useState(false);
+    const [createCustomer, setcreateCustomer] = useState(false);
+    let data = null;
+    data = localStorage.getItem('userData');
+    let logUserData = JSON.parse(data);
 
+    useEffect(() => {
+        console.log(logUserData);
+        if (logUserData) {
+            if (logUserData.roles == 'ADMIN') {
+                setRoleMode('View');
+            } else if (logUserData.roles == 'MANAGER') {
+                setRoleMode('create');
+                setcreateCustomer(true);
+            }
+        }
+    }, [logUserData]);
     const columns = [
         {
-            title: 'Company ID',
-            field: 'companyId',
-            filterPlaceholder: 'filter',
+            title: 'User Name',
+            field: 'userName',
+            filterPlaceholder: 'User Name',
             align: 'left'
         },
         {
-            title: 'Name',
-            field: 'companyName',
-            filterPlaceholder: 'filter',
+            title: 'First Name',
+            field: 'firstName',
+            filterPlaceholder: 'First Name',
             align: 'left'
+        },
+        {
+            title: 'Last Name',
+            field: 'lastName',
+            align: 'left',
+            grouping: false,
+            filterPlaceholder: 'Last Name'
+        },
+        {
+            title: 'NIC',
+            field: 'nic',
+            align: 'left',
+            grouping: false,
+            filterPlaceholder: 'NIC'
         },
         {
             title: 'Email',
             field: 'email',
             align: 'left',
             grouping: false,
-            filterPlaceholder: 'filter'
+            filterPlaceholder: 'Email'
         },
-        {
-            title: 'Website',
-            field: 'website',
-            align: 'left',
-            grouping: false,
-            filterPlaceholder: 'filter'
-        },
-        {
-            title: 'Tax Registration',
-            field: 'taxRegistration',
-            align: 'right',
-            grouping: false,
-            filterPlaceholder: 'filter'
-        },
+
         {
             title: 'Status',
             field: 'status',
@@ -84,79 +105,80 @@ function ViewCompanyProfile() {
                     )}
                 </div>
             )
+        },
+        {
+            title: 'Account',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('account', rowData)}>
+                    {roleMode} Account
+                </Button>
+            ),
+            align: 'center'
         }
     ];
 
     const dispatch = useDispatch();
-    const error = useSelector((state) => state.taxReducer.errorMsg);
+    const error = useSelector((state) => state.userReducer.errorMsg);
+    const users = useSelector((state) => state.userReducer.users);
+    const user = useSelector((state) => state.userReducer.user);
+    const lastModifiedDate = useSelector((state) => state.userReducer.lastModifiedDateTime);
+    const myProfileUpdate = useSelector((state) => state.userReducer.myProfileUpdate);
 
-    const companyProfileList = useSelector((state) => state.companyProfileReducer.companyProfileList);
-    const companyProfileData = useSelector((state) => state.companyProfileReducer.companyProfile);
-    const lastModifiedDate = useSelector((state) => state.companyProfileReducer.lastModifiedDateTime);
-
-    useEffect(() => {
-        console.log(companyProfileList);
-        if (companyProfileList?.payload?.length > 0) {
-            setTableData(companyProfileList?.payload[0]);
+    const handleButtonClick = (type, rowData) => {
+        // Add your button click logic here
+        console.log('Button clicked for:', rowData);
+        if (type == 'account') {
+            setUserCode(rowData);
+            setOpenAccount(true);
         }
-    }, [companyProfileList]);
+    };
 
     useEffect(() => {
-        console.log(error);
+        setLastModifiedTimeDate(lastModifiedDate);
+    }, [lastModifiedDate]);
+
+    useEffect(() => {
+        if (users?.length > 0) {
+            setTableData(users);
+        }
+    }, [users]);
+
+    useEffect(() => {
         if (error != null) {
-            console.log('failed Toast');
             setOpenErrorToast(true);
         }
     }, [error]);
 
     useEffect(() => {
-        console.log(companyProfileData);
-        console.log(typeof companyProfileData);
-        if (companyProfileData) {
+        if (user) {
             setHandleToast(true);
-            dispatch(getAllCompanyProfileData());
-            dispatch(getLatestModifiedDetails());
+            dispatch(getAllUserDetails('CUSTOMER'));
         }
-    }, [companyProfileData]);
+    }, [user]);
 
     useEffect(() => {
-        dispatch(getAllCompanyProfileData());
-        dispatch(getLatestModifiedDetails());
+        dispatch(getAllUserDetails('CUSTOMER'));
     }, []);
 
-    useEffect(() => {
-        setLastModifiedTimeDate(
-            lastModifiedDate === null
-                ? ''
-                : new Date(lastModifiedDate).toLocaleString('en-GB', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: '2-digit',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                      hour12: true
-                  })
-        );
-    }, [lastModifiedDate]);
-
     const handleClickOpen = (type, data) => {
-        console.log(type);
-        console.log(data);
         if (type === 'VIEW_UPDATE') {
             setMode(type);
-            setCode(data.companyName);
+            setUserCode(data);
         } else if (type === 'INSERT') {
-            setCode('');
+            setUserCode('');
             setMode(type);
         } else {
             setMode(type);
-            setCode(data.companyName);
+            setUserCode(data.userId);
         }
         setOpen(true);
     };
 
     const handleClose = () => {
-        setOpen(false);
+        mode === 'VIEW' ? setOpen(false) : setOpenConfirmationModel(true);
+    };
+    const handleCloseBankAccount = () => {
+        setOpenAccount(false);
     };
 
     const handleToast = () => {
@@ -165,19 +187,32 @@ function ViewCompanyProfile() {
     const handleErrorToast = () => {
         setOpenErrorToast(false);
     };
+    const handleCloseModel = (status) => {
+        if (status == true) {
+            setOpen(false);
+            setOpenConfirmationModel(false);
+        } else {
+            setOpenConfirmationModel(false);
+        }
+    };
+
+    const handleCloseSubmit = () => {
+        setOpen(false);
+    };
+
     return (
         <div>
-            <MainCard title="Company Profile Setup">
+            <MainCard title={<div className="title">Customer</div>}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12}>
                                 <MaterialTable
-                                    title={`Last Modified Date : ${lastModifiedTimeDate}`}
+                                    // title={`Last Modified Date : ${lastModifiedTimeDate}`}
                                     columns={columns}
                                     data={tableData}
                                     actions={[
-                                        {
+                                        createCustomer && {
                                             icon: tableIcons.Add,
                                             tooltip: 'Add New',
                                             isFreeAction: true,
@@ -196,7 +231,7 @@ function ViewCompanyProfile() {
                                     ]}
                                     options={{
                                         padding: 'dense',
-                                        showTitle: true,
+                                        showTitle: false,
                                         sorting: true,
                                         search: true,
                                         searchFieldAlignment: 'right',
@@ -213,36 +248,61 @@ function ViewCompanyProfile() {
                                         exportFileName: 'TableData',
                                         actionsColumnIndex: -1,
                                         columnsButton: true,
-
                                         headerStyle: {
                                             whiteSpace: 'nowrap',
-                                            height: 30,
-                                            maxHeight: 30,
+                                            height: 20,
+                                            maxHeight: 20,
                                             padding: 2,
                                             fontSize: '14px',
-                                            backgroundColor: '#2196F3',
+                                            background: '-moz-linear-gradient(top, #0790E8, #3180e6)',
                                             background: '-ms-linear-gradient(top, #0790E8, #3180e6)',
                                             background: '-webkit-linear-gradient(top, #0790E8, #3180e6)',
-                                            textAlign: 'center',
+                                            // textAlign: 'center',
                                             color: '#FFF',
                                             textAlign: 'center'
                                         },
                                         rowStyle: {
                                             whiteSpace: 'nowrap',
                                             height: 20,
-                                            align: 'left',
-                                            // maxHeight: 20,
                                             fontSize: '13px',
                                             padding: 0
                                         }
                                     }}
                                 />
 
-                                {open ? <CompanyProfile open={open} handleClose={handleClose} code={code} mode={mode} /> : ''}
+                                {open ? (
+                                    <User
+                                        open={open}
+                                        handleClose={handleClose}
+                                        userCode={userCode}
+                                        mode={mode}
+                                        component="user_creation"
+                                        handleCloseSubmit={handleCloseSubmit}
+                                    />
+                                ) : (
+                                    ''
+                                )}
                                 {openToast ? <SuccessMsg openToast={openToast} handleToast={handleToast} mode={mode} /> : null}
                                 {openErrorToast ? (
                                     <ErrorMsg openToast={openErrorToast} handleToast={setOpenErrorToast} mode={mode} />
                                 ) : null}
+                                {openConfirmationModel ? (
+                                    <AlertModelClose title="dev" open={openConfirmationModel} handleCloseModel={handleCloseModel} />
+                                ) : (
+                                    ''
+                                )}
+                                {openAccount ? (
+                                    <BankAccount
+                                        open={openAccount}
+                                        handleClose={handleCloseBankAccount}
+                                        userCode={userCode}
+                                        mode={mode}
+                                        component="user_creation"
+                                        handleCloseSubmit={handleCloseSubmit}
+                                    />
+                                ) : (
+                                    ''
+                                )}
                             </Grid>
                         </Grid>
                         {/* </SubCard> */}
@@ -253,4 +313,4 @@ function ViewCompanyProfile() {
     );
 }
 
-export default ViewCompanyProfile;
+export default ViewCustomer;
