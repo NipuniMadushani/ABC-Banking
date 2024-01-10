@@ -1,12 +1,4 @@
-import {
-    SAVE_BANK_ACCOUNT_DATA,
-    GET_BANK_ACCOUNT_DATA_BY_ID,
-    GET_ALL_BANK_ACCOUNT_DATA,
-    GET_ALL_BANK_DATA,
-    GET_ALL_BRANCH_DATA,
-    GET_ALL_BANK_DETAILS_DATA,
-    UPDATE_BANK_ACCOUNT_DATA
-} from '../../constant/master/BankAccountConstant';
+import { SAVE_BANK_ACCOUNT_DATA, GET_ALL_BANK_ACCOUNT_DATA } from '../../constant/master/BankAccountConstant';
 // BANK_ACCOUNT set up
 
 export const saveBankAccountData = (data) => {
@@ -16,11 +8,11 @@ export const saveBankAccountData = (data) => {
     };
 };
 
-// export const getAllActiveBrnachManagers = () => {
-//     return {
-//         type: GET_ALL_BANK_DATA
-//     };
-// };
+export const getAllBankAccounts = () => {
+    return {
+        type: GET_ALL_BANK_ACCOUNT_DATA
+    };
+};
 
 // export const getLatestModifiedBankDetails = () => {
 //     return {

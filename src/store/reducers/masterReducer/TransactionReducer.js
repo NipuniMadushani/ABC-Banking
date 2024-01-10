@@ -46,13 +46,9 @@ export const transactionReducer = (state = initialState, action) => {
             };
 
         case SUCCESS_BANK_STATEMENT:
-            console.warn('SUCCESS_GET_BANK_ACCOUNT_DATA_BY_ID', action.payload);
-            console.log(data.payload[0]);
             return { ...state, bankStatemetList: data.payload[0] };
 
         case FAILED_BANK_STATEMENT:
-            console.warn('FAILED_GET_BANK_ACCOUNT_DATA_BY_UNIQUE_ID', action);
-            console.log(data);
             return {
                 ...state,
                 bankStatemetList: null,

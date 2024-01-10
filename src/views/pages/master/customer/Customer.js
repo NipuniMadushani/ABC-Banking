@@ -79,7 +79,7 @@ function Customer({ open, handleClose, mode, userCode, component, handleCloseSub
         // department: yup.object().typeError('Required field'),
         // cluster: yup.object().typeError('Required field'),
         userName: yup.string().required('Requied field'),
-        password: yup.string().max(8).required('Required field')
+        password: yup.string().max(18).required('Required field')
         // roles: yup
         //     .array()
         //     // .of(yup.object().shape({ roleName: yup.string().required('Required field') }))

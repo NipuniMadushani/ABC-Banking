@@ -12,7 +12,7 @@ import {
 //Transaction saga
 
 export function* depositSaga(action) {
-    action.data.path = `${process.env.REACT_APP_ABC_TRANSACTION_BANKING_MANAGEMENT_URL}/account`;
+    action.data.path = `${process.env.REACT_APP_ABC_TRANSACTION_BANKING_MANAGEMENT_URL}/transaction`;
     let responseData = [];
     try {
         responseData = yield call(create, action.data);
@@ -25,7 +25,7 @@ export function* depositSaga(action) {
 }
 
 export function* withdrawSaga(action) {
-    action.data.path = `${process.env.REACT_APP_ABC_TRANSACTION_BANKING_MANAGEMENT_URL}/account`;
+    action.data.path = `${process.env.REACT_APP_ABC_TRANSACTION_BANKING_MANAGEMENT_URL}/transaction`;
     let responseData = [];
     try {
         responseData = yield call(create, action.data);
@@ -38,10 +38,12 @@ export function* withdrawSaga(action) {
 }
 
 export function* bankStatementSaga(action) {
-    action.data.path = `${process.env.REACT_APP_ABC_TRANSACTION_BANKING_MANAGEMENT_URL}/account`;
     let responseData = [];
     try {
-        responseData = yield call(getById, action.data);
+        responseData = yield call(
+            getById,
+            `${process.env.REACT_APP_ABC_TRANSACTION_BANKING_MANAGEMENT_URL}/allTransactionByAccount/${action.data}`
+        );
         console.log(responseData.data.payload);
 
         yield put({ type: SUCCESS_BANK_STATEMENT, data: responseData.data });
@@ -49,4 +51,3 @@ export function* bankStatementSaga(action) {
         yield put({ type: FAILED_BANK_STATEMENT, data: responseData.data });
     }
 }
-

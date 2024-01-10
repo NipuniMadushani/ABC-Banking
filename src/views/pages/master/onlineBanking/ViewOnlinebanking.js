@@ -30,7 +30,8 @@ function ViewOnlinebanking() {
     const [openWithdrwal, setOpenWithdrwal] = useState(false);
     const [openDeposit, setOpenDeposit] = useState(false);
     const [openStatement, setOpenStatement] = useState(false);
-
+    const [storeData, setStoreData] = useState(null);
+    const [roleMode, setRoleMode] = useState(false);
     const columns = [
         {
             title: 'First Name',
@@ -45,13 +46,13 @@ function ViewOnlinebanking() {
             align: 'left'
         },
         {
-            title: 'Role',
-            field: 'roles',
+            title: 'Email',
+            field: 'email',
             filterPlaceholder: 'filter',
             align: 'left'
         },
         {
-            title: 'Withdrwal2',
+            title: 'Withdrwal',
             render: (rowData) => (
                 <Button variant="outlined" type="button" onClick={() => handleButtonClick('Withdrawal', rowData)}>
                     Withdraw
@@ -61,7 +62,7 @@ function ViewOnlinebanking() {
         },
 
         {
-            title: 'Withdrwal24',
+            title: 'Deposit',
             render: (rowData) => (
                 <Button variant="outlined" type="button" onClick={() => handleButtonClick('Deposit', rowData)}>
                     Deposit
@@ -70,7 +71,7 @@ function ViewOnlinebanking() {
             align: 'center'
         },
         {
-            title: 'Withdrw4al2',
+            title: 'Download Statement',
             render: (rowData) => (
                 <Button variant="outlined" type="button" onClick={() => handleButtonClick('statement', rowData)}>
                     Download Statement
@@ -84,10 +85,13 @@ function ViewOnlinebanking() {
         // Add your button click logic here
         console.log('Button clicked for:', rowData);
         if (type == 'Withdrawal') {
+            setStoreData(rowData);
             setOpenWithdrwal(true);
         } else if (type == 'Deposit') {
+            setStoreData(rowData);
             setOpenDeposit(true);
         } else if (type == 'statement') {
+            setStoreData(rowData);
             setOpenStatement(true);
         }
     };
@@ -97,13 +101,42 @@ function ViewOnlinebanking() {
 
     const customersWithAccounts = useSelector((state) => state.userReducer.customersWithAccounts);
     const lastModifiedDate = useSelector((state) => state.departmentDesignationReducer.lastModifiedDateTime);
-
+    const withdrawAmount = useSelector((state) => state.transactionReducer.lastModifiedDateTime);
+    const depositAmount = useSelector((state) => state.transactionReducer.lastModifiedDateTime);
     useEffect(() => {
         console.log(customersWithAccounts);
 
         if (customersWithAccounts) {
             console.log(customersWithAccounts);
             setTableData(customersWithAccounts);
+        }
+    }, [customersWithAccounts]);
+
+    let data = null;
+    data = localStorage.getItem('userData');
+    let logUserData = JSON.parse(data);
+    useEffect(() => {
+        console.log(logUserData);
+        if (logUserData) {
+            if (logUserData.roles == 'ADMIN' || logUserData.roles == 'MANAGER') {
+                setRoleMode(true);
+            } else if (logUserData.roles == 'CUSTOMER') {
+                setRoleMode(false);
+            }
+        }
+    }, [logUserData]);
+
+    useEffect(() => {
+        if (customersWithAccounts) {
+            if (logUserData.roles == 'ADMIN' || logUserData.roles == 'MANAGER') {
+                setTableData(customersWithAccounts);
+            } else if (logUserData.roles == 'CUSTOMER') {
+                console.warn(logUserData.userName);
+                console.warn(customersWithAccounts);
+                let account = customersWithAccounts.filter((data) => logUserData.userName == data.userName);
+                console.warn(account);
+                setTableData(account);
+            }
         }
     }, [customersWithAccounts]);
 
@@ -115,20 +148,12 @@ function ViewOnlinebanking() {
         }
     }, [error]);
 
-    // useEffect(() => {
-    //     console.log(departmentDesignation);
-    //     if (departmentDesignation) {
-    //         console.log('sucessToast');
-    //         setHandleToast(true);
-    //         dispatch(getAllDepartmentDesignationData());
-    //         dispatch(getLatestModifiedDetails());
-    //     }
-    // }, [departmentDesignation]);
-
     useEffect(() => {
-        dispatch(customersWithAccountsAction());
-        dispatch(getLatestModifiedDetails());
-    }, []);
+        if (withdrawAmount || depositAmount) {
+            console.log('sucessToast');
+            setHandleToast(true);
+        }
+    }, [withdrawAmount, depositAmount]);
 
     useEffect(() => {
         console.log(typeof lastModifiedDate);
@@ -186,9 +211,16 @@ function ViewOnlinebanking() {
     const handleErrorToast = () => {
         setOpenErrorToast(false);
     };
+
+    useEffect(() => {
+        setHandleToast(false);
+        dispatch(customersWithAccountsAction());
+        // dispatch(getLatestModifiedDetails());
+    }, []);
+
     return (
         <div>
-            <MainCard title="Online Banking">
+            <MainCard title={<div className="title">Transaction</div>}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
@@ -197,27 +229,29 @@ function ViewOnlinebanking() {
                                     title={`Last Modified Date : ${lastModifiedTimeDate}`}
                                     columns={columns}
                                     data={tableData}
-                                    actions={[
-                                        {
-                                            icon: tableIcons.Add,
-                                            tooltip: 'Add New',
-                                            isFreeAction: true,
-                                            onClick: () => handleClickOpen('INSERT', null)
-                                        },
-                                        (rowData) => ({
-                                            icon: tableIcons.Edit,
-                                            tooltip: 'Edit',
-                                            onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
-                                        }),
-                                        (rowData) => ({
-                                            icon: tableIcons.VisibilityIcon,
-                                            tooltip: 'View',
-                                            onClick: () => handleClickOpen('VIEW', rowData)
-                                        })
-                                    ]}
+                                    actions={
+                                        [
+                                            // {
+                                            //     icon: tableIcons.Add,
+                                            //     tooltip: 'Add New',
+                                            //     isFreeAction: true,
+                                            //     onClick: () => handleClickOpen('INSERT', null)
+                                            // },
+                                            // (rowData) => ({
+                                            //     icon: tableIcons.Edit,
+                                            //     tooltip: 'Edit',
+                                            //     onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
+                                            // }),
+                                            // (rowData) => ({
+                                            //     icon: tableIcons.VisibilityIcon,
+                                            //     tooltip: 'View',
+                                            //     onClick: () => handleClickOpen('VIEW', rowData)
+                                            // })
+                                        ]
+                                    }
                                     options={{
                                         padding: 'dense',
-                                        showTitle: true,
+                                        showTitle: false,
                                         sorting: true,
                                         search: true,
                                         searchFieldAlignment: 'right',
@@ -229,7 +263,7 @@ function ViewOnlinebanking() {
                                         pageSize: 10,
                                         paginationType: 'stepped',
                                         showFirstLastPageButtons: false,
-                                        exportButton: true,
+                                        exportButton: false,
                                         exportAllData: true,
                                         exportFileName: 'TableData',
                                         actionsColumnIndex: -1,
@@ -260,12 +294,26 @@ function ViewOnlinebanking() {
                                 />
 
                                 {openWithdrwal ? (
-                                    <Withdrawal open={openWithdrwal} handleClose={handleClose} code={code} mode={mode} type={type} />
+                                    <Withdrawal
+                                        open={openWithdrwal}
+                                        handleClose={handleClose}
+                                        code={code}
+                                        mode={mode}
+                                        type={type}
+                                        storeData={storeData}
+                                    />
                                 ) : (
                                     ''
                                 )}
                                 {openDeposit ? (
-                                    <Deposit open={openDeposit} handleClose={handleClose} code={code} mode={mode} type={type} />
+                                    <Deposit
+                                        open={openDeposit}
+                                        handleClose={handleClose}
+                                        code={code}
+                                        mode={mode}
+                                        type={type}
+                                        storeData={storeData}
+                                    />
                                 ) : (
                                     ''
                                 )}

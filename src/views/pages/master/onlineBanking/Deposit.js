@@ -16,13 +16,14 @@ import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
 import CreatedUpdatedUserDetailsWithTableFormat from '../userTimeDetails/CreatedUpdatedUserDetailsWithTableFormat';
 
-function Deposit({ open, handleClose, mode, code, type }) {
+import { depositAmount, withdrawAmount, getBankStatement } from '../../../../store/actions/masterActions/TransactionAction';
+function Deposit({ open, handleClose, mode, code, type, storeData }) {
     const initialValues = {
         transactionAmount: '',
         transactionId: '',
-        type: '',
+        type: 'cr',
         currentAmount: '',
-        account: '',
+        accountNo: '',
         modifiedBy: '',
         date: new Date()
     };
@@ -35,15 +36,25 @@ function Deposit({ open, handleClose, mode, code, type }) {
 
     //get data from reducers...
     const departmentDesignationToUpdate = useSelector((state) => state.departmentDesignationReducer.departmentDesignationToUpdate);
-    const duplicateDepartmentDesignation = useSelector((state) => state.departmentDesignationReducer.duplicateDepartmentDesignation);
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if (mode === 'VIEW_UPDATE' || mode === 'VIEW') {
-            dispatch(getDepartmentDesignationDataById(code, type));
+        if (storeData) {
+            console.log(storeData);
+            let initialValues = {
+                transactionAmount: '',
+                transactionId: null,
+                type: 'cr',
+                currentAmount: storeData.currentBalance,
+                accountNo: storeData.accountNo,
+                modifiedBy: '',
+                date: new Date()
+            };
+
+            setLoadValues(initialValues);
         }
-    }, [mode]);
+    }, [storeData]);
 
     useEffect(() => {
         if (
@@ -55,10 +66,10 @@ function Deposit({ open, handleClose, mode, code, type }) {
     }, [departmentDesignationToUpdate]);
 
     const handleSubmitForm = (data) => {
+        console.log(data);
         if (mode === 'INSERT') {
-            dispatch(saveDepartmentDesignationData(data));
+            dispatch(depositAmount(data));
         } else if (mode === 'VIEW_UPDATE') {
-            dispatch(updateDepartmentDesignationData(data));
         }
         handleClose();
     };

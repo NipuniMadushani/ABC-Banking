@@ -109,7 +109,12 @@ function ViewCustomer() {
         {
             title: 'Account',
             render: (rowData) => (
-                <Button variant="outlined" type="button" onClick={() => handleButtonClick('account', rowData)}>
+                <Button
+                    variant="outlined"
+                    type="button"
+                    onClick={() => handleButtonClick('account', rowData)}
+                    disabled={(roleMode == 'View' && !rowData.account) || (roleMode == 'create' && rowData.account)}
+                >
                     {roleMode} Account
                 </Button>
             ),
@@ -123,6 +128,7 @@ function ViewCustomer() {
     const user = useSelector((state) => state.userReducer.user);
     const lastModifiedDate = useSelector((state) => state.userReducer.lastModifiedDateTime);
     const myProfileUpdate = useSelector((state) => state.userReducer.myProfileUpdate);
+    const bankAccount = useSelector((state) => state.bankAcccountReducer.bankAccount);
 
     const handleButtonClick = (type, rowData) => {
         // Add your button click logic here
@@ -150,15 +156,11 @@ function ViewCustomer() {
     }, [error]);
 
     useEffect(() => {
-        if (user) {
+        if (user || bankAccount) {
             setHandleToast(true);
             dispatch(getAllUserDetails('CUSTOMER'));
         }
-    }, [user]);
-
-    useEffect(() => {
-        dispatch(getAllUserDetails('CUSTOMER'));
-    }, []);
+    }, [user, bankAccount]);
 
     const handleClickOpen = (type, data) => {
         if (type === 'VIEW_UPDATE') {
@@ -200,6 +202,10 @@ function ViewCustomer() {
         setOpen(false);
     };
 
+    useEffect(() => {
+        setHandleToast(false);
+        dispatch(getAllUserDetails('CUSTOMER'));
+    }, []);
     return (
         <div>
             <MainCard title={<div className="title">Customer</div>}>
@@ -217,17 +223,17 @@ function ViewCustomer() {
                                             tooltip: 'Add New',
                                             isFreeAction: true,
                                             onClick: () => handleClickOpen('INSERT', null)
-                                        },
-                                        (rowData) => ({
-                                            icon: tableIcons.Edit,
-                                            tooltip: 'Edit',
-                                            onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
-                                        }),
-                                        (rowData) => ({
-                                            icon: tableIcons.VisibilityIcon,
-                                            tooltip: 'View',
-                                            onClick: () => handleClickOpen('VIEW', rowData)
-                                        })
+                                        }
+                                        // (rowData) => ({
+                                        //     icon: tableIcons.Edit,
+                                        //     tooltip: 'Edit',
+                                        //     onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
+                                        // }),
+                                        // (rowData) => ({
+                                        //     icon: tableIcons.VisibilityIcon,
+                                        //     tooltip: 'View',
+                                        //     onClick: () => handleClickOpen('VIEW', rowData)
+                                        // })
                                     ]}
                                     options={{
                                         padding: 'dense',
@@ -299,6 +305,7 @@ function ViewCustomer() {
                                         mode={mode}
                                         component="user_creation"
                                         handleCloseSubmit={handleCloseSubmit}
+                                        roleMode={roleMode}
                                     />
                                 ) : (
                                     ''

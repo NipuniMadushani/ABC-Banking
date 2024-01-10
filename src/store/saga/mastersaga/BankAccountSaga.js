@@ -65,7 +65,7 @@ export function* getAllBankAccountSaga() {
     let responseData = [];
 
     try {
-        responseData = yield call(get, process.env.REACT_APP_FINANCE_URL + '/BANK_ACCOUNTes');
+        responseData = yield call(get, process.env.REACT_APP_ABC_BANKING_MANAGEMENT_URL + '/accounts');
         console.log(responseData.data.payload);
         yield put({ type: SUCCESS_BANK_ACCOUNT_LIST_DATA, data: responseData.data });
     } catch (e) {

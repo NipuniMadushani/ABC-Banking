@@ -16,7 +16,7 @@ const pages = {
     children: [
         {
             id: 'authentication',
-            title: 'Authentication',
+            title: 'Account Management',
             type: 'collapse',
             icon: icons.IconKey,
 
@@ -26,6 +26,20 @@ const pages = {
                     title: 'Bank Managers',
                     type: 'item',
                     url: '/pages/usermanagement/usercreation',
+                    breadcrumbs: false
+                },
+                {
+                    id: 'customer-id',
+                    title: 'Customer',
+                    type: 'item',
+                    url: '/pages/usermanagement/customer',
+                    breadcrumbs: false
+                },
+                {
+                    id: 'bank-detail-id',
+                    title: 'Bank Accounts',
+                    type: 'item',
+                    url: '/pages/usermanagement/bankaccounts',
                     breadcrumbs: false
                 }
             ]

@@ -15,16 +15,30 @@ import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
 import CreatedUpdatedUserDetailsWithTableFormat from '../userTimeDetails/CreatedUpdatedUserDetailsWithTableFormat';
+import { depositAmount, withdrawAmount, getBankStatement } from '../../../../store/actions/masterActions/TransactionAction';
 
-function Withdrawal({ open, handleClose, mode, code, type }) {
+function Withdrawal({ open, handleClose, mode, code, type, storeData }) {
     const initialValues = {
-        transactionAmount: ''
+        transactionAmount: '',
+        transactionId: '',
+        type: 'dr',
+        currentAmount: '',
+        accountNo: '',
+        modifiedBy: '',
+        date: new Date()
     };
 
     const [loadValues, setLoadValues] = useState(null);
 
     const validationSchema = yup.object().shape({
-        transactionAmount: yup.number().required('Required field')
+        currentAmount: yup.number().required('Required field'),
+        transactionAmount: yup
+            .number()
+            .required('Required field')
+            .test('lessThanAvailableBalance', 'Transaction amount must be less than available balance', function (value) {
+                const availableBalance = this.resolve(yup.ref('currentAmount'));
+                return value <= availableBalance;
+            })
     });
 
     //get data from reducers...
@@ -32,6 +46,23 @@ function Withdrawal({ open, handleClose, mode, code, type }) {
     const duplicateDepartmentDesignation = useSelector((state) => state.departmentDesignationReducer.duplicateDepartmentDesignation);
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (storeData) {
+            console.log(storeData);
+            let initialValues = {
+                transactionAmount: '',
+                transactionId: null,
+                type: 'dr',
+                currentAmount: storeData.currentBalance,
+                accountNo: storeData.accountNo,
+                modifiedBy: '',
+                date: new Date()
+            };
+
+            setLoadValues(initialValues);
+        }
+    }, [storeData]);
 
     useEffect(() => {
         if (mode === 'VIEW_UPDATE' || mode === 'VIEW') {
@@ -50,7 +81,7 @@ function Withdrawal({ open, handleClose, mode, code, type }) {
 
     const handleSubmitForm = (data) => {
         if (mode === 'INSERT') {
-            dispatch(saveDepartmentDesignationData(data));
+            dispatch(withdrawAmount(data));
         } else if (mode === 'VIEW_UPDATE') {
             dispatch(updateDepartmentDesignationData(data));
         }
@@ -110,6 +141,30 @@ function Withdrawal({ open, handleClose, mode, code, type }) {
                                                             touched.transactionAmount && errors.transactionAmount
                                                                 ? errors.transactionAmount
                                                                 : ''
+                                                        }
+                                                    ></TextField>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <TextField
+                                                        sx={{
+                                                            width: { xs: 100, sm: 250 },
+                                                            '& .MuiInputBase-root': {
+                                                                height: 40
+                                                            }
+                                                        }}
+                                                        disabled
+                                                        InputLabelProps={{
+                                                            shrink: true
+                                                        }}
+                                                        type="number"
+                                                        label="Current Amount"
+                                                        name="currentAmount"
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur}
+                                                        value={values.currentAmount}
+                                                        error={Boolean(touched.currentAmount && errors.currentAmount)}
+                                                        helperText={
+                                                            touched.currentAmount && errors.currentAmount ? errors.currentAmount : ''
                                                         }
                                                     ></TextField>
                                                 </Grid>

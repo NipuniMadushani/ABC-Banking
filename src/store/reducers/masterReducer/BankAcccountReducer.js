@@ -16,7 +16,7 @@ import {
 
 const initialState = {
     bankAccount: null,
-    BANK_ACCOUNTes: [],
+    bankAccountList: [],
     BANK_ACCOUNTToUpdate: null,
     BANK_ACCOUNTToEdit: null,
     errorMsg: null,
@@ -88,13 +88,11 @@ export const bankAcccountReducer = (state = initialState, action) => {
             console.warn('SUCCESS_BANK_ACCOUNT_LIST_DATA', action);
 
             console.log(data.payload[0]);
-            return { ...state, BANK_ACCOUNTes: data.payload[0] };
+            return { ...state, bankAccountList: data.payload[0] };
 
         case FAILED_BANK_ACCOUNT_LIST_DATA:
-            console.warn('FAILED_BANK_ACCOUNT_LIST_DATA', action);
-
             console.log(data);
-            return { ...state, BANK_ACCOUNTes: data };
+            return { ...state, bankAccountList: [] };
 
         case BANK_ACCOUNT_DUPLICATE:
             return { ...state, duplicateBANK_ACCOUNT: data };

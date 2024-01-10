@@ -66,6 +66,15 @@ const MainRoutes = {
             element: <ViewUserCreation />
         },
         {
+            path: '/pages/usermanagement/customer',
+            element: <ViewCustomer />
+        },
+
+        {
+            path: '/pages/usermanagement/bankaccounts',
+            element: <ViewBankAccount />
+        },
+        {
             path: 'dashboard',
             children: [
                 {
@@ -129,10 +138,6 @@ const MainRoutes = {
             path: 'master',
             children: [
                 {
-                    path: 'customer',
-                    element: <ViewCustomer />
-                },
-                {
                     path: 'tourtypeview',
                     element: <ViewTourType />
                 },
@@ -184,10 +189,7 @@ const MainRoutes = {
                     path: 'managingCompanyview',
                     element: <ViewManagingComapany />
                 },
-                {
-                    path: 'bankaccounts',
-                    element: <ViewBankAccount />
-                },
+
                 {
                     path: 'bankbranches',
                     element: <ViewBranchDetails />

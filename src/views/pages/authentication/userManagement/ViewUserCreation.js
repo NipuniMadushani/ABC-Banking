@@ -12,6 +12,7 @@ import { getAllUserDetails, getLatestModifiedUserDetails } from 'store/actions/a
 import User from './UserCreation';
 import { FormControlLabel, FormGroup, Switch } from '@mui/material';
 import AlertModelClose from 'messages/AlertModelClose';
+import newLogo from 'assets/images/banner_dashboard.png';
 
 function ViewUserCreation() {
     const [open, setOpen] = useState(false);
@@ -22,6 +23,7 @@ function ViewUserCreation() {
     const [tableData, setTableData] = useState([]);
     const [lastModifiedTimeDate, setLastModifiedTimeDate] = useState(null);
     const [openConfirmationModel, setOpenConfirmationModel] = useState(false);
+    const [roleMode, setRoleMode] = useState(false);
     const columns = [
         {
             title: 'User Name',
@@ -96,6 +98,20 @@ function ViewUserCreation() {
     const lastModifiedDate = useSelector((state) => state.userReducer.lastModifiedDateTime);
     const myProfileUpdate = useSelector((state) => state.userReducer.myProfileUpdate);
 
+    let data = null;
+    data = localStorage.getItem('userData');
+    let logUserData = JSON.parse(data);
+    useEffect(() => {
+        console.log(logUserData);
+        if (logUserData) {
+            if (logUserData.roles == 'ADMIN') {
+                setRoleMode(true);
+            } else if (logUserData.roles == 'MANAGER') {
+                setRoleMode(false);
+            }
+        }
+    }, [logUserData]);
+
     useEffect(() => {
         setLastModifiedTimeDate(lastModifiedDate);
     }, [lastModifiedDate]);
@@ -118,10 +134,6 @@ function ViewUserCreation() {
             dispatch(getAllUserDetails('MANAGER'));
         }
     }, [user]);
-
-    useEffect(() => {
-        dispatch(getAllUserDetails('MANAGER'));
-    }, []);
 
     const handleClickOpen = (type, data) => {
         if (type === 'VIEW_UPDATE') {
@@ -160,103 +172,119 @@ function ViewUserCreation() {
         setOpen(false);
     };
 
+    useEffect(() => {
+        setHandleToast(false);
+        dispatch(getAllUserDetails('MANAGER'));
+    }, []);
+
     return (
         <div>
-            <MainCard title={<div className="title">Bank Manager</div>}>
-                <Grid container spacing={gridSpacing}>
-                    <Grid item xs={12}>
-                        <Grid container spacing={gridSpacing}>
-                            <Grid item xs={12}>
-                                <MaterialTable
-                                    // title={`Last Modified Date : ${lastModifiedTimeDate}`}
-                                    columns={columns}
-                                    data={tableData}
-                                    actions={[
-                                        {
-                                            icon: tableIcons.Add,
-                                            tooltip: 'Add New',
-                                            isFreeAction: true,
-                                            onClick: () => handleClickOpen('INSERT', null)
-                                        },
-                                        (rowData) => ({
-                                            icon: tableIcons.Edit,
-                                            tooltip: 'Edit',
-                                            onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
-                                        }),
-                                        (rowData) => ({
-                                            icon: tableIcons.VisibilityIcon,
-                                            tooltip: 'View',
-                                            onClick: () => handleClickOpen('VIEW', rowData)
-                                        })
-                                    ]}
-                                    options={{
-                                        padding: 'dense',
-                                        showTitle: false,
-                                        sorting: true,
-                                        search: true,
-                                        searchFieldAlignment: 'right',
-                                        searchAutoFocus: true,
-                                        searchFieldVariant: 'standard',
-                                        filtering: true,
-                                        paging: true,
-                                        pageSizeOptions: [2, 5, 10, 20, 25, 50, 100],
-                                        pageSize: 10,
-                                        paginationType: 'stepped',
-                                        showFirstLastPageButtons: false,
-                                        exportButton: true,
-                                        exportAllData: true,
-                                        exportFileName: 'Managers Details',
-                                        actionsColumnIndex: -1,
-                                        columnsButton: true,
-                                        headerStyle: {
-                                            whiteSpace: 'nowrap',
-                                            height: 20,
-                                            maxHeight: 20,
-                                            padding: 2,
-                                            fontSize: '14px',
-                                            background: '-moz-linear-gradient(top, #0790E8, #3180e6)',
-                                            background: '-ms-linear-gradient(top, #0790E8, #3180e6)',
-                                            background: '-webkit-linear-gradient(top, #0790E8, #3180e6)',
-                                            // textAlign: 'center',
-                                            color: '#FFF',
-                                            textAlign: 'center'
-                                        },
-                                        rowStyle: {
-                                            whiteSpace: 'nowrap',
-                                            height: 20,
-                                            fontSize: '13px',
-                                            padding: 0
-                                        }
-                                    }}
-                                />
-
-                                {open ? (
-                                    <User
-                                        open={open}
-                                        handleClose={handleClose}
-                                        userCode={userCode}
-                                        mode={mode}
-                                        component="user_creation"
-                                        handleCloseSubmit={handleCloseSubmit}
+            {roleMode && (
+                <MainCard title={<div className="title">Bank Manager</div>}>
+                    <Grid container spacing={gridSpacing}>
+                        <Grid item xs={12}>
+                            <Grid container spacing={gridSpacing}>
+                                <Grid item xs={12}>
+                                    <MaterialTable
+                                        // title={`Last Modified Date : ${lastModifiedTimeDate}`}
+                                        columns={columns}
+                                        data={tableData}
+                                        actions={[
+                                            {
+                                                icon: tableIcons.Add,
+                                                tooltip: 'Add New',
+                                                isFreeAction: true,
+                                                onClick: () => handleClickOpen('INSERT', null)
+                                            },
+                                            (rowData) => ({
+                                                icon: tableIcons.Edit,
+                                                tooltip: 'Edit',
+                                                onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
+                                            }),
+                                            (rowData) => ({
+                                                icon: tableIcons.VisibilityIcon,
+                                                tooltip: 'View',
+                                                onClick: () => handleClickOpen('VIEW', rowData)
+                                            })
+                                        ]}
+                                        options={{
+                                            padding: 'dense',
+                                            showTitle: false,
+                                            sorting: true,
+                                            search: true,
+                                            searchFieldAlignment: 'right',
+                                            searchAutoFocus: true,
+                                            searchFieldVariant: 'standard',
+                                            filtering: true,
+                                            paging: true,
+                                            pageSizeOptions: [2, 5, 10, 20, 25, 50, 100],
+                                            pageSize: 10,
+                                            paginationType: 'stepped',
+                                            showFirstLastPageButtons: false,
+                                            exportButton: true,
+                                            exportAllData: true,
+                                            exportFileName: 'Managers Details',
+                                            actionsColumnIndex: -1,
+                                            columnsButton: true,
+                                            headerStyle: {
+                                                whiteSpace: 'nowrap',
+                                                height: 20,
+                                                maxHeight: 20,
+                                                padding: 2,
+                                                fontSize: '14px',
+                                                background: '-moz-linear-gradient(top, #0790E8, #3180e6)',
+                                                background: '-ms-linear-gradient(top, #0790E8, #3180e6)',
+                                                background: '-webkit-linear-gradient(top, #0790E8, #3180e6)',
+                                                // textAlign: 'center',
+                                                color: '#FFF',
+                                                textAlign: 'center'
+                                            },
+                                            rowStyle: {
+                                                whiteSpace: 'nowrap',
+                                                height: 20,
+                                                fontSize: '13px',
+                                                padding: 0
+                                            }
+                                        }}
                                     />
-                                ) : (
-                                    ''
-                                )}
-                                {openToast ? <SuccessMsg openToast={openToast} handleToast={handleToast} mode={mode} /> : null}
-                                {openErrorToast ? (
-                                    <ErrorMsg openToast={openErrorToast} handleToast={setOpenErrorToast} mode={mode} />
-                                ) : null}
-                                {openConfirmationModel ? (
-                                    <AlertModelClose title="dev" open={openConfirmationModel} handleCloseModel={handleCloseModel} />
-                                ) : (
-                                    ''
-                                )}
+
+                                    {open ? (
+                                        <User
+                                            open={open}
+                                            handleClose={handleClose}
+                                            userCode={userCode}
+                                            mode={mode}
+                                            component="user_creation"
+                                            handleCloseSubmit={handleCloseSubmit}
+                                        />
+                                    ) : (
+                                        ''
+                                    )}
+                                    {openToast ? <SuccessMsg openToast={openToast} handleToast={handleToast} mode={mode} /> : null}
+                                    {openErrorToast ? (
+                                        <ErrorMsg openToast={openErrorToast} handleToast={setOpenErrorToast} mode={mode} />
+                                    ) : null}
+                                    {openConfirmationModel ? (
+                                        <AlertModelClose title="dev" open={openConfirmationModel} handleCloseModel={handleCloseModel} />
+                                    ) : (
+                                        ''
+                                    )}
+                                </Grid>
                             </Grid>
+                            {/* </SubCard> */}
                         </Grid>
-                        {/* </SubCard> */}
+                    </Grid>
+                </MainCard>
+            )}
+            {!roleMode && (
+                <Grid container spacing={gridSpacing}>
+                    <Grid item lg={12} md={12} sm={12} xs={12}>
+                        <Grid item xs={12}>
+                            <img src={newLogo} alt="DMS Software Technologies" width="40%"></img>
+                        </Grid>
                     </Grid>
                 </Grid>
-            </MainCard>
+            )}
         </div>
     );
 }

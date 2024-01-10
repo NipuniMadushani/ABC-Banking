@@ -59,23 +59,6 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
     const [previewImages, setPreviewImages] = useState([]);
     const formikRef = useRef();
 
-    // yup.addMethod(yup.string, 'checkDuplicateLocationCode', function (message) {
-    //     return this.test('checkDuplicateLocationCode', 'Duplicate Tax group', async function validateValue(value) {
-    //         if (mode === 'INSERT') {
-    //             try {
-    //                 // dispatch(checkDuplicateTaxGroupCode(value));
-
-    //                 if (duplicateLoction != null && duplicateLoction.errorMessages.length != 0) {
-    //                     return false;
-    //                 } else {
-    //                     return true;
-    //                 }
-    //                 return false; // or true as you see fit
-    //             } catch (error) {}
-    //         }
-    //         return true;
-    //     });
-    // });
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
     const validationSchema = yup.object().shape({

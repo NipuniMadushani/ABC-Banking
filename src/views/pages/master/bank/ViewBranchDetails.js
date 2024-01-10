@@ -12,7 +12,7 @@ import { getAllTaxData, getLatestModifiedTaxDetails } from 'store/actions/master
 import { getAllBranchData, getLatestModifiedBranchDetails } from 'store/actions/masterActions/BankAction';
 import SuccessMsg from 'messages/SuccessMsg';
 import ErrorMsg from 'messages/ErrorMsg';
-
+import newLogo from 'assets/images/banner_dashboard.png';
 const ViewBranchDetails = () => {
     const columns = [
         {
@@ -91,6 +91,7 @@ const ViewBranchDetails = () => {
     const [openErrorToast, setOpenErrorToast] = useState(false);
     const [lastModifiedTimeDate, setLastModifiedTimeDate] = useState(null);
     const [openBankDialog, setOpenBankDialog] = useState(false);
+    const [roleMode, setRoleMode] = useState(false);
     const dispatch = useDispatch();
     const error = useSelector((state) => state.bankReducer.errorMsg);
 
@@ -104,6 +105,20 @@ const ViewBranchDetails = () => {
             setTableData(branchList?.payload[0]);
         }
     }, [branchList]);
+
+    let data = null;
+    data = localStorage.getItem('userData');
+    let logUserData = JSON.parse(data);
+    useEffect(() => {
+        console.log(logUserData);
+        if (logUserData) {
+            if (logUserData.roles == 'ADMIN' || logUserData.roles == 'MANAGER') {
+                setRoleMode(true);
+            } else if (logUserData.roles == 'CUSTOMER') {
+                setRoleMode(false);
+            }
+        }
+    }, [logUserData]);
 
     const handleClose = () => {
         setOpen(false);
@@ -155,92 +170,103 @@ const ViewBranchDetails = () => {
 
     return (
         <div>
-            <MainCard title={<div className="title">Branch Details</div>}>
-                <Grid container spacing={gridSpacing}>
-                    <Grid item xs={12}>
-                        <Grid container spacing={gridSpacing}>
-                            <Grid item xs={12}>
-                                <MaterialTable
-                                    // title={`Last Modified Date : ${lastModifiedTimeDate}`}
-                                    columns={columns}
-                                    data={tableData}
-                                    actions={[
-                                        {
-                                            icon: tableIcons.AccountBalanceIcon,
-                                            tooltip: 'Add New Branch',
-                                            isFreeAction: true,
-                                            onClick: () => handleClickOpen('INSERT', null)
-                                        },
+            {roleMode && (
+                <MainCard title={<div className="title">Branch Details</div>}>
+                    <Grid container spacing={gridSpacing}>
+                        <Grid item xs={12}>
+                            <Grid container spacing={gridSpacing}>
+                                <Grid item xs={12}>
+                                    <MaterialTable
+                                        // title={`Last Modified Date : ${lastModifiedTimeDate}`}
+                                        columns={columns}
+                                        data={tableData}
+                                        actions={[
+                                            {
+                                                icon: tableIcons.AccountBalanceIcon,
+                                                tooltip: 'Add New Branch',
+                                                isFreeAction: true,
+                                                onClick: () => handleClickOpen('INSERT', null)
+                                            },
 
-                                        (rowData) => ({
-                                            // <-- ***NOW A FUNCTION***
-                                            icon: tableIcons.Edit,
-                                            tooltip: 'Edit ',
-                                            onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
-                                        }),
-                                        (rowData) => ({
-                                            icon: tableIcons.VisibilityIcon,
-                                            tooltip: 'View',
-                                            onClick: () => handleClickOpen('VIEW', rowData)
-                                        })
-                                    ]}
-                                    options={{
-                                        padding: 'dense',
-                                        showTitle: false,
-                                        sorting: true,
-                                        search: true,
-                                        searchFieldAlignment: 'right',
-                                        searchAutoFocus: true,
-                                        searchFieldVariant: 'standard',
-                                        filtering: true,
-                                        paging: true,
-                                        pageSizeOptions: [5, 10, 20, 50, 100],
-                                        pageSize: 10,
-                                        paginationType: 'stepped',
-                                        showFirstLastPageButtons: false,
-                                        exportButton: true,
-                                        exportAllData: true,
-                                        exportFileName: 'Branch Details',
-                                        actionsColumnIndex: -1,
-                                        columnsButton: true,
-                                        color: 'primary',
+                                            (rowData) => ({
+                                                // <-- ***NOW A FUNCTION***
+                                                icon: tableIcons.Edit,
+                                                tooltip: 'Edit ',
+                                                onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
+                                            }),
+                                            (rowData) => ({
+                                                icon: tableIcons.VisibilityIcon,
+                                                tooltip: 'View',
+                                                onClick: () => handleClickOpen('VIEW', rowData)
+                                            })
+                                        ]}
+                                        options={{
+                                            padding: 'dense',
+                                            showTitle: false,
+                                            sorting: true,
+                                            search: true,
+                                            searchFieldAlignment: 'right',
+                                            searchAutoFocus: true,
+                                            searchFieldVariant: 'standard',
+                                            filtering: true,
+                                            paging: true,
+                                            pageSizeOptions: [5, 10, 20, 50, 100],
+                                            pageSize: 10,
+                                            paginationType: 'stepped',
+                                            showFirstLastPageButtons: false,
+                                            exportButton: true,
+                                            exportAllData: true,
+                                            exportFileName: 'Branch Details',
+                                            actionsColumnIndex: -1,
+                                            columnsButton: true,
+                                            color: 'primary',
 
-                                        headerStyle: {
-                                            whiteSpace: 'nowrap',
-                                            height: 30,
-                                            maxHeight: 30,
-                                            padding: 2,
-                                            fontSize: '14px',
-                                            backgroundColor: '#2196F3',
-                                            background: '-ms-linear-gradient(top, #0790E8, #3180e6)',
-                                            background: '-webkit-linear-gradient(top, #0790E8, #3180e6)',
-                                            textAlign: 'center',
-                                            color: '#FFF',
-                                            textAlign: 'center'
-                                        },
-                                        rowStyle: {
-                                            whiteSpace: 'nowrap',
-                                            height: 20,
-                                            align: 'left',
-                                            // maxHeight: 20,
-                                            fontSize: '13px',
-                                            padding: 0
-                                        }
-                                    }}
-                                />
+                                            headerStyle: {
+                                                whiteSpace: 'nowrap',
+                                                height: 30,
+                                                maxHeight: 30,
+                                                padding: 2,
+                                                fontSize: '14px',
+                                                backgroundColor: '#2196F3',
+                                                background: '-ms-linear-gradient(top, #0790E8, #3180e6)',
+                                                background: '-webkit-linear-gradient(top, #0790E8, #3180e6)',
+                                                textAlign: 'center',
+                                                color: '#FFF',
+                                                textAlign: 'center'
+                                            },
+                                            rowStyle: {
+                                                whiteSpace: 'nowrap',
+                                                height: 20,
+                                                align: 'left',
+                                                // maxHeight: 20,
+                                                fontSize: '13px',
+                                                padding: 0
+                                            }
+                                        }}
+                                    />
 
-                                {openBankDialog ? <Bank open={openBankDialog} handleClose={handleBankClose} id={id} mode={mode} /> : ''}
+                                    {openBankDialog ? <Bank open={openBankDialog} handleClose={handleBankClose} id={id} mode={mode} /> : ''}
 
-                                {openToast ? <SuccessMsg openToast={openToast} handleToast={handleToast} mode={mode} /> : null}
-                                {openErrorToast ? (
-                                    <ErrorMsg openToast={openErrorToast} handleToast={setOpenErrorToast} mode={mode} />
-                                ) : null}
+                                    {openToast ? <SuccessMsg openToast={openToast} handleToast={handleToast} mode={mode} /> : null}
+                                    {openErrorToast ? (
+                                        <ErrorMsg openToast={openErrorToast} handleToast={setOpenErrorToast} mode={mode} />
+                                    ) : null}
+                                </Grid>
                             </Grid>
+                            {/* </SubCard> */}
                         </Grid>
-                        {/* </SubCard> */}
+                    </Grid>
+                </MainCard>
+            )}
+            {!roleMode && (
+                <Grid container spacing={gridSpacing}>
+                    <Grid item lg={12} md={12} sm={12} xs={12}>
+                        <Grid item xs={12}>
+                            <img src={newLogo} alt="DMS Software Technologies" width="40%"></img>
+                        </Grid>
                     </Grid>
                 </Grid>
-            </MainCard>
+            )}
         </div>
     );
 };

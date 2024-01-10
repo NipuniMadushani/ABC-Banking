@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dialog, FormControlLabel, Box, DialogContent, TextField, DialogTitle, FormGroup, Button, MenuItem, Switch } from '@mui/material';
+import { Dialog, FormControlLabel, Box, DialogContent, TextField, DialogTitle, Chip, Button, MenuItem, Switch } from '@mui/material';
 import MaterialTable from 'material-table';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -15,85 +15,102 @@ import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
 import CreatedUpdatedUserDetailsWithTableFormat from '../userTimeDetails/CreatedUpdatedUserDetailsWithTableFormat';
+import { getBankStatement } from '../../../../store/actions/masterActions/TransactionAction';
 
 function BankStatement({ open, handleClose, mode, code, type }) {
     const initialValues = {
-        type: '',
-        description: '',
-        status: true
+        accountNo: ''
     };
 
     const [loadValues, setLoadValues] = useState(null);
     const [tableData, setTableData] = useState([]);
     const columns = [
         {
-            title: 'First Name',
-            field: 'firstName',
+            title: 'Date',
+            field: 'date',
+            filterPlaceholder: 'filter',
+            align: 'left',
+            render: (rowData) => (
+                <div>
+                    {new Date(rowData.date).toLocaleString('en-GB', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: '2-digit',
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        hour12: true
+                    })}
+                </div>
+            )
+        },
+        {
+            title: 'Current Amount',
+            field: 'currentAmount',
             filterPlaceholder: 'filter',
             align: 'left'
         },
         {
-            title: 'User Name',
-            field: 'userName',
+            title: 'Transaction Amount',
+            field: 'transactionAmount',
             filterPlaceholder: 'filter',
             align: 'left'
         },
         {
-            title: 'Role',
-            field: 'roles',
-            filterPlaceholder: 'filter',
-            align: 'left'
-        },
-        {
-            title: 'Withdrwal2',
+            title: 'Credit/Debit',
+            field: 'type',
+            filterPlaceholder: 'CR/DR',
+            align: 'left',
             render: (rowData) => (
-                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Withdrawal', rowData)}>
-                    Withdraw
-                </Button>
-            ),
-            align: 'center'
-        },
-
-        {
-            title: 'Withdrwal24',
-            render: (rowData) => (
-                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Deposit', rowData)}>
-                    Deposit
-                </Button>
-            ),
-            align: 'center'
-        },
-        {
-            title: 'Withdrw4al2',
-            render: (rowData) => (
-                <Button variant="outlined" type="button" onClick={() => handleButtonClick('statement', rowData)}>
-                    Download Statement
-                </Button>
-            ),
-            align: 'center'
+                <div
+                    style={{
+                        alignItems: 'center',
+                        align: 'center',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}
+                >
+                    {rowData.type === 'cr' ? (
+                        <Chip
+                            size="small"
+                            label="CREDIT"
+                            sx={{
+                                color: '#000000',
+                                bgcolor: '#00b300'
+                            }}
+                        />
+                    ) : (
+                        <Chip
+                            size="small"
+                            label="DEBIT"
+                            sx={{
+                                color: '#000000',
+                                bgcolor: '#e64d00'
+                            }}
+                        />
+                    )}
+                </div>
+            )
         }
     ];
 
     const validationSchema = yup.object().shape({
-        accno: yup.string().required('Required field')
+        accountNo: yup.string().required('Required field')
     });
 
-    const customersWithAccounts = useSelector((state) => state.userReducer.customersWithAccounts);
-
     //get data from reducers...
-    const departmentDesignationToUpdate = useSelector((state) => state.departmentDesignationReducer.departmentDesignationToUpdate);
-    const duplicateDepartmentDesignation = useSelector((state) => state.departmentDesignationReducer.duplicateDepartmentDesignation);
+    const bankStatemetList = useSelector((state) => state.transactionReducer.bankStatemetList);
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-        console.log(customersWithAccounts);
+        console.log(bankStatemetList);
 
-        if (customersWithAccounts) {
-            console.log(customersWithAccounts);
-            setTableData(customersWithAccounts);
+        if (bankStatemetList) {
+            console.log(bankStatemetList);
+            setTableData(bankStatemetList);
         }
-    }, [customersWithAccounts]);
+    }, [bankStatemetList]);
 
     useEffect(() => {
         if (mode === 'VIEW_UPDATE' || mode === 'VIEW') {
@@ -101,24 +118,16 @@ function BankStatement({ open, handleClose, mode, code, type }) {
         }
     }, [mode]);
 
-    useEffect(() => {
-        if (
-            (mode === 'VIEW_UPDATE' && departmentDesignationToUpdate != null) ||
-            (mode === 'VIEW' && departmentDesignationToUpdate != null)
-        ) {
-            setLoadValues(departmentDesignationToUpdate);
-        }
-    }, [departmentDesignationToUpdate]);
-
     const handleSubmitForm = (data) => {
         if (mode === 'INSERT') {
-            dispatch(saveDepartmentDesignationData(data));
-        } else if (mode === 'VIEW_UPDATE') {
-            dispatch(updateDepartmentDesignationData(data));
+            dispatch(getBankStatement(data.accountNo));
         }
-        handleClose();
+        // handleClose();
     };
 
+    useEffect(() => {
+        setTableData([]);
+    }, []);
     return (
         <div>
             <Dialog
@@ -186,7 +195,7 @@ function BankStatement({ open, handleClose, mode, code, type }) {
                                                         type="submit"
                                                         style={{ marginLeft: '20px' }}
                                                     >
-                                                        {mode === 'INSERT' ? 'SAVE' : 'UPDATE'}
+                                                        {mode === 'INSERT' ? 'SEARCH' : 'UPDATE'}
                                                     </Button>
                                                 </Grid>
                                             </Grid>
@@ -195,24 +204,26 @@ function BankStatement({ open, handleClose, mode, code, type }) {
                                             title={`Last Modified Date : `}
                                             columns={columns}
                                             data={tableData}
-                                            actions={[
-                                                {
-                                                    icon: tableIcons.Add,
-                                                    tooltip: 'Add New',
-                                                    isFreeAction: true,
-                                                    onClick: () => handleClickOpen('INSERT', null)
-                                                },
-                                                (rowData) => ({
-                                                    icon: tableIcons.Edit,
-                                                    tooltip: 'Edit',
-                                                    onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
-                                                }),
-                                                (rowData) => ({
-                                                    icon: tableIcons.VisibilityIcon,
-                                                    tooltip: 'View',
-                                                    onClick: () => handleClickOpen('VIEW', rowData)
-                                                })
-                                            ]}
+                                            actions={
+                                                [
+                                                    // {
+                                                    //     icon: tableIcons.Add,
+                                                    //     tooltip: 'Add New',
+                                                    //     isFreeAction: true,
+                                                    //     onClick: () => handleClickOpen('INSERT', null)
+                                                    // },
+                                                    // (rowData) => ({
+                                                    //     icon: tableIcons.Edit,
+                                                    //     tooltip: 'Edit',
+                                                    //     onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
+                                                    // }),
+                                                    // (rowData) => ({
+                                                    //     icon: tableIcons.VisibilityIcon,
+                                                    //     tooltip: 'View',
+                                                    //     onClick: () => handleClickOpen('VIEW', rowData)
+                                                    // })
+                                                ]
+                                            }
                                             options={{
                                                 padding: 'dense',
                                                 showTitle: false,
@@ -229,7 +240,7 @@ function BankStatement({ open, handleClose, mode, code, type }) {
                                                 showFirstLastPageButtons: false,
                                                 exportButton: true,
                                                 exportAllData: true,
-                                                exportFileName: 'TableData',
+                                                exportFileName: 'Bank Statement',
                                                 actionsColumnIndex: -1,
                                                 columnsButton: true,
 
@@ -256,36 +267,6 @@ function BankStatement({ open, handleClose, mode, code, type }) {
                                                 }
                                             }}
                                         />
-                                        <Box display="flex" flexDirection="row-reverse" style={{ marginTop: '20px' }}>
-                                            {mode != 'VIEW' ? (
-                                                <Button
-                                                    variant="outlined"
-                                                    type="button"
-                                                    style={{
-                                                        // backgroundColor: '#B22222',
-                                                        marginLeft: '10px'
-                                                    }}
-                                                    onClick={(e) => resetForm()}
-                                                >
-                                                    CLEAR
-                                                </Button>
-                                            ) : (
-                                                ''
-                                            )}
-
-                                            {mode != 'VIEW' ? (
-                                                <Button className="btnSave" variant="contained" type="submit">
-                                                    Submit
-                                                </Button>
-                                            ) : (
-                                                ''
-                                            )}
-                                        </Box>
-                                        <Box>
-                                            <Grid item>
-                                                {mode === 'VIEW' ? <CreatedUpdatedUserDetailsWithTableFormat formValues={values} /> : null}
-                                            </Grid>
-                                        </Box>
                                     </Form>
                                 );
                             }}

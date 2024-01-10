@@ -8,8 +8,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
-import { FormControlLabel, FormGroup, Switch } from '@mui/material';
-
+import { FormControlLabel, FormGroup, Switch, Button } from '@mui/material';
+import { getAllBankAccounts } from '../../../../store/actions/masterActions/BankAccountActions';
 function ViewBankAccount() {
     const [open, setOpen] = useState(false);
     const [taxGroupCode, setTaxGroupCode] = useState('');
@@ -19,49 +19,44 @@ function ViewBankAccount() {
     const [tableData, setTableData] = useState([]);
     const [lastModifiedTimeDate, setLastModifiedTimeDate] = useState(null);
     const [openAccount, setOpenAccount] = useState(false);
+    const [roleMode, setRoleMode] = useState(false);
 
     const columns = [
         {
-            title: 'Customer Name',
-            field: 'bank.bankName',
+            title: 'Account No',
+            field: 'accountNo',
             filterPlaceholder: 'filter',
-            align: 'left'
+            align: 'center'
+        },
+        {
+            title: 'User',
+            field: 'user.userName',
+            align: 'center',
+            grouping: false,
+            filterPlaceholder: 'filter'
+        },
+        {
+            title: 'Branch',
+            field: 'branch.bankName',
+            align: 'center',
+            grouping: false,
+            filterPlaceholder: 'filter'
+        },
+        {
+            title: 'Available Balance',
+            field: 'availableBalance',
+            filterPlaceholder: 'filter',
+            align: 'center'
         },
 
         {
-            title: 'Bank Branch',
-            field: 'companyName',
-            filterPlaceholder: 'filter',
-            align: 'left'
-        },
-        {
-            title: 'Account Number',
-            field: 'accountNumber',
+            title: 'Created Date',
+            field: 'createdDate',
             align: 'left',
             grouping: false,
             filterPlaceholder: 'filter'
         },
-        {
-            title: 'Ifs  Code',
-            field: 'accountDesc',
-            align: 'left',
-            grouping: false,
-            filterPlaceholder: 'filter'
-        },
-        {
-            title: 'Account Type',
-            field: 'intermediaryBank',
-            align: 'right',
-            grouping: false,
-            filterPlaceholder: 'filter'
-        },
-        {
-            title: 'Complete Detail',
-            field: 'intermediaryBank',
-            align: 'right',
-            grouping: false,
-            filterPlaceholder: 'filter'
-        },
+
         {
             title: 'Status',
             field: 'status',
@@ -91,24 +86,38 @@ function ViewBankAccount() {
                     )}
                 </div>
             )
-        },
-        {
-            title: 'Statement',
-            field: 'intermediaryBank',
-            align: 'right',
-            grouping: false,
-            filterPlaceholder: 'filter'
-        },
-        {
-            title: 'view acc',
-            render: (rowData) => (
-                <Button variant="outlined" type="button" onClick={() => handleButtonClick('account', rowData)}>
-                    Account
-                </Button>
-            ),
-            align: 'center'
         }
+        // {
+        //     title: 'Statement',
+        //     field: 'intermediaryBank',
+        //     align: 'right',
+        //     grouping: false,
+        //     filterPlaceholder: 'filter'
+        // },
+        // {
+        //     title: 'view acc',
+        //     render: (rowData) => (
+        //         <Button variant="outlined" type="button" onClick={() => handleButtonClick('account', rowData)}>
+        //             Account
+        //         </Button>
+        //     ),
+        //     align: 'center'
+        // }
     ];
+
+    let data = null;
+    data = localStorage.getItem('userData');
+    let logUserData = JSON.parse(data);
+    useEffect(() => {
+        console.log(logUserData);
+        if (logUserData) {
+            if (logUserData.roles == 'ADMIN' || logUserData.roles == 'MANAGER') {
+                setRoleMode(true);
+            } else if (logUserData.roles == 'CUSTOMER') {
+                setRoleMode(false);
+            }
+        }
+    }, [logUserData]);
 
     const handleButtonClick = (type, rowData) => {
         // Add your button click logic here
@@ -129,16 +138,10 @@ function ViewBankAccount() {
     const dispatch = useDispatch();
     const error = useSelector((state) => state.bankAcccountReducer.errorMsg);
 
-    const taxGroupListData = useSelector((state) => state.bankAcccountReducer.taxgroups);
+    const bankAccountList = useSelector((state) => state.bankAcccountReducer.bankAccountList);
     const bankAccount = useSelector((state) => state.bankAcccountReducer.bankAccount);
-    console.log(taxGroupListData);
-    const lastModifiedDate = useSelector((state) => state.bankAcccountReducer.lastModifiedDateTime);
 
-    useEffect(() => {
-        if (taxGroupListData?.payload?.length > 0) {
-            setTableData(taxGroupListData?.payload[0]);
-        }
-    }, [taxGroupListData]);
+    const lastModifiedDate = useSelector((state) => state.bankAcccountReducer.lastModifiedDateTime);
 
     useEffect(() => {
         console.log(error);
@@ -159,10 +162,18 @@ function ViewBankAccount() {
     }, [bankAccount]);
 
     useEffect(() => {
-        // dispatch(getAllTaxGroupDetails());
-        // dispatch(getAllTaxData());
-        // dispatch(getLatestModifiedTaxGroupDetails());
-    }, []);
+        if (bankAccountList) {
+            if (logUserData.roles == 'ADMIN' || logUserData.roles == 'MANAGER') {
+                setTableData(bankAccountList);
+            } else if (logUserData.roles == 'CUSTOMER') {
+                console.warn(logUserData.userName);
+                console.warn(bankAccountList);
+                let account = bankAccountList.filter((data) => logUserData.userName == data.user.userName);
+                console.warn(account);
+                setTableData(account);
+            }
+        }
+    }, [bankAccountList]);
 
     useEffect(() => {
         setLastModifiedTimeDate(
@@ -205,9 +216,17 @@ function ViewBankAccount() {
     const handleErrorToast = () => {
         setOpenErrorToast(false);
     };
+
+    useEffect(() => {
+        setHandleToast(false);
+        dispatch(getAllBankAccounts());
+        // dispatch(getAllTaxData());
+        // dispatch(getLatestModifiedTaxGroupDetails());
+    }, []);
+
     return (
         <div>
-            <MainCard title="Bank Accounts">
+            <MainCard title={<div className="title">Bank Accounts</div>}>
                 <Grid container spacing={gridSpacing}>
                     <Grid item xs={12}>
                         <Grid container spacing={gridSpacing}>
@@ -216,24 +235,24 @@ function ViewBankAccount() {
                                     title={`Last Modified Date : ${lastModifiedTimeDate}`}
                                     columns={columns}
                                     data={tableData}
-                                    actions={[
-                                        {
-                                            icon: tableIcons.Add,
-                                            tooltip: 'Add New',
-                                            isFreeAction: true,
-                                            onClick: () => handleClickOpen('INSERT', null)
-                                        },
-                                        (rowData) => ({
-                                            icon: tableIcons.Edit,
-                                            tooltip: 'Edit',
-                                            onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
-                                        }),
-                                        (rowData) => ({
-                                            icon: tableIcons.VisibilityIcon,
-                                            tooltip: 'View',
-                                            onClick: () => handleClickOpen('VIEW', rowData)
-                                        })
-                                    ]}
+                                    // actions={[
+                                    //     {
+                                    //         icon: tableIcons.Add,
+                                    //         tooltip: 'Add New',
+                                    //         isFreeAction: true,
+                                    //         onClick: () => handleClickOpen('INSERT', null)
+                                    //     },
+                                    //     (rowData) => ({
+                                    //         icon: tableIcons.Edit,
+                                    //         tooltip: 'Edit',
+                                    //         onClick: () => handleClickOpen('VIEW_UPDATE', rowData)
+                                    //     }),
+                                    //     (rowData) => ({
+                                    //         icon: tableIcons.VisibilityIcon,
+                                    //         tooltip: 'View',
+                                    //         onClick: () => handleClickOpen('VIEW', rowData)
+                                    //     })
+                                    // ]}
                                     options={{
                                         padding: 'dense',
                                         showTitle: false,

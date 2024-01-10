@@ -153,11 +153,6 @@ function ViewBankDetail() {
     }, [bankDetailData]);
 
     useEffect(() => {
-        dispatch(getAllBankDetailsData());
-        dispatch(getLatestModifiedDetails());
-    }, []);
-
-    useEffect(() => {
         console.log(lastModifiedDate);
         setLastModifiedTimeDate(
             lastModifiedDate === null
@@ -199,6 +194,13 @@ function ViewBankDetail() {
     const handleErrorToast = () => {
         setOpenErrorToast(false);
     };
+
+    useEffect(() => {
+        setHandleToast(false);
+        dispatch(getAllBankDetailsData());
+        dispatch(getLatestModifiedDetails());
+    }, []);
+
     return (
         <div>
             <MainCard title={<div className="title">Bank Accounts</div>}>

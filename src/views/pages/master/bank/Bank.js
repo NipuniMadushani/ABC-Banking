@@ -48,7 +48,6 @@ function Bank({ open, handleClose, mode, id }) {
 
     const [loadValues, setLoadValues] = useState(null);
     const branchManagerList = useSelector((state) => state.bankReducer.branchManagerList);
-    const duplicateTax = useSelector((state) => state.taxReducer.duplicateTax);
 
     const branchToUpdate = useSelector((state) => state.branchReducer.branchToUpdate);
 

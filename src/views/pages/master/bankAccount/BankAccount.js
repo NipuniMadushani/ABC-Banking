@@ -1,6 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Dialog, Box, DialogContent, TextField, DialogTitle, Button, FormGroup, FormControlLabel, Switch } from '@mui/material';
+import {
+    Dialog,
+    Box,
+    DialogContent,
+    TextField,
+    DialogTitle,
+    Button,
+    FormGroup,
+    FormControlLabel,
+    Switch,
+    Autocomplete
+} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { Formik, Form } from 'formik';
@@ -10,8 +21,8 @@ import { saveBankAccountData } from '../../../../store/actions/masterActions/Ban
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
-function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
+import { getAllBranchData, getLatestModifiedBranchDetails } from 'store/actions/masterActions/BankAction';
+function BankAccount({ open, handleClose, mode, taxGroupCode, userCode, roleMode }) {
     const initialValues = {
         accountId: null,
         accountNo: '',
@@ -25,19 +36,22 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
         modifiedDate: '',
         bank: 'ABC',
         customerContract: '',
-        accountBalance: '',
-        customer: ''
+        availableBalance: '',
+        customer: '',
+        branch: null
     };
 
     const [taxListOptions, setTaxListOptions] = useState([]);
     const [loadValues, setLoadValues] = useState(null);
     const [openDialogBox, setOpenDialogBox] = useState(false);
+    const [branches, setBranches] = useState(false);
 
     const validationSchema = yup.object().shape({});
 
     const taxGroupToUpdate = useSelector((state) => state.bankAcccountReducer.taxGroupToUpdate);
     const taxListData = useSelector((state) => state.bankAcccountReducer.taxes);
     const duplicateTaxGroup = useSelector((state) => state.bankAcccountReducer.duplicateTaxGroup);
+    const branchList = useSelector((state) => state.branchReducer.branches);
 
     const dispatch = useDispatch();
 
@@ -50,11 +64,19 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
     }, [mode]);
 
     useEffect(() => {
+        console.log(branchList);
+        if (branchList?.payload?.length > 0) {
+            setBranches(branchList?.payload[0]);
+        }
+    }, [branchList]);
+
+    useEffect(() => {
         if (userCode != null) {
+            console.log(userCode);
             let data = {
                 accountId: null,
-                accountNo: '',
-                ifscCode: '',
+                accountNo: userCode?.accountDetails?.accountNo,
+                ifscCode: userCode?.accountDetails?.ifscCode,
                 type: '',
                 status: true,
                 userId: userCode.userId,
@@ -64,9 +86,11 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
                 modifiedDate: '',
                 bank: 'ABC',
                 customerContract: '',
-                accountBalance: '',
-                customer: userCode.userName
+                availableBalance: userCode?.accountDetails?.availableBalance,
+                customer: userCode.userName,
+                branch: userCode?.accountDetails == null ? null : userCode?.accountDetails.branch
             };
+
             setLoadValues(data);
         }
     }, [userCode]);
@@ -78,6 +102,10 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
             setLoadValues(taxGroupToUpdate);
         }
     }, [taxGroupToUpdate]);
+
+    useEffect(() => {
+        dispatch(getAllBranchData());
+    }, []);
 
     const checkValidArray = (arry) => {
         arry.sort();
@@ -92,6 +120,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
     };
     const handleSubmitForm = (data) => {
         console.warn(data);
+        data.branchId = data.branch.branchId;
         if (mode === 'INSERT') {
             dispatch(saveBankAccountData(data));
         } else if (mode === 'VIEW_UPDATE') {
@@ -138,14 +167,14 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
                                                 }}
                                                 validationSchema={validationSchema}
                                             >
-                                                {({ values, handleChange, errors, handleBlur, touched, resetForm }) => {
+                                                {({ values, handleChange, errors, handleBlur, touched, resetForm, setFieldValue }) => {
                                                     return (
                                                         <Form>
                                                             <div style={{ marginTop: '6px', margin: '10px' }}>
                                                                 <Grid gap="10px" display="flex">
                                                                     <Grid item>
                                                                         <TextField
-                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
+                                                                            disabled
                                                                             label="Bank"
                                                                             sx={{
                                                                                 width: { sm: 200, md: 300 },
@@ -168,7 +197,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
                                                                     </Grid>
                                                                     <Grid>
                                                                         <TextField
-                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
+                                                                            disabled={roleMode == 'View'}
                                                                             sx={{
                                                                                 width: { sm: 200, md: 300 },
                                                                                 '& .MuiInputBase-root': {
@@ -197,7 +226,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
                                                                     <Grid item>
                                                                         {' '}
                                                                         <TextField
-                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
+                                                                            disabled={roleMode == 'View'}
                                                                             sx={{
                                                                                 width: { sm: 200, md: 300 },
                                                                                 '& .MuiInputBase-root': {
@@ -248,7 +277,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
                                                                 <Grid gap="10px" display="flex" style={{ marginTop: '15px' }}>
                                                                     <Grid item>
                                                                         <TextField
-                                                                            disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
+                                                                            disabled={roleMode == 'View'}
                                                                             sx={{
                                                                                 width: { sm: 200, md: 300 },
                                                                                 '& .MuiInputBase-root': {
@@ -260,14 +289,16 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
                                                                                 shrink: true
                                                                             }}
                                                                             label="Avaliable Balance"
-                                                                            name="accountBalance"
+                                                                            name="availableBalance"
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
-                                                                            value={values.accountBalance}
-                                                                            error={Boolean(touched.accountBalance && errors.accountBalance)}
+                                                                            value={values.availableBalance}
+                                                                            error={Boolean(
+                                                                                touched.availableBalance && errors.availableBalance
+                                                                            )}
                                                                             helperText={
-                                                                                touched.accountBalance && errors.accountBalance
-                                                                                    ? errors.accountBalance
+                                                                                touched.availableBalance && errors.availableBalance
+                                                                                    ? errors.availableBalance
                                                                                     : ''
                                                                             }
                                                                         ></TextField>
@@ -278,7 +309,7 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
                                                                             // adapterLocale={locale}
                                                                         >
                                                                             <DatePicker
-                                                                                disabled={mode != 'INSERT'}
+                                                                                disabled={roleMode == 'View'}
                                                                                 onChange={(value) => {
                                                                                     setFieldValue(`createdDate`, value);
                                                                                 }}
@@ -315,27 +346,61 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
                                                                     </Grid>
                                                                 </Grid>
                                                                 <Grid gap="10px" display="flex" style={{ marginTop: '15px' }}>
-                                                                    <FormGroup>
-                                                                        <FormControlLabel
-                                                                            name="status"
-                                                                            disabled={mode === 'VIEW'}
-                                                                            // disabled={
-                                                                            //     mode == 'VIEW' || component === 'user_profile'
-                                                                            //         ? true
-                                                                            //         : false
-                                                                            // }
-                                                                            control={<Switch color="success" />}
-                                                                            onChange={handleChange}
-                                                                            value={values.status}
-                                                                            label="Status"
-                                                                            checked={values.status}
+                                                                    <Grid item xs={6}>
+                                                                        <Autocomplete
+                                                                            fullWidth
+                                                                            name="branch"
+                                                                            onChange={(_, value) => {
+                                                                                setFieldValue(`branch`, value);
+                                                                            }}
+                                                                            disabled={roleMode == 'View'}
+                                                                            value={values.branch}
+                                                                            options={branches}
+                                                                            getOptionLabel={(option) =>
+                                                                                `${option.bankName} - (${option.bankCode})`
+                                                                            }
+                                                                            isOptionEqualToValue={(option, value) =>
+                                                                                option.branchId === value.branchId
+                                                                            }
+                                                                            renderInput={(params) => (
+                                                                                <TextField
+                                                                                    {...params}
+                                                                                    label="Branch"
+                                                                                    sx={{
+                                                                                        width: { sm: 200, md: 300 },
+                                                                                        '& .MuiInputBase-root': {
+                                                                                            height: 40
+                                                                                        }
+                                                                                    }}
+                                                                                    variant="outlined"
+                                                                                    InputLabelProps={{
+                                                                                        shrink: true
+                                                                                    }}
+                                                                                    name="branch"
+                                                                                    onBlur={handleBlur}
+                                                                                />
+                                                                            )}
                                                                         />
-                                                                    </FormGroup>
+                                                                    </Grid>{' '}
+                                                                    <Grid item xs={3}>
+                                                                        <FormGroup>
+                                                                            {' '}
+                                                                            <FormControlLabel
+                                                                                name="status"
+                                                                                disabled={roleMode == 'View'}
+                                                                                control={<Switch color="success" />}
+                                                                                onChange={handleChange}
+                                                                                value={values.status}
+                                                                                label="Status"
+                                                                                checked={values.status}
+                                                                            />
+                                                                        </FormGroup>
+                                                                    </Grid>
                                                                 </Grid>
                                                             </div>
 
                                                             <Box display="flex" flexDirection="row-reverse" style={{ marginTop: '20px' }}>
-                                                                {mode != 'VIEW' ? (
+                                                                {roleMode != 'View' ? (
                                                                     <Button
                                                                         variant="outlined"
                                                                         type="reset"
@@ -351,12 +416,10 @@ function BankAccount({ open, handleClose, mode, taxGroupCode, userCode }) {
                                                                     ''
                                                                 )}
 
-                                                                {mode != 'VIEW' ? (
+                                                                {roleMode != 'View' && (
                                                                     <Button className="btnSave" variant="contained" type="submit">
                                                                         {mode === 'INSERT' ? 'SAVE' : 'UPDATE'}
                                                                     </Button>
-                                                                ) : (
-                                                                    ''
                                                                 )}
                                                             </Box>
                                                         </Form>
