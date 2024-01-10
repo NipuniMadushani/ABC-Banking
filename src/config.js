@@ -1,5 +1,5 @@
 const config = {
-    basename: '/ABC-banking',
+    basename: '/',
     defaultPath: '/',
     fontFamily: `'Lexend', sans-serif`,
     borderRadius: 12
