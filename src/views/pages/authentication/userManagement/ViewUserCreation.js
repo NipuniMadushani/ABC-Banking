@@ -280,7 +280,7 @@ function ViewUserCreation() {
                 <Grid container spacing={gridSpacing}>
                     <Grid item lg={12} md={12} sm={12} xs={12}>
                         <Grid item xs={12}>
-                            <img src={newLogo} alt="DMS Software Technologies" width="40%"></img>
+                            <img src={newLogo} alt="abs" width="1500" height="700"></img>
                         </Grid>
                     </Grid>
                 </Grid>

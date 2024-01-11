@@ -113,7 +113,11 @@ function ViewCustomer() {
                     variant="outlined"
                     type="button"
                     onClick={() => handleButtonClick('account', rowData)}
-                    disabled={(roleMode == 'View' && !rowData.account) || (roleMode == 'create' && rowData.account)}
+                    disabled={
+                        (roleMode == 'View' && !rowData.account) ||
+                        (roleMode == 'create' && rowData.account) ||
+                        logUserData.roles == 'CUSTOMER'
+                    }
                 >
                     {roleMode} Account
                 </Button>
