@@ -89,23 +89,6 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
     const duplicateUser = useSelector((state) => state.userReducer.duplicateUser);
     const userToUpdate = useSelector((state) => state.userReducer.userToUpdate);
     const profileToUpdate = useSelector((state) => state.userReducer.profileToUpdate);
-    const [marketListOptions, setMarketListOptions] = useState([]);
-    const clusterListData = useSelector((state) => state.codeAndNameReducer.cluterTypesDetails);
-    const companyProfile = useSelector((state) => state.companyProfileReducer.companyProfileList);
-    const availableLicenseCount = useSelector((state) => state.companyProfileReducer.availableLicenseCount);
-    const marketListData = useSelector((state) => state.marketReducer.marketActiveList);
-    const [clusterListOptions, setClusterListOptions] = useState([]);
-    const [departmentListOptions, setDepartmentListOptions] = useState([]);
-    const [designationListOptions, setDesignationListOptions] = useState([]);
-    const [userListOptions, setuserListOptions] = useState([]);
-    const [titleListOptions, setTitleListOptions] = useState([]);
-    const [companyListOptions, setCompanyListOptions] = useState([]);
-    const [userRoleListOptions, setuserRoleListOptions] = useState([]);
-    const [inputMarketValue, setMarketInputValue] = useState(initialValues.markets);
-    const departmentActiveList = useSelector((state) => state.departmentDesignationReducer.departmentActiveList);
-    const designationActiveList = useSelector((state) => state.departmentDesignationReducer.designationActiveList);
-    const roleIdList = useSelector((state) => state.userReducer.userRole);
-    const myProfileUpdate = useSelector((state) => state.userReducer.myProfileUpdate);
 
     const dispatch = useDispatch();
     const titleItems = [
@@ -131,17 +114,6 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
             title: 'Ven.'
         }
     ];
-    useEffect(() => {
-        if (clusterListData != null) {
-            setClusterListOptions(clusterListData);
-        }
-    }, [clusterListData]);
-
-    useEffect(() => {
-        if (departmentActiveList != null) {
-            setDepartmentListOptions(departmentActiveList);
-        }
-    }, [departmentActiveList]);
 
     useEffect(() => {
         console.warn(userToUpdate);
@@ -210,7 +182,7 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
     };
 
     useEffect(() => {
-        setTitleListOptions(titleItems);
+        // setTitleListOptions(titleItems);
     }, []);
 
     return (
@@ -541,37 +513,42 @@ function User({ open, handleClose, mode, userCode, component, handleCloseSubmit 
                                                                             // }
                                                                         ></TextField>
                                                                     </Grid>
-                                                                    <Grid
-                                                                        item
-                                                                        // display={
-                                                                        //     component === 'user_creation' && mode === 'INSERT'
-                                                                        //         ? 'flex'
-                                                                        //         : 'none'
-                                                                        // }
-                                                                    >
-                                                                        {' '}
-                                                                        <TextField
-                                                                            sx={{
-                                                                                width: { sm: 200, md: 200 },
-                                                                                '& .MuiInputBase-root': {
-                                                                                    height: 40
+                                                                    {mode === 'INSERT' ? (
+                                                                        <Grid
+                                                                            item
+                                                                            // display={
+                                                                            //     component === 'user_creation' && mode === 'INSERT'
+                                                                            //         ? 'flex'
+                                                                            //         : 'none'
+                                                                            // }
+                                                                        >
+                                                                            {' '}
+                                                                            <TextField
+                                                                                sx={{
+                                                                                    width: { sm: 200, md: 200 },
+                                                                                    '& .MuiInputBase-root': {
+                                                                                        height: 40
+                                                                                    }
+                                                                                }}
+                                                                                label="Password"
+                                                                                InputLabelProps={{
+                                                                                    shrink: true
+                                                                                }}
+                                                                                disabled={mode == 'VIEW'}
+                                                                                name="password"
+                                                                                onChange={handleChange}
+                                                                                onBlur={handleBlur}
+                                                                                value={values.password}
+                                                                                error={Boolean(touched.password && errors.password)}
+                                                                                helperText={
+                                                                                    touched.password && errors.password
+                                                                                        ? errors.password
+                                                                                        : ''
                                                                                 }
-                                                                            }}
-                                                                            label="Password"
-                                                                            InputLabelProps={{
-                                                                                shrink: true
-                                                                            }}
-                                                                            disabled={mode == 'VIEW'}
-                                                                            name="password"
-                                                                            onChange={handleChange}
-                                                                            onBlur={handleBlur}
-                                                                            value={values.password}
-                                                                            error={Boolean(touched.password && errors.password)}
-                                                                            helperText={
-                                                                                touched.password && errors.password ? errors.password : ''
-                                                                            }
-                                                                        ></TextField>
-                                                                    </Grid>
+                                                                            ></TextField>
+                                                                        </Grid>
+                                                                    ) : null}
+
                                                                     <Grid item style={{ marginLeft: '10px' }}>
                                                                         <FormGroup>
                                                                             <FormControlLabel

@@ -143,9 +143,23 @@ function ViewCustomer() {
         setLastModifiedTimeDate(lastModifiedDate);
     }, [lastModifiedDate]);
 
+    // useEffect(() => {
+    //     if (users?.length > 0) {
+    //         setTableData(users);
+    //     }
+    // }, [users]);
+
     useEffect(() => {
-        if (users?.length > 0) {
-            setTableData(users);
+        if (users) {
+            if (logUserData.roles == 'ADMIN' || logUserData.roles == 'MANAGER') {
+                setTableData(users);
+            } else if (logUserData.roles == 'CUSTOMER') {
+                console.warn(logUserData.userName);
+                console.warn(users);
+                let account = users.filter((data) => logUserData.userName == data.userName);
+                console.warn(account);
+                setTableData(account);
+            }
         }
     }, [users]);
 

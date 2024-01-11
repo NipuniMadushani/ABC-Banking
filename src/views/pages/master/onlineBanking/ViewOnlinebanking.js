@@ -62,7 +62,7 @@ function ViewOnlinebanking() {
                     variant="outlined"
                     type="button"
                     onClick={() => handleButtonClick('Withdrawal', rowData)}
-                    disabled={!disableWithdraw}
+                    disabled={disableWithdraw}
                 >
                     Withdraw
                 </Button>
@@ -73,7 +73,7 @@ function ViewOnlinebanking() {
         {
             title: 'Deposit',
             render: (rowData) => (
-                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Deposit', rowData)} disabled={!disableDeposit}>
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Deposit', rowData)} disabled={disableDeposit}>
                     Deposit
                 </Button>
             ),
@@ -86,7 +86,7 @@ function ViewOnlinebanking() {
                     variant="outlined"
                     type="button"
                     onClick={() => handleButtonClick('statement', rowData)}
-                    disabled={!disableBankStatement}
+                    disabled={disableBankStatement}
                 >
                     Download Statement
                 </Button>
@@ -96,7 +96,7 @@ function ViewOnlinebanking() {
         {
             title: 'Download Statement',
             render: (rowData) => (
-                <Button variant="outlined" type="button" onClick={() => handleButtonClick('transfer', rowData)} disabled={!disableTransfer}>
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('transfer', rowData)} disabled={disableTransfer}>
                     Money Transfer
                 </Button>
             ),
@@ -131,14 +131,28 @@ function ViewOnlinebanking() {
     const transferMoney = useSelector((state) => state.transactionReducer.transferMoney);
 
     const error = useSelector((state) => state.transactionReducer.error);
-    useEffect(() => {
-        console.log(customersWithAccounts);
+    // useEffect(() => {
+    //     console.log(customersWithAccounts);
 
-        if (customersWithAccounts) {
-            console.log(customersWithAccounts);
-            setTableData(customersWithAccounts);
-        }
-    }, [customersWithAccounts]);
+    //     if (customersWithAccounts) {
+    //         console.log(customersWithAccounts);
+    //         setTableData(customersWithAccounts);
+    //     }
+    // }, [customersWithAccounts]);
+
+    // useEffect(() => {
+    //     if (customersWithAccounts) {
+    //         if (logUserData.roles == 'ADMIN' || logUserData.roles == 'MANAGER') {
+    //             setTableData(users);
+    //         } else if (logUserData.roles == 'CUSTOMER') {
+    //             console.warn(logUserData.userName);
+    //             console.warn(customersWithAccounts);
+    //             let account = customersWithAccounts.filter((data) => logUserData.userName == data.userName);
+    //             console.warn(account);
+    //             setTableData(account);
+    //         }
+    //     }
+    // }, [customersWithAccounts]);
 
     let data = null;
     data = localStorage.getItem('userData');
@@ -168,7 +182,7 @@ function ViewOnlinebanking() {
                 let account = customersWithAccounts.filter((data) => logUserData.userName == data.userName);
                 console.warn(account);
                 setTableData(account);
-                setTableData(customersWithAccounts);
+                setTableData(account);
                 setdisableBankStatement(true);
                 setdisableDeposit(true);
                 setdisableTransfer(false);
