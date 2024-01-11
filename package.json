@@ -2,7 +2,7 @@
     "name": "ABC_Banking",
     "version": "3.2.0",
     "private": true,
-    "homepage": "https://NipuniMadushani.github.io/ABC-Banking",
+    "homepage": "/ABC-Banking",
     "dependencies": {
         "@date-io/date-fns": "^1.3.13",
         "@dnd-kit/core": "^6.0.8",

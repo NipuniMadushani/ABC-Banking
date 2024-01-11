@@ -4,34 +4,58 @@ import { Dialog, FormControlLabel, Box, DialogContent, TextField, DialogTitle, F
 
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+
 import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
+import { depositAmount, transferMoney, getBankStatement } from '../../../../store/actions/masterActions/TransactionAction';
 
-function OnlineBanking({ open, handleClose, mode, code, type }) {
+function TransferMoney({ open, handleClose, mode, code, type, storeData }) {
     const initialValues = {
-        type: '',
-        description: '',
-        status: true
+        transactionAmount: '',
+        transactionId: '',
+        type: 'ONLINE',
+        currentAmount: '',
+        accountNo: '',
+        modifiedBy: '',
+        date: new Date()
     };
 
     const [loadValues, setLoadValues] = useState(null);
 
     const validationSchema = yup.object().shape({
-        type: yup.string().required('Required field'),
-        description: yup.string().required('Required field'),
-        status: yup.boolean()
+        currentAmount: yup.number().required('Required field'),
+        transactionAmount: yup
+            .number()
+            .required('Required field')
+            .test('lessThanAvailableBalance', 'Transaction amount must be less than available balance', function (value) {
+                const availableBalance = this.resolve(yup.ref('currentAmount'));
+                return value <= availableBalance;
+            })
     });
-
-    //get data from reducers...
 
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        if (storeData) {
+            console.log(storeData);
+            let initialValues = {
+                transactionAmount: '',
+                transactionId: null,
+                type: 'ONLINE',
+                currentAmount: storeData.currentBalance,
+                accountNo: storeData.accountNo,
+                modifiedBy: '',
+                date: new Date()
+            };
+
+            setLoadValues(initialValues);
+        }
+    }, [storeData]);
+
     const handleSubmitForm = (data) => {
         if (mode === 'INSERT') {
-            dispatch(saveDepartmentDesignationData(data));
-        } else if (mode === 'VIEW_UPDATE') {
-            dispatch(updateDepartmentDesignationData(data));
+            dispatch(transferMoney(data));
         }
         handleClose();
     };
@@ -41,10 +65,7 @@ function OnlineBanking({ open, handleClose, mode, code, type }) {
             <Dialog fullWidth open={open} keepMounted onClose={handleClose} aria-describedby="alert-dialog-slide-description">
                 <DialogTitle>
                     <Box display="flex" className="dialog-title">
-                        <Box flexGrow={1}>
-                            {mode === 'INSERT' ? 'Add' : ''} {mode === 'VIEW_UPDATE' ? 'Update' : ''} {mode === 'VIEW' ? 'View' : ''}
-                            Department / Designation
-                        </Box>
+                        <Box flexGrow={1}>Transfer Money</Box>
                         <Box>
                             <IconButton onClick={handleClose}>
                                 <CloseIcon />
@@ -72,31 +93,24 @@ function OnlineBanking({ open, handleClose, mode, code, type }) {
                                                 <Grid item xs={6}>
                                                     <TextField
                                                         sx={{
-                                                            width: { xs: 100, sm: 200 },
+                                                            width: { xs: 100, sm: 250 },
                                                             '& .MuiInputBase-root': {
                                                                 height: 40
                                                             }
                                                         }}
                                                         disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
-                                                        select
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
-                                                        label="type"
-                                                        name="type"
+                                                        type="number"
+                                                        label="Account Number"
+                                                        name="trAccountNo"
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
-                                                        value={values.type}
-                                                        error={Boolean(touched.type && errors.type)}
-                                                        helperText={touched.type && errors.type ? errors.type : ''}
-                                                    >
-                                                        <MenuItem dense={true} value={'Department'}>
-                                                            Department
-                                                        </MenuItem>
-                                                        <MenuItem dense={true} value={'Designation'}>
-                                                            Designation
-                                                        </MenuItem>
-                                                    </TextField>
+                                                        value={values.trAccountNo}
+                                                        error={Boolean(touched.trAccountNo && errors.trAccountNo)}
+                                                        helperText={touched.trAccountNo && errors.trAccountNo ? errors.trAccountNo : ''}
+                                                    ></TextField>
                                                 </Grid>
                                                 <Grid item xs={6}>
                                                     <TextField
@@ -110,27 +124,19 @@ function OnlineBanking({ open, handleClose, mode, code, type }) {
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}
-                                                        label="Description"
-                                                        name="description"
+                                                        type="number"
+                                                        label="Amount"
+                                                        name="transactionAmount"
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
-                                                        value={values.description}
-                                                        error={Boolean(touched.description && errors.description)}
-                                                        helperText={touched.description && errors.description ? errors.description : ''}
+                                                        value={values.transactionAmount}
+                                                        error={Boolean(touched.transactionAmount && errors.transactionAmount)}
+                                                        helperText={
+                                                            touched.transactionAmount && errors.transactionAmount
+                                                                ? errors.transactionAmount
+                                                                : ''
+                                                        }
                                                     ></TextField>
-                                                </Grid>
-                                                <Grid item xs={3}>
-                                                    <FormGroup>
-                                                        <FormControlLabel
-                                                            name="status"
-                                                            onChange={handleChange}
-                                                            value={values.status}
-                                                            control={<Switch color="success" />}
-                                                            label="Status"
-                                                            checked={values.status}
-                                                            disabled={mode == 'VIEW'}
-                                                        />
-                                                    </FormGroup>
                                                 </Grid>
                                             </Grid>
                                         </Box>
@@ -153,7 +159,7 @@ function OnlineBanking({ open, handleClose, mode, code, type }) {
 
                                             {mode != 'VIEW' ? (
                                                 <Button className="btnSave" variant="contained" type="submit">
-                                                    {mode === 'INSERT' ? 'SAVE' : 'UPDATE'}
+                                                    {mode === 'INSERT' ? 'Transfer' : 'UPDATE'}
                                                 </Button>
                                             ) : (
                                                 ''
@@ -170,4 +176,4 @@ function OnlineBanking({ open, handleClose, mode, code, type }) {
     );
 }
 
-export default OnlineBanking;
+export default TransferMoney;

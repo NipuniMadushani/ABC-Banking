@@ -18,7 +18,6 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import 'assets/scss/style.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import { checkDuplicateTaxCode, getTaxDataById, saveTaxData, updateTaxData } from 'store/actions/masterActions/TaxAction';
 import { getAllActiveBrnachManagers, getBranchDataById, saveBankData } from 'store/actions/masterActions/BankAction';
 import * as yup from 'yup';
 import { Formik, Form } from 'formik';

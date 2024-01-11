@@ -4,13 +4,16 @@ import {
     SUCCESS_WITHDRAW_AMOUNT,
     FAILED_WITHDRAW_AMOUNT,
     SUCCESS_BANK_STATEMENT,
-    FAILED_BANK_STATEMENT
+    FAILED_BANK_STATEMENT,
+    SUCCESS_TRANSFER_MONEY,
+    FAILED_TRANSFER_MONEY
 } from 'store/constant/master/TransactionConstant';
 const initialState = {
     withdrawAmount: null,
     depositAmount: null,
     bankStatemetList: null,
-    errorMsg: null
+    errorMsg: null,
+    transferMoney: null
 };
 
 export const transactionReducer = (state = initialState, action) => {
@@ -45,6 +48,16 @@ export const transactionReducer = (state = initialState, action) => {
                 errorMsg: data ? data.errorMessages : 'netwok error'
             };
 
+        case SUCCESS_TRANSFER_MONEY:
+            return { ...state, transferMoney: data.payload[0] };
+
+        case FAILED_TRANSFER_MONEY:
+            return {
+                ...state,
+                transferMoney: null,
+                errorMsg: data ? data.errorMessages : 'netwok error'
+            };
+
         case SUCCESS_BANK_STATEMENT:
             return { ...state, bankStatemetList: data.payload[0] };
 
@@ -54,7 +67,6 @@ export const transactionReducer = (state = initialState, action) => {
                 bankStatemetList: null,
                 errorMsg: data ? data.errorMessages : 'netwok error'
             };
-
         default:
             return state;
     }

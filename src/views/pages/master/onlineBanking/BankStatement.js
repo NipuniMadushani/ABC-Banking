@@ -4,12 +4,7 @@ import { Dialog, FormControlLabel, Box, DialogContent, TextField, DialogTitle, C
 import MaterialTable from 'material-table';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import {
-    saveDepartmentDesignationData,
-    getDepartmentDesignationDataById,
-    updateDepartmentDesignationData,
-    checkDuplicateDepartmentDesignationCode
-} from '../../../../store/actions/masterActions/DepartmentDesignationAction';
+
 import tableIcons from 'utils/MaterialTableIcons';
 import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
@@ -17,7 +12,7 @@ import * as yup from 'yup';
 import CreatedUpdatedUserDetailsWithTableFormat from '../userTimeDetails/CreatedUpdatedUserDetailsWithTableFormat';
 import { getBankStatement } from '../../../../store/actions/masterActions/TransactionAction';
 
-function BankStatement({ open, handleClose, mode, code, type }) {
+function BankStatement({ open, handleClose, mode, code, type, storeData }) {
     const initialValues = {
         accountNo: ''
     };
@@ -70,21 +65,30 @@ function BankStatement({ open, handleClose, mode, code, type }) {
                         alignItems: 'center'
                     }}
                 >
-                    {rowData.type === 'cr' ? (
+                    {rowData.type === 'CR' ? (
                         <Chip
                             size="small"
                             label="CREDIT"
                             sx={{
-                                color: '#000000',
+                                color: '#ffffff',
                                 bgcolor: '#00b300'
+                            }}
+                        />
+                    ) : rowData.type === 'DR' ? (
+                        <Chip
+                            size="small"
+                            label="DEBIT"
+                            sx={{
+                                color: '#ffffff',
+                                bgcolor: '#005ce6'
                             }}
                         />
                     ) : (
                         <Chip
                             size="small"
-                            label="DEBIT"
+                            label="TRANSFER"
                             sx={{
-                                color: '#000000',
+                                color: '#ffffff',
                                 bgcolor: '#e64d00'
                             }}
                         />
@@ -112,18 +116,18 @@ function BankStatement({ open, handleClose, mode, code, type }) {
         }
     }, [bankStatemetList]);
 
-    useEffect(() => {
-        if (mode === 'VIEW_UPDATE' || mode === 'VIEW') {
-            dispatch(getDepartmentDesignationDataById(code, type));
-        }
-    }, [mode]);
-
     const handleSubmitForm = (data) => {
         if (mode === 'INSERT') {
             dispatch(getBankStatement(data.accountNo));
         }
         // handleClose();
     };
+
+    useEffect(() => {
+        if (storeData) {
+            setLoadValues(storeData);
+        }
+    }, [storeData]);
 
     useEffect(() => {
         setTableData([]);
@@ -176,7 +180,7 @@ function BankStatement({ open, handleClose, mode, code, type }) {
                                                                 height: 40
                                                             }
                                                         }}
-                                                        disabled={mode == 'VIEW_UPDATE' || mode == 'VIEW'}
+                                                        disabled
                                                         InputLabelProps={{
                                                             shrink: true
                                                         }}

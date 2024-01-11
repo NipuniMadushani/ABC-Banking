@@ -23,14 +23,13 @@ import {
     checkedSavedBankandBranch,
     getBankDetailsDataById
 } from '../../../../store/actions/masterActions/BankAction';
-import { getAllCurrencyListData } from '../../../../store/actions/masterActions/ExpenseTypeAction';
+
 import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
 import CreatedUpdatedUserDetailsWithTableFormat from '../userTimeDetails/CreatedUpdatedUserDetailsWithTableFormat';
-import { getAllbankData, getBranchesByBankId } from 'store/actions/masterActions/BankAction';
+
 import countryList from 'react-select-country-list';
-import { getAllActiveMarketData } from 'store/actions/masterActions/operatorActions/MarketAction';
 
 function BankDetail({ open, handleClose, mode, code }) {
     const initialValues = {
@@ -80,59 +79,16 @@ function BankDetail({ open, handleClose, mode, code }) {
             setBranchList(branchesByBankId);
         }
     }, [branchesByBankId]);
-    // useEffect(() => {
-    //     if (bankListData?.length != 0) {
-    //         console.log(bankListData);
-    //         if (bankListData?.payload.length === 1) {
-    //             console.log(bankListData?.payload[0]);
-    //             setbankList(bankListData?.payload[0]);
-    //         }
-    //     }
-    // }, [bankListData]);
-
-    // useEffect(() => {
-    //     if (bankListData.length != 0) {
-    //         console.log(bankListData);
-    //         if (bankListData.payload.length === 1) {
-    //             console.log(bankListData.payload[0]);
-    //             setbankList(bankListData.payload[0]);
-    //         }
-    //     }
-    // }, [bankListData]);
 
     useEffect(() => {
         dispatch(getAllActiveMarketData());
         dispatch(getAllCurrencyListData());
-        // dispatch(getAllbankData());
     }, []);
 
     useEffect(() => {
         console.log(marketListData);
         setMarketListOptions(marketListData);
     }, [marketListData]);
-
-    yup.addMethod(yup.object, 'checkDuplicateBankandBranch', function (message) {
-        return this.test('checkDuplicateBankandBranch', message, async function validateValue(value) {
-            if (mode === 'INSERT') {
-                try {
-                    console.log(value);
-                    if (value != null) {
-                        console.log('sjhgchs');
-                    }
-                    let data = { bank: value.bankCode.bankId, branch: value.branchId };
-                    await dispatch(checkedSavedBankandBranch(data));
-                    console.log(duplicateBankDetail);
-                    if (duplicateBankDetail != null && duplicateBankDetail.errorMessages.length != 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                    return false;
-                } catch (error) {}
-            }
-            return true;
-        });
-    });
 
     const validationSchema = yup.object().shape({
         // bank: yup.object().nullable().required('Required field'),

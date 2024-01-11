@@ -8,7 +8,6 @@ import { useEffect, useState } from 'react';
 
 import Bank from './Bank';
 import { useSelector, useDispatch } from 'react-redux';
-import { getAllTaxData, getLatestModifiedTaxDetails } from 'store/actions/masterActions/TaxAction';
 import { getAllBranchData, getLatestModifiedBranchDetails } from 'store/actions/masterActions/BankAction';
 import SuccessMsg from 'messages/SuccessMsg';
 import ErrorMsg from 'messages/ErrorMsg';

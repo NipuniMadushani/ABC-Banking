@@ -4,24 +4,18 @@ import { Dialog, FormControlLabel, Box, DialogContent, TextField, DialogTitle, F
 
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import {
-    saveDepartmentDesignationData,
-    getDepartmentDesignationDataById,
-    updateDepartmentDesignationData,
-    checkDuplicateDepartmentDesignationCode
-} from '../../../../store/actions/masterActions/DepartmentDesignationAction';
 
 import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
-import CreatedUpdatedUserDetailsWithTableFormat from '../userTimeDetails/CreatedUpdatedUserDetailsWithTableFormat';
+
 import { depositAmount, withdrawAmount, getBankStatement } from '../../../../store/actions/masterActions/TransactionAction';
 
 function Withdrawal({ open, handleClose, mode, code, type, storeData }) {
     const initialValues = {
         transactionAmount: '',
         transactionId: '',
-        type: 'dr',
+        type: 'DR',
         currentAmount: '',
         accountNo: '',
         modifiedBy: '',
@@ -41,9 +35,6 @@ function Withdrawal({ open, handleClose, mode, code, type, storeData }) {
             })
     });
 
-    //get data from reducers...
-    const departmentDesignationToUpdate = useSelector((state) => state.departmentDesignationReducer.departmentDesignationToUpdate);
-    const duplicateDepartmentDesignation = useSelector((state) => state.departmentDesignationReducer.duplicateDepartmentDesignation);
 
     const dispatch = useDispatch();
 
@@ -53,7 +44,7 @@ function Withdrawal({ open, handleClose, mode, code, type, storeData }) {
             let initialValues = {
                 transactionAmount: '',
                 transactionId: null,
-                type: 'dr',
+                type: 'DR',
                 currentAmount: storeData.currentBalance,
                 accountNo: storeData.accountNo,
                 modifiedBy: '',
@@ -64,27 +55,12 @@ function Withdrawal({ open, handleClose, mode, code, type, storeData }) {
         }
     }, [storeData]);
 
-    useEffect(() => {
-        if (mode === 'VIEW_UPDATE' || mode === 'VIEW') {
-            dispatch(getDepartmentDesignationDataById(code, type));
-        }
-    }, [mode]);
 
-    useEffect(() => {
-        if (
-            (mode === 'VIEW_UPDATE' && departmentDesignationToUpdate != null) ||
-            (mode === 'VIEW' && departmentDesignationToUpdate != null)
-        ) {
-            setLoadValues(departmentDesignationToUpdate);
-        }
-    }, [departmentDesignationToUpdate]);
 
     const handleSubmitForm = (data) => {
         if (mode === 'INSERT') {
             dispatch(withdrawAmount(data));
-        } else if (mode === 'VIEW_UPDATE') {
-            dispatch(updateDepartmentDesignationData(data));
-        }
+        } 
         handleClose();
     };
 
@@ -196,9 +172,7 @@ function Withdrawal({ open, handleClose, mode, code, type, storeData }) {
                                             )}
                                         </Box>
                                         <Box>
-                                            <Grid item>
-                                                {mode === 'VIEW' ? <CreatedUpdatedUserDetailsWithTableFormat formValues={values} /> : null}
-                                            </Grid>
+                                          
                                         </Box>
                                     </Form>
                                 );

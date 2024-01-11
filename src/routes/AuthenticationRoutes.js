@@ -35,14 +35,6 @@ const AuthenticationRoutes = {
         {
             path: '/pages/login',
             element: <Login />
-        },
-        {
-            path: '/pages/forgotpassword',
-            element: <ForgotPassword />
-        },
-        {
-            path: '/pages/resetpassword',
-            element: <ResetPassword />
         }
     ]
     // element: <MainLayout />,

@@ -1,4 +1,4 @@
-import { DEPOSIT_AMOUNT, WITHDRAW_AMOUNT, BANK_STATEMENT } from '../../constant/master/TransactionConstant';
+import { DEPOSIT_AMOUNT, WITHDRAW_AMOUNT, BANK_STATEMENT, TRANSFER_MONEY } from '../../constant/master/TransactionConstant';
 // Transaction set up
 
 export const depositAmount = (data) => {
@@ -18,6 +18,13 @@ export const withdrawAmount = (data) => {
 export const getBankStatement = (data) => {
     return {
         type: BANK_STATEMENT,
+        data
+    };
+};
+
+export const transferMoney = (data) => {
+    return {
+        type: TRANSFER_MONEY,
         data
     };
 };

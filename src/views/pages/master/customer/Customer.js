@@ -29,12 +29,6 @@ import {
     getProfileData,
     updateMyProfile
 } from 'store/actions/authenticationActions/UserAction';
-import CreatedUpdatedUserDetailsWithTableFormat from 'views/pages/master/userTimeDetails/CreatedUpdatedUserDetailsWithTableFormat';
-import { getAllActiveMarketData } from 'store/actions/masterActions/operatorActions/MarketAction';
-import { getAllClusterData } from 'store/actions/masterActions/CodeAndNameAction';
-import { getAllCompanyProfileData, getAvailableLicenseCount } from 'store/actions/masterActions/CompanyProfileAction';
-import { getAllDepartmentData, getAllDesignationData } from 'store/actions/masterActions/DepartmentDesignationAction';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import './../../../../assets/scss/imageUpload.css';
@@ -97,20 +91,7 @@ function Customer({ open, handleClose, mode, userCode, component, handleCloseSub
     const userToUpdate = useSelector((state) => state.userReducer.userToUpdate);
     const profileToUpdate = useSelector((state) => state.userReducer.profileToUpdate);
     const [marketListOptions, setMarketListOptions] = useState([]);
-    const clusterListData = useSelector((state) => state.codeAndNameReducer.cluterTypesDetails);
-    const companyProfile = useSelector((state) => state.companyProfileReducer.companyProfileList);
-    const availableLicenseCount = useSelector((state) => state.companyProfileReducer.availableLicenseCount);
-    const marketListData = useSelector((state) => state.marketReducer.marketActiveList);
-    const [clusterListOptions, setClusterListOptions] = useState([]);
-    const [departmentListOptions, setDepartmentListOptions] = useState([]);
-    const [designationListOptions, setDesignationListOptions] = useState([]);
-    const [userListOptions, setuserListOptions] = useState([]);
-    const [titleListOptions, setTitleListOptions] = useState([]);
-    const [companyListOptions, setCompanyListOptions] = useState([]);
-    const [userRoleListOptions, setuserRoleListOptions] = useState([]);
-    const [inputMarketValue, setMarketInputValue] = useState(initialValues.markets);
-    const departmentActiveList = useSelector((state) => state.departmentDesignationReducer.departmentActiveList);
-    const designationActiveList = useSelector((state) => state.departmentDesignationReducer.designationActiveList);
+
     const roleIdList = useSelector((state) => state.userReducer.userRole);
     const myProfileUpdate = useSelector((state) => state.userReducer.myProfileUpdate);
 
@@ -138,17 +119,6 @@ function Customer({ open, handleClose, mode, userCode, component, handleCloseSub
             title: 'Ven.'
         }
     ];
-    useEffect(() => {
-        if (clusterListData != null) {
-            setClusterListOptions(clusterListData);
-        }
-    }, [clusterListData]);
-
-    useEffect(() => {
-        if (departmentActiveList != null) {
-            setDepartmentListOptions(departmentActiveList);
-        }
-    }, [departmentActiveList]);
 
     useEffect(() => {
         console.warn(userToUpdate);
@@ -157,51 +127,10 @@ function Customer({ open, handleClose, mode, userCode, component, handleCloseSub
         }
     }, [userToUpdate]);
 
-    useEffect(() => {
-        if ((mode === 'VIEW_UPDATE' && profileToUpdate != null) || (mode === 'VIEW' && profileToUpdate != null)) {
-            console.warn(profileToUpdate);
-            profileToUpdate.disablePassowrdField = false;
-            profileToUpdate.availableLicenceCount = profileToUpdate.company.availableLicenceCount;
-            profileToUpdate.allocatedLicenceCount = profileToUpdate.company.allocatedLicenceCount;
-            // setFieldValue('disablePassowrdField', false);
-            let images = [];
-            const contentType = 'image/png';
-            if (profileToUpdate.docPath !== '') {
-                const byteCharacters = atob(profileToUpdate?.docPath);
-                const byteNumbers = new Array(byteCharacters?.length);
-                for (let i = 0; i < byteCharacters?.length; i++) {
-                    byteNumbers[i] = byteCharacters?.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                const blob1 = new Blob([byteArray], { type: contentType });
-                images.push(URL.createObjectURL(blob1));
-                let fileData = new File([blob1], 'name');
-                profileToUpdate.files = [fileData];
-            }
-            profileToUpdate.files = [];
-            setLoadValues(profileToUpdate);
-            // formikRef.current.setFieldValue('disablePassowrdField', false);
-        }
-    }, [profileToUpdate]);
-
-    useEffect(() => {
-        // if ((mode === 'VIEW_UPDATE' && component === 'user_creation') || (mode === 'VIEW' && component === 'user_creation')) {
-        //     dispatch(getUserDataById(userCode));
-        //     // setTitleListOptions(ti)
-        // } else if ((mode === 'VIEW_UPDATE' && component === 'user_profile') || (mode === 'VIEW' && component === 'user_profile')) {
-        //     dispatch(getProfileData(userCode));
-        // }
-    }, [mode]);
-
     const handleSubmitForm = (data) => {
         console.log(data);
         dispatch(saveUserData(data));
         handleCloseSubmit();
-    };
-
-    const loadAvalibleLicenseCount = (data, setFieldValue) => {
-        setFieldValue('availableLicenceCount', data.availableLicenceCount);
-        setFieldValue('allocatedLicenceCount', data.allocatedLicenceCount);
     };
 
     useEffect(() => {

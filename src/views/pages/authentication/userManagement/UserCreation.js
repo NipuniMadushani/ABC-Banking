@@ -29,14 +29,7 @@ import {
     getProfileData,
     updateMyProfile
 } from 'store/actions/authenticationActions/UserAction';
-import CreatedUpdatedUserDetailsWithTableFormat from 'views/pages/master/userTimeDetails/CreatedUpdatedUserDetailsWithTableFormat';
-import { getAllActiveMarketData } from 'store/actions/masterActions/operatorActions/MarketAction';
-import { getAllClusterData } from 'store/actions/masterActions/CodeAndNameAction';
-import { getAllCompanyProfileData, getAvailableLicenseCount } from 'store/actions/masterActions/CompanyProfileAction';
-import { getAllDepartmentData, getAllDesignationData } from 'store/actions/masterActions/DepartmentDesignationAction';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
-import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import './../../../../assets/scss/imageUpload.css';
 
 function User({ open, handleClose, mode, userCode, component, handleCloseSubmit }) {

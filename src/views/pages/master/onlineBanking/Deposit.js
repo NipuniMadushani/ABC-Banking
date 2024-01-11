@@ -4,24 +4,18 @@ import { Dialog, FormControlLabel, Box, DialogContent, TextField, DialogTitle, F
 
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import {
-    saveDepartmentDesignationData,
-    getDepartmentDesignationDataById,
-    updateDepartmentDesignationData,
-    checkDuplicateDepartmentDesignationCode
-} from '../../../../store/actions/masterActions/DepartmentDesignationAction';
+
 
 import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
-import CreatedUpdatedUserDetailsWithTableFormat from '../userTimeDetails/CreatedUpdatedUserDetailsWithTableFormat';
 
 import { depositAmount, withdrawAmount, getBankStatement } from '../../../../store/actions/masterActions/TransactionAction';
 function Deposit({ open, handleClose, mode, code, type, storeData }) {
     const initialValues = {
         transactionAmount: '',
         transactionId: '',
-        type: 'cr',
+        type: 'CR',
         currentAmount: '',
         accountNo: '',
         modifiedBy: '',
@@ -45,7 +39,7 @@ function Deposit({ open, handleClose, mode, code, type, storeData }) {
             let initialValues = {
                 transactionAmount: '',
                 transactionId: null,
-                type: 'cr',
+                type: 'CR',
                 currentAmount: storeData.currentBalance,
                 accountNo: storeData.accountNo,
                 modifiedBy: '',
@@ -156,11 +150,7 @@ function Deposit({ open, handleClose, mode, code, type, storeData }) {
                                                 ''
                                             )}
                                         </Box>
-                                        <Box>
-                                            <Grid item>
-                                                {mode === 'VIEW' ? <CreatedUpdatedUserDetailsWithTableFormat formValues={values} /> : null}
-                                            </Grid>
-                                        </Box>
+                                       
                                     </Form>
                                 );
                             }}

@@ -7,16 +7,14 @@ import Withdrawal from './Withdrawal';
 import SuccessMsg from '../../../../messages/SuccessMsg';
 import ErrorMsg from '../../../../messages/ErrorMsg';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-    getAllDepartmentDesignationData,
-    getLatestModifiedDetails
-} from '../../../../store/actions/masterActions/DepartmentDesignationAction';
+
 import Grid from '@mui/material/Grid';
 import MainCard from 'ui-component/cards/MainCard';
 import { gridSpacing } from 'store/constant';
 import { Button, FormControlLabel, FormGroup, Switch } from '@mui/material';
 import BankStatement from './BankStatement';
 import { customersWithAccountsAction } from 'store/actions/authenticationActions/UserAction';
+import TransferMoney from './TransferMoney';
 
 function ViewOnlinebanking() {
     const [open, setOpen] = useState(false);
@@ -32,6 +30,12 @@ function ViewOnlinebanking() {
     const [openStatement, setOpenStatement] = useState(false);
     const [storeData, setStoreData] = useState(null);
     const [roleMode, setRoleMode] = useState(false);
+    const [openMoneyTransfer, setOpenMoneyTransfer] = useState(false);
+
+    const [disableWithdraw, setdisableWithdraw] = useState(false);
+    const [disableDeposit, setdisableDeposit] = useState(false);
+    const [disableBankStatement, setdisableBankStatement] = useState(false);
+    const [disableTransfer, setdisableTransfer] = useState(false);
     const columns = [
         {
             title: 'First Name',
@@ -54,7 +58,12 @@ function ViewOnlinebanking() {
         {
             title: 'Withdrwal',
             render: (rowData) => (
-                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Withdrawal', rowData)}>
+                <Button
+                    variant="outlined"
+                    type="button"
+                    onClick={() => handleButtonClick('Withdrawal', rowData)}
+                    disabled={!disableWithdraw}
+                >
                     Withdraw
                 </Button>
             ),
@@ -64,7 +73,7 @@ function ViewOnlinebanking() {
         {
             title: 'Deposit',
             render: (rowData) => (
-                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Deposit', rowData)}>
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('Deposit', rowData)} disabled={!disableDeposit}>
                     Deposit
                 </Button>
             ),
@@ -73,8 +82,22 @@ function ViewOnlinebanking() {
         {
             title: 'Download Statement',
             render: (rowData) => (
-                <Button variant="outlined" type="button" onClick={() => handleButtonClick('statement', rowData)}>
+                <Button
+                    variant="outlined"
+                    type="button"
+                    onClick={() => handleButtonClick('statement', rowData)}
+                    disabled={!disableBankStatement}
+                >
                     Download Statement
+                </Button>
+            ),
+            align: 'center'
+        },
+        {
+            title: 'Download Statement',
+            render: (rowData) => (
+                <Button variant="outlined" type="button" onClick={() => handleButtonClick('transfer', rowData)} disabled={!disableTransfer}>
+                    Money Transfer
                 </Button>
             ),
             align: 'center'
@@ -93,16 +116,21 @@ function ViewOnlinebanking() {
         } else if (type == 'statement') {
             setStoreData(rowData);
             setOpenStatement(true);
+        } else if (type == 'transfer') {
+            setStoreData(rowData);
+            setOpenMoneyTransfer(true);
         }
     };
 
     const dispatch = useDispatch();
-    const error = useSelector((state) => state.departmentDesignationReducer.errorMsg);
 
     const customersWithAccounts = useSelector((state) => state.userReducer.customersWithAccounts);
-    const lastModifiedDate = useSelector((state) => state.departmentDesignationReducer.lastModifiedDateTime);
-    const withdrawAmount = useSelector((state) => state.transactionReducer.lastModifiedDateTime);
-    const depositAmount = useSelector((state) => state.transactionReducer.lastModifiedDateTime);
+
+    const withdrawAmount = useSelector((state) => state.transactionReducer.withdrawAmount);
+    const depositAmount = useSelector((state) => state.transactionReducer.depositAmount);
+    const transferMoney = useSelector((state) => state.transactionReducer.transferMoney);
+
+    const error = useSelector((state) => state.transactionReducer.error);
     useEffect(() => {
         console.log(customersWithAccounts);
 
@@ -130,12 +158,21 @@ function ViewOnlinebanking() {
         if (customersWithAccounts) {
             if (logUserData.roles == 'ADMIN' || logUserData.roles == 'MANAGER') {
                 setTableData(customersWithAccounts);
+                setdisableBankStatement(false);
+                setdisableDeposit(false);
+                setdisableTransfer(true);
+                setdisableWithdraw(false);
             } else if (logUserData.roles == 'CUSTOMER') {
                 console.warn(logUserData.userName);
                 console.warn(customersWithAccounts);
                 let account = customersWithAccounts.filter((data) => logUserData.userName == data.userName);
                 console.warn(account);
                 setTableData(account);
+                setTableData(customersWithAccounts);
+                setdisableBankStatement(true);
+                setdisableDeposit(true);
+                setdisableTransfer(false);
+                setdisableWithdraw(true);
             }
         }
     }, [customersWithAccounts]);
@@ -149,27 +186,11 @@ function ViewOnlinebanking() {
     }, [error]);
 
     useEffect(() => {
-        if (withdrawAmount || depositAmount) {
+        if (withdrawAmount || depositAmount || transferMoney) {
             console.log('sucessToast');
             setHandleToast(true);
         }
-    }, [withdrawAmount, depositAmount]);
-
-    useEffect(() => {
-        console.log(typeof lastModifiedDate);
-        setLastModifiedTimeDate(
-            lastModifiedDate === null || lastModifiedDate === ''
-                ? ''
-                : new Date(lastModifiedDate).toLocaleString('en-GB', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: '2-digit',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                      hour12: true
-                  })
-        );
-    }, [lastModifiedDate]);
+    }, [withdrawAmount, depositAmount, transferMoney]);
 
     const handleClickOpen = (type, data) => {
         console.log(type);
@@ -203,6 +224,7 @@ function ViewOnlinebanking() {
         setOpenDeposit(false);
         setOpenWithdrwal(false);
         setOpenStatement(false);
+        setOpenMoneyTransfer(false);
     };
 
     const handleToast = () => {
@@ -226,7 +248,7 @@ function ViewOnlinebanking() {
                         <Grid container spacing={gridSpacing}>
                             <Grid item xs={12}>
                                 <MaterialTable
-                                    title={`Last Modified Date : ${lastModifiedTimeDate}`}
+                                    title={`Last Modified Date `}
                                     columns={columns}
                                     data={tableData}
                                     actions={
@@ -318,7 +340,26 @@ function ViewOnlinebanking() {
                                     ''
                                 )}
                                 {openStatement ? (
-                                    <BankStatement open={openStatement} handleClose={handleClose} code={code} mode={mode} type={type} />
+                                    <BankStatement
+                                        open={openStatement}
+                                        handleClose={handleClose}
+                                        code={code}
+                                        mode={mode}
+                                        type={type}
+                                        storeData={storeData}
+                                    />
+                                ) : (
+                                    ''
+                                )}
+                                {openMoneyTransfer ? (
+                                    <TransferMoney
+                                        open={openMoneyTransfer}
+                                        handleClose={handleClose}
+                                        code={code}
+                                        mode={mode}
+                                        type={type}
+                                        storeData={storeData}
+                                    />
                                 ) : (
                                     ''
                                 )}

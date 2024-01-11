@@ -6,7 +6,9 @@ import {
     SUCCESS_WITHDRAW_AMOUNT,
     FAILED_WITHDRAW_AMOUNT,
     SUCCESS_BANK_STATEMENT,
-    FAILED_BANK_STATEMENT
+    FAILED_BANK_STATEMENT,
+    SUCCESS_TRANSFER_MONEY,
+    FAILED_TRANSFER_MONEY
 } from 'store/constant/master/TransactionConstant';
 
 //Transaction saga
@@ -49,5 +51,18 @@ export function* bankStatementSaga(action) {
         yield put({ type: SUCCESS_BANK_STATEMENT, data: responseData.data });
     } catch (e) {
         yield put({ type: FAILED_BANK_STATEMENT, data: responseData.data });
+    }
+}
+
+export function* transferMoneySaga(action) {
+    action.data.path = `${process.env.REACT_APP_ABC_TRANSACTION_BANKING_MANAGEMENT_URL}/transaction`;
+    let responseData = [];
+    try {
+        responseData = yield call(create, action.data);
+        console.log(responseData.data.payload);
+
+        yield put({ type: SUCCESS_TRANSFER_MONEY, data: responseData.data });
+    } catch (e) {
+        yield put({ type: FAILED_TRANSFER_MONEY, data: responseData.data });
     }
 }
