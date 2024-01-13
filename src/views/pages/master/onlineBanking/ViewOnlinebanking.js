@@ -183,7 +183,7 @@ function ViewOnlinebanking() {
                 console.warn(account);
                 setTableData(account);
                 setTableData(account);
-                setdisableBankStatement(true);
+                setdisableBankStatement(false);
                 setdisableDeposit(true);
                 setdisableTransfer(false);
                 setdisableWithdraw(true);
@@ -203,6 +203,7 @@ function ViewOnlinebanking() {
         if (withdrawAmount || depositAmount || transferMoney) {
             console.log('sucessToast');
             setHandleToast(true);
+            dispatch(customersWithAccountsAction());
         }
     }, [withdrawAmount, depositAmount, transferMoney]);
 

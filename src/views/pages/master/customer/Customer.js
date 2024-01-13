@@ -133,9 +133,9 @@ function Customer({ open, handleClose, mode, userCode, component, handleCloseSub
         handleCloseSubmit();
     };
 
-    useEffect(() => {
-        setTitleListOptions(titleItems);
-    }, []);
+    // useEffect(() => {
+    //     setTitleListOptions(titleItems);
+    // }, []);
 
     return (
         <div>

@@ -23,7 +23,7 @@ function BankStatement({ open, handleClose, mode, code, type, storeData }) {
         {
             title: 'Date',
             field: 'date',
-            filterPlaceholder: 'filter',
+            filterPlaceholder: 'YYYY-MM-DD',
             align: 'left',
             render: (rowData) => (
                 <div>

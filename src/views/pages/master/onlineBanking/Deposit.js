@@ -5,7 +5,6 @@ import { Dialog, FormControlLabel, Box, DialogContent, TextField, DialogTitle, F
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
-
 import { Formik, Form } from 'formik';
 import Grid from '@mui/material/Grid';
 import * as yup from 'yup';
@@ -29,7 +28,6 @@ function Deposit({ open, handleClose, mode, code, type, storeData }) {
     });
 
     //get data from reducers...
-    const departmentDesignationToUpdate = useSelector((state) => state.departmentDesignationReducer.departmentDesignationToUpdate);
 
     const dispatch = useDispatch();
 
@@ -49,15 +47,6 @@ function Deposit({ open, handleClose, mode, code, type, storeData }) {
             setLoadValues(initialValues);
         }
     }, [storeData]);
-
-    useEffect(() => {
-        if (
-            (mode === 'VIEW_UPDATE' && departmentDesignationToUpdate != null) ||
-            (mode === 'VIEW' && departmentDesignationToUpdate != null)
-        ) {
-            setLoadValues(departmentDesignationToUpdate);
-        }
-    }, [departmentDesignationToUpdate]);
 
     const handleSubmitForm = (data) => {
         console.log(data);
@@ -150,7 +139,6 @@ function Deposit({ open, handleClose, mode, code, type, storeData }) {
                                                 ''
                                             )}
                                         </Box>
-                                       
                                     </Form>
                                 );
                             }}

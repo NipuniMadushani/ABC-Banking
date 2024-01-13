@@ -32,7 +32,7 @@ const utilities = {
 
                 {
                     id: 'bank-branch-id',
-                    title: 'Bank & Branches',
+                    title: 'Branches',
                     type: 'item',
                     url: '/master/bankbranches',
                     breadcrumbs: false

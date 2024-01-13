@@ -132,7 +132,7 @@ const HeaderSection = () => {
                                                 color="secondary"
                                                 startIcon={<PlayArrowIcon />}
                                             >
-                                                Admin Login
+                                                Login
                                             </Button>
                                         </AnimateButton>
                                     </Grid>
